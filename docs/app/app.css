@@ -19,8 +19,8 @@
     --color-fd-secondary-foreground: var(--mpc-colors-color-palette-fg-subtle);
 
     /* Accent colors */
-    --color-fd-primary: var(--mpc-colors-accent-default);
-    --color-fd-primary-foreground: var(--mpc-colors-accent-fg);
+    --color-fd-primary: var(--mpc-colors-color-palette-palette-fg);
+    --color-fd-primary-foreground: var(--mpc-colors-color-palette-fg-subtle);
 
     /* Card */
     --color-fd-card: var(--mpc-colors-color-palette-bg-subtle);
@@ -35,5 +35,5 @@
     --color-fd-accent-foreground: var(--mpc-colors-color-palette-fg);
 
     /* Ring */
-    --color-fd-ring: var(--mpc-colors-accent-default);
+    --color-fd-ring: var(--mpc-colors-color-palette-surface-hover);
 }
