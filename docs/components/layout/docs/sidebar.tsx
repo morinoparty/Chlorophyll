@@ -15,7 +15,7 @@ const itemVariants = cva(
     {
         variants: {
             variant: {
-                link: "transition-colors hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 hover:transition-none data-[active=true]:bg-fd-primary/10 data-[active=true]:text-fd-primary data-[active=true]:hover:transition-colors",
+                link: "transition-colors hover:bg-fd-accent/90 hover:text-fd-accent-foreground/80 hover:transition-none data-[active=true]:bg-[var(--mpc-colors-color-palette-solid)] data-[active=true]:text-[var(--mpc-colors-color-palette-contrast)] data-[active=true]:hover:bg-[var(--mpc-colors-color-palette-solid-emphasized)]",
                 button: "transition-colors hover:bg-fd-accent/50 hover:text-fd-accent-foreground/80 hover:transition-none",
             },
             highlight: {
