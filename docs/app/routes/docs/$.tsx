@@ -62,7 +62,7 @@ function Page() {
             {...baseOptions()}
             nav={{
                 ...baseOptions().nav,
-                enabled: false,
+                enabled: true,
             }}
             tree={pageTree}
             sidebar={{
