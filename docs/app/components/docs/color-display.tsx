@@ -38,18 +38,18 @@ const colorDisplayStyles = sva({
         },
         name: {
             fontSize: { base: "xs", md: "sm" },
-            color: "fg.default",
+            color: "colorPalette.fg",
             width: "full",
             textAlign: "center",
-            margin: 0,
+            margin: "0",
         },
         value: {
             display: { base: "none", md: "block" },
             fontSize: "xs",
-            color: "fg.muted",
+            color: "colorPalette.fg.muted",
             width: "full",
             textAlign: "center",
-            margin: 0,
+            margin: "0",
         },
     },
 });

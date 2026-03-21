@@ -55,7 +55,7 @@ const clientLoader = browserCollections.docs.createClientLoader({
 function Page() {
     const data = Route.useLoaderData();
     const { pageTree } = useFumadocsLoader(data);
-    const Content = clientLoader.getComponent(data.path);
+    const Content = clientLoader.getComponent(data.path) as unknown as React.FC;
 
     return (
         <DocsLayout

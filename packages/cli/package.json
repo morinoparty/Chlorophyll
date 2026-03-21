@@ -1,0 +1,29 @@
+{
+    "name": "@chlorophyll/cli",
+    "version": "0.0.1",
+    "type": "module",
+    "bin": {
+        "chlorophyll": "./bin/cli.mjs"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs"
+        }
+    },
+    "scripts": {
+        "build": "unbuild",
+        "dev": "unbuild --stub"
+    },
+    "dependencies": {
+        "citty": "^0.1.6",
+        "consola": "^3.4.2",
+        "culori": "^4.0.2"
+    },
+    "devDependencies": {
+        "@chlorophyll/react": "workspace:*",
+        "typescript": "~5.9.3",
+        "unbuild": "^3.5.0"
+    },
+    "license": "CC0-1.0"
+}

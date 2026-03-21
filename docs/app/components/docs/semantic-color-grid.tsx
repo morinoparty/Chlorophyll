@@ -15,7 +15,7 @@ const gridStyles = sva({
             alignItems: "center",
         },
         cardPreview: {
-            width: "100%",
+            width: "full",
             height: "24",
             borderRadius: "md",
             border: "sm",
