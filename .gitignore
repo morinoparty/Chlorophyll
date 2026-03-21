@@ -40,7 +40,8 @@ generated
 **/reports/*
 **/storybook-static/*
 
-**/tests/e2e/*.ts-snapshots/*
+# Playwright VRT baseline screenshots (committed for CI)
+# **/tests/e2e/*.ts-snapshots/*
 
 **/storycap/*
 
