@@ -3,21 +3,21 @@ import textStylesSpec from "styled-system/specs/text-styles.json";
 import tokensSpec from "styled-system/specs/tokens.json";
 
 const tableStyles = sva({
-    slots: ["tableWrapper", "table", "th", "td"],
+    slots: ["tableWrapper", "table", "th", "td", "tdMuted"],
     base: {
         tableWrapper: {
             width: "full",
             overflowX: "auto",
             WebkitOverflowScrolling: "touch",
         },
-        table: { width: "full", minWidth: "500px", borderCollapse: "collapse" },
+        table: { width: "full", minWidth: "[500px]", borderCollapse: "collapse" },
         th: {
             textAlign: "left",
             padding: "3",
             fontSize: { base: "xs", md: "sm" },
             fontWeight: "semibold",
             color: "colorPalette.fg.muted",
-            borderBottom: "1px solid",
+            borderBottom: "[1px solid]",
             borderColor: "border.muted",
             whiteSpace: "nowrap",
         },
@@ -25,7 +25,16 @@ const tableStyles = sva({
             padding: "3",
             fontSize: { base: "xs", md: "sm" },
             color: "colorPalette.fg",
-            borderBottom: "1px solid",
+            borderBottom: "[1px solid]",
+            borderColor: "border.subtle",
+            verticalAlign: "middle",
+            whiteSpace: "nowrap",
+        },
+        tdMuted: {
+            padding: "3",
+            fontSize: { base: "xs", md: "sm" },
+            color: "colorPalette.fg.muted",
+            borderBottom: "[1px solid]",
             borderColor: "border.subtle",
             verticalAlign: "middle",
             whiteSpace: "nowrap",
@@ -57,7 +66,7 @@ function parseFontSizeTokens(): FontSizeToken[] {
     if (!fontSizesData) return [];
     return fontSizesData.values.map((token) => ({
         name: token.name,
-        value: token.value,
+        value: String(token.value),
         cssVar: token.cssVar,
     }));
 }
@@ -93,8 +102,8 @@ export function TextStylesTable() {
                             <td className={styles.td}>
                                 <code>{token.name}</code>
                             </td>
-                            <td className={styles.td}>{token.fontSize}</td>
-                            <td className={styles.td}>{token.lineHeight}</td>
+                            <td className={styles.tdMuted}>{token.fontSize}</td>
+                            <td className={styles.tdMuted}>{token.lineHeight}</td>
                             <td className={styles.td}>
                                 <span
                                     style={{
@@ -134,7 +143,7 @@ export function FontSizesTable() {
                             <td className={styles.td}>
                                 <code>fontSizes.{token.name}</code>
                             </td>
-                            <td className={styles.td}>{token.value}</td>
+                            <td className={styles.tdMuted}>{token.value}</td>
                             <td className={styles.td}>
                                 <span
                                     style={{

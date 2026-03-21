@@ -47,7 +47,7 @@ export function Sidebar({ currentPath = "" }: SidebarProps) {
                 flexShrink: 0,
                 position: "sticky",
                 top: "16",
-                height: "calc(100vh - 4rem)",
+                height: "[calc(100vh - 4rem)]",
                 overflowY: "auto",
                 paddingY: "6",
                 paddingRight: "4",
@@ -62,7 +62,7 @@ export function Sidebar({ currentPath = "" }: SidebarProps) {
                                 paddingY: "1",
                                 fontSize: "sm",
                                 fontWeight: "semibold",
-                                color: "fg.default",
+                                color: "colorPalette.fg.muted",
                             })}
                         >
                             {section.title}
@@ -80,14 +80,14 @@ export function Sidebar({ currentPath = "" }: SidebarProps) {
                                                 paddingY: "1.5",
                                                 borderRadius: "md",
                                                 fontSize: "sm",
-                                                color: isActive ? "accent.default" : "fg.muted",
+                                                color: isActive ? "colorPalette.solid" : "colorPalette.fg.muted",
                                                 fontWeight: isActive ? "medium" : "normal",
                                                 textDecoration: "none",
-                                                bg: isActive ? "accent.a3" : "transparent",
+                                                bg: isActive ? "colorPalette.bg.subtle" : "[transparent]",
                                                 transition: "colors",
                                                 _hover: {
-                                                    color: isActive ? "accent.default" : "fg.default",
-                                                    bg: isActive ? "accent.a3" : "bg.subtle",
+                                                    color: isActive ? "colorPalette.solid" : "colorPalette.fg",
+                                                    bg: isActive ? "colorPalette.bg.subtle" : "bg.subtle",
                                                 },
                                             })}
                                         >

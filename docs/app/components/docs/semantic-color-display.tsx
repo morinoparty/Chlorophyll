@@ -19,7 +19,7 @@ const semanticColorDisplayStyles = sva({
             borderColor: "border",
         },
         swatch: {
-            flex: 1,
+            flex: "1",
             height: "full",
         },
         info: {

@@ -20,5 +20,6 @@ export function baseOptions(): BaseLayoutProps {
             mode: "toggle",
         },
         githubUrl: "https://github.com/morinoparty/chlorophyll",
+        storybookUrl: "https://chlorophyll-storybook.nikomaru.workers.dev/",
     };
 }

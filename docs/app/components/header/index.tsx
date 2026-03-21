@@ -10,10 +10,10 @@ const headerStyles = sva({
     base: {
         root: {
             position: "sticky",
-            top: 0,
-            zIndex: 50,
-            bg: "bg.canvas/80",
-            backdropFilter: "blur(8px)",
+            top: "0",
+            zIndex: "overlay",
+            bg: "bg/80",
+            backdropFilter: "[blur(8px)]",
         },
         container: {
             display: "flex",
@@ -29,11 +29,11 @@ const headerStyles = sva({
             alignItems: "center",
             gap: "4",
             textDecoration: "none",
-            color: "fg.default",
+            color: "colorPalette.fg",
         },
         logoIcon: {
             width: "10",
-            height: "37px",
+            height: "[37px]",
         },
         logoText: {
             fontWeight: "bold",
@@ -42,25 +42,25 @@ const headerStyles = sva({
         rightSection: {
             display: "flex",
             alignItems: "center",
-            gap: { base: "16px", md: "64px" },
+            gap: { base: "4", md: "16" },
         },
         nav: {
             display: { base: "none", md: "flex" },
             alignItems: "center",
-            gap: "32px",
+            gap: "8",
         },
         navLink: {
             fontSize: "md",
             fontWeight: "medium",
-            color: "fg.default",
+            color: "colorPalette.fg.muted",
             textDecoration: "none",
             transition: "colors",
-            _hover: { color: "fg.muted" },
+            _hover: { color: "colorPalette.fg" },
         },
         icons: {
             display: "flex",
             alignItems: "center",
-            gap: "16px",
+            gap: "4",
         },
         iconLink: {
             display: "flex",
@@ -68,9 +68,9 @@ const headerStyles = sva({
             justifyContent: "center",
             width: { base: "5", lg: "6" },
             height: { base: "5", lg: "6" },
-            color: "fg.default",
+            color: "colorPalette.fg.muted",
             transition: "colors",
-            _hover: { color: "fg.muted" },
+            _hover: { color: "colorPalette.fg" },
             "& svg": {
                 width: { base: "5", lg: "6" },
                 height: { base: "5", lg: "6" },

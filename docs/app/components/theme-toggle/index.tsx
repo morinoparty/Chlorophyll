@@ -34,15 +34,15 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             onClick={toggleMode}
             className={cx(
                 css({
-                    bg: "transparent",
-                    border: "none",
+                    bg: "[transparent]",
+                    border: "[none]",
                     cursor: "pointer",
-                    color: "fg.default",
+                    color: "colorPalette.fg.muted",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     transition: "colors",
-                    _hover: { color: "fg.muted" },
+                    _hover: { color: "colorPalette.fg" },
                 }),
                 className,
             )}
