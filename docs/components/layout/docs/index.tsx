@@ -98,7 +98,7 @@ export function DocsLayout({
                     .filter((v) => v.type !== "icon")
                     .map((item, i, list) => (
                         <SidebarLinkItem
-                            key={item.url ?? `link-${i}`}
+                            key={"url" in item ? item.url : `link-${i}`}
                             item={item}
                             className={cn(i === list.length - 1 && "mb-4")}
                         />

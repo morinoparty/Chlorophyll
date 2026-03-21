@@ -68,7 +68,7 @@ export function TokenGrid({ type, previewStyle = "default" }: TokenGridProps) {
                 };
             case "borderWidth":
                 return {
-                    border: `${token.cssVar} solid var(--mpc-colors-border-default)`,
+                    border: `${token.cssVar} solid var(--mpc-colors-border)`,
                 };
             default:
                 return {};

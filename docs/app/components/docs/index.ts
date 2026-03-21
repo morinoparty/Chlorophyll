@@ -2,6 +2,7 @@ export { AnimationTokenTable } from "./animation-token-table";
 export { BorderTokenTable } from "./border-token-table";
 export { ColorDisplay } from "./color-display";
 export { ColorList } from "./color-list";
+export { EasingTokenTable } from "./easing-token-table";
 export { SemanticColorDisplay } from "./semantic-color-display";
 export { SemanticColorGrid } from "./semantic-color-grid";
 export { SemanticTokenGrid } from "./semantic-token-grid";

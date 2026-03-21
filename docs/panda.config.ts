@@ -3,6 +3,7 @@ import { defineConfig } from "@pandacss/dev";
 
 export default defineConfig({
     preflight: true,
+    strictTokens: true,
     prefix: "mpc",
     globalCss: {
         // デフォルト + moriテーマ

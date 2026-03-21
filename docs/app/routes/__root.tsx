@@ -14,7 +14,7 @@ export const Route = createRootRoute({
             { name: "description", content: "Chlorophyll - A design system for Morinoparty projects" },
         ],
         links: [
-            process.env.NODE_ENV !== "development" && { rel: "stylesheet", href: pandacss },
+            process.env.NODE_ENV !== "development" ? { rel: "stylesheet", href: pandacss } : undefined,
             { rel: "icon", type: "image/svg+xml", href: "/chlorophyll.svg" },
             { rel: "stylesheet", href: appCss },
             { rel: "stylesheet", href: "https://api.fontshare.com/v2/css?f[]=satoshi@1&display=swap" },
@@ -44,8 +44,8 @@ function RootComponent() {
             </head>
             <body
                 className={css({
-                    margin: 0,
-                    minHeight: "100vh",
+                    margin: "0",
+                    minHeight: "dvh",
                     display: "flex",
                     textStyle: "body",
                     flexDirection: "column",
@@ -58,8 +58,8 @@ function RootComponent() {
                     {!isDocsPage && <Header />}
                     <main
                         className={css({
-                            flex: 1,
-                            width: "100%",
+                            flex: "1",
+                            width: "full",
                         })}
                     >
                         <Outlet />

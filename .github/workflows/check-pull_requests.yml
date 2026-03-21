@@ -21,8 +21,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # test-storybook uses the same Playwright version as @chlorophyll/storybook (chromium headless shell)
       - name: Install Playwright Browsers
-        run: pnpx playwright install --with-deps
+        run: pnpm --filter @chlorophyll/storybook exec playwright install chromium --with-deps
 
       - name: Build Storybook
         run: pnpm --filter @chlorophyll/storybook build

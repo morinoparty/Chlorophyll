@@ -34,15 +34,15 @@ export function ColorPaletteToggle({ className }: ColorPaletteToggleProps) {
             onClick={toggleTheme}
             className={cx(
                 css({
-                    bg: "transparent",
-                    border: "none",
+                    bg: "red.1",
+                    border: "var(--mpc-borders-border-lg)",
                     cursor: "pointer",
-                    color: "fg.default",
+                    color: "colorPalette.fg.muted",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     transition: "colors",
-                    _hover: { color: "fg.muted" },
+                    _hover: { color: "colorPalette.fg" },
                 }),
                 className,
             )}

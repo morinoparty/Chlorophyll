@@ -14,7 +14,7 @@ const colorListStyles = sva({
         title: {
             fontSize: "lg",
             fontWeight: "semibold",
-            color: "fg.default",
+            color: "colorPalette.fg",
         },
         grid: {
             display: "grid",

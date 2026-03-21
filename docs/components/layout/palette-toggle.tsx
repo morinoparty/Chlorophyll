@@ -1,7 +1,7 @@
 "use client";
 import { cva } from "class-variance-authority";
 import { TreePine, Waves } from "lucide-react";
-import { type ComponentProps, useEffect, useState } from "react";
+import { type HTMLAttributes, useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 
 type Palette = "mori" | "umi";
@@ -24,7 +24,7 @@ export function PaletteToggle({
     className,
     mode = "toggle",
     ...props
-}: ComponentProps<"div"> & {
+}: HTMLAttributes<HTMLElement> & {
     mode?: "toggle" | "select";
 }) {
     const [mounted, setMounted] = useState(false);

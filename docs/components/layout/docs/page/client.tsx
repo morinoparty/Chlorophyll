@@ -303,7 +303,7 @@ export function PageBreadcrumb({ includeRoot, includeSeparator, includePage, ...
                 const className = cn("truncate", i === items.length - 1 && "text-fd-primary font-medium");
 
                 return (
-                    <Fragment key={item.name}>
+                    <Fragment key={String(item.name)}>
                         {i !== 0 && <ChevronRight className="size-3.5 shrink-0" />}
                         {item.url ? (
                             <Link href={item.url} className={cn(className, "transition-opacity hover:opacity-80")}>

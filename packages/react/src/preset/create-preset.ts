@@ -32,7 +32,16 @@ export const createPreset = (option: PresetOptions) => {
         name: "@moripa/panda-preset",
         presets: ["@pandacss/preset-base"],
         globalFontface: globalFontFace,
-
+        globalCss: {
+            "::selection": {
+                backgroundColor: "colorPalette.5",
+                color: "colorPalette.12",
+            },
+            ".dark ::selection": {
+                backgroundColor: "colorPalette.dark.4",
+                color: "colorPalette.dark.12",
+            },
+        },
         conditions: {
             light: ":root &, .light &",
         },

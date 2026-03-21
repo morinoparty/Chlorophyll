@@ -17,18 +17,18 @@ const homeStyles = sva({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: "60vh",
+            minHeight: "[60vh]",
             textAlign: "center",
             gap: "6",
         },
         title: {
             fontSize: "4xl",
             fontWeight: "bold",
-            color: "fg.default",
+            color: "colorPalette.fg",
         },
         description: {
             fontSize: "lg",
-            color: "fg.muted",
+            color: "colorPalette.fg.muted",
             maxWidth: "lg",
         },
         actions: {
@@ -51,10 +51,10 @@ function Home() {
             </p>
             <div className={styles.actions}>
                 <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }}>
-                    <Button>ドキュメントへ</Button>
+                    <Button intent="primary">ドキュメントへ</Button>
                 </Link>
                 <Link to="/docs/$" params={{ _splat: "theme" }}>
-                    <Button>トークン一覧</Button>
+                    <Button intent="secondary">トークン一覧</Button>
                 </Link>
             </div>
         </div>

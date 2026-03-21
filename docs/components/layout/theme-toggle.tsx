@@ -1,7 +1,7 @@
 "use client";
 import { cva } from "class-variance-authority";
 import { Airplay, Moon, Sun } from "lucide-react";
-import { type ComponentProps, useEffect, useState } from "react";
+import { type HTMLAttributes, useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 
 type Mode = "light" | "dark" | "system";
@@ -37,7 +37,7 @@ export function ThemeToggle({
     className,
     mode: toggleMode = "light-dark",
     ...props
-}: ComponentProps<"div"> & {
+}: HTMLAttributes<HTMLElement> & {
     mode?: "light-dark" | "light-dark-system";
 }) {
     const [mounted, setMounted] = useState(false);

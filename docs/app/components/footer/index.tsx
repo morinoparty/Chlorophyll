@@ -7,9 +7,9 @@ export function Footer() {
     return (
         <footer
             className={css({
-                borderTop: "1px solid",
-                borderColor: "border.default",
-                bg: "bg.default",
+                borderTop: "[1px solid]",
+                borderColor: "border",
+                bg: "bg",
                 marginTop: "auto",
             })}
         >
@@ -32,13 +32,13 @@ export function Footer() {
                         <span
                             className={css({
                                 fontWeight: "semibold",
-                                color: "fg.default",
+                                color: "colorPalette.fg",
                             })}
                         >
                             Chlorophyll
                         </span>
                     </div>
-                    <p className={css({ fontSize: "sm", color: "fg.muted" })}>
+                    <p className={css({ fontSize: "sm", color: "colorPalette.fg.muted" })}>
                         A design system for Morinoparty projects.
                     </p>
                 </div>
@@ -48,9 +48,9 @@ export function Footer() {
                     <a
                         href="/docs"
                         className={css({
-                            color: "fg.muted",
+                            color: "colorPalette.fg.muted",
                             textDecoration: "none",
-                            _hover: { color: "fg.default" },
+                            _hover: { color: "colorPalette.fg" },
                         })}
                     >
                         Docs
@@ -58,9 +58,9 @@ export function Footer() {
                     <a
                         href="/docs/theme"
                         className={css({
-                            color: "fg.muted",
+                            color: "colorPalette.fg.muted",
                             textDecoration: "none",
-                            _hover: { color: "fg.default" },
+                            _hover: { color: "colorPalette.fg" },
                         })}
                     >
                         Components
@@ -70,9 +70,9 @@ export function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={css({
-                            color: "fg.muted",
+                            color: "colorPalette.fg.muted",
                             textDecoration: "none",
-                            _hover: { color: "fg.default" },
+                            _hover: { color: "colorPalette.fg" },
                         })}
                     >
                         GitHub
@@ -87,11 +87,11 @@ export function Footer() {
                     marginX: "auto",
                     paddingX: { base: "4", md: "6" },
                     paddingY: "4",
-                    borderTop: "1px solid",
-                    borderColor: "border.default",
+                    borderTop: "[1px solid]",
+                    borderColor: "border",
                 })}
             >
-                <p className={css({ fontSize: "sm", color: "fg.muted" })}>
+                <p className={css({ fontSize: "sm", color: "colorPalette.fg.muted" })}>
                     &copy; {currentYear} Morinoparty. All rights reserved.
                 </p>
             </div>

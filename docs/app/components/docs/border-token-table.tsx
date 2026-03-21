@@ -2,21 +2,21 @@ import { sva } from "styled-system/css";
 import { parseSemanticTokensByType } from "./semantic-token-parser";
 
 const tableStyles = sva({
-    slots: ["tableWrapper", "table", "th", "td", "previewBox"],
+    slots: ["tableWrapper", "table", "th", "td", "tdMuted", "previewBox"],
     base: {
         tableWrapper: {
             width: "full",
             overflowX: "auto",
             WebkitOverflowScrolling: "touch",
         },
-        table: { width: "full", minWidth: "500px", borderCollapse: "collapse" },
+        table: { width: "full", minWidth: "[500px]", borderCollapse: "collapse" },
         th: {
             textAlign: "left",
             padding: "3",
             fontSize: { base: "xs", md: "sm" },
             fontWeight: "semibold",
             color: "colorPalette.fg.muted",
-            borderBottom: "1px solid",
+            borderBottom: "[1px solid]",
             borderColor: "border.muted",
             whiteSpace: "nowrap",
         },
@@ -24,7 +24,16 @@ const tableStyles = sva({
             padding: "3",
             fontSize: { base: "xs", md: "sm" },
             color: "colorPalette.fg",
-            borderBottom: "1px solid",
+            borderBottom: "[1px solid]",
+            borderColor: "border.subtle",
+            verticalAlign: "middle",
+            whiteSpace: "nowrap",
+        },
+        tdMuted: {
+            padding: "3",
+            fontSize: { base: "xs", md: "sm" },
+            color: "colorPalette.fg.muted",
+            borderBottom: "[1px solid]",
             borderColor: "border.subtle",
             verticalAlign: "middle",
             whiteSpace: "nowrap",
@@ -58,7 +67,7 @@ export function BorderTokenTable() {
                             <td className={styles.td}>
                                 <code>borders.{token.name}</code>
                             </td>
-                            <td className={styles.td}>
+                            <td className={styles.tdMuted}>
                                 <code>{token.reference}</code>
                             </td>
                             <td className={styles.td}>
