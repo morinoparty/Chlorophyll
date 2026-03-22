@@ -50,3 +50,7 @@ generated
 vrt/*
 
 **/.playwright-mcp/**
+
+
+storybook/playwright-report/
+storybook/test-results/
