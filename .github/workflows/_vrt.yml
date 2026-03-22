@@ -43,21 +43,34 @@ jobs:
         with:
           ref: ${{ inputs.base_ref }}
 
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Storybook
-        run: pnpm --filter @chlorophyll/storybook build
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-all-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm --filter @chlorophyll/storybook exec playwright install --with-deps
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter @chlorophyll/storybook exec playwright install-deps
+
+      - name: Build Storybook
+        run: pnpm --filter @chlorophyll/storybook build
 
       - name: Capture baseline snapshots
         run: pnpm --filter @chlorophyll/storybook exec playwright test --update-snapshots
@@ -86,21 +99,34 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Storybook
-        run: pnpm --filter @chlorophyll/storybook build
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-all-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm --filter @chlorophyll/storybook exec playwright install --with-deps
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter @chlorophyll/storybook exec playwright install-deps
+
+      - name: Build Storybook
+        run: pnpm --filter @chlorophyll/storybook build
 
       - name: Download baseline snapshots
         uses: actions/download-artifact@v8
