@@ -1,0 +1,50 @@
+name: Preview Deploy
+
+on:
+  workflow_call:
+    outputs:
+      storybook_url:
+        value: ${{ jobs.deploy.outputs.storybook_url }}
+      docs_url:
+        value: ${{ jobs.deploy.outputs.docs_url }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      storybook_url: ${{ steps.deploy-storybook-preview.outputs.deployment-url }}
+      docs_url: ${{ steps.deploy-docs-preview.outputs.deployment-url }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build storybook
+        run: pnpm --filter @chlorophyll/storybook build
+
+      - name: Build docs
+        run: pnpm --filter @chlorophyll/docs build
+
+      - name: Deploy storybook preview
+        id: deploy-storybook-preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_KEY }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: storybook
+          packageManager: pnpm
+          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
+
+      - name: Deploy docs preview
+        id: deploy-docs-preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_KEY }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: docs
+          packageManager: pnpm
+          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"

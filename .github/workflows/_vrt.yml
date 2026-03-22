@@ -1,0 +1,157 @@
+name: Visual Regression Test
+
+on:
+  workflow_call:
+    inputs:
+      commit_sha:
+        required: true
+        type: string
+      base_ref:
+        required: true
+        type: string
+    outputs:
+      test_total:
+        value: ${{ jobs.compare.outputs.test_total }}
+      test_passed:
+        value: ${{ jobs.compare.outputs.test_passed }}
+      test_failed:
+        value: ${{ jobs.compare.outputs.test_failed }}
+      test_flaky:
+        value: ${{ jobs.compare.outputs.test_flaky }}
+      test_skipped:
+        value: ${{ jobs.compare.outputs.test_skipped }}
+      test_result:
+        value: ${{ jobs.compare.outputs.test_result }}
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_EC2_METADATA_DISABLED: true
+  AWS_REGION: auto
+  AWS_CLI_FILE_ENCODING: UTF-8
+  AWS_DEFAULT_S3_SIGNATURE_VERSION: s3v4
+  S3_UPLOAD_BUCKET: ${{ secrets.S3_UPLOAD_BUCKET }}
+  S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+
+jobs:
+  # mainブランチでベースラインスナップショットを取得
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.base_ref }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Storybook
+        run: pnpm --filter @chlorophyll/storybook build
+
+      - name: Install Playwright Browsers
+        run: pnpm --filter @chlorophyll/storybook exec playwright install --with-deps
+
+      - name: Capture baseline snapshots
+        run: pnpm --filter @chlorophyll/storybook exec playwright test --update-snapshots
+
+      - name: Upload baseline snapshots
+        uses: actions/upload-artifact@v7
+        with:
+          name: vrt-baseline-snapshots
+          path: storybook/tests/e2e/vrt.spec.ts-snapshots/
+          retention-days: 1
+
+  # PRブランチでベースラインと比較
+  compare:
+    needs: baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      test_total: ${{ steps.test-results.outputs.total }}
+      test_passed: ${{ steps.test-results.outputs.passed }}
+      test_failed: ${{ steps.test-results.outputs.failed }}
+      test_flaky: ${{ steps.test-results.outputs.flaky }}
+      test_skipped: ${{ steps.test-results.outputs.skipped }}
+      test_result: ${{ steps.vrt.outcome }}
+    env:
+      COMMIT_SHORT_SHA: ${{ inputs.commit_sha }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Storybook
+        run: pnpm --filter @chlorophyll/storybook build
+
+      - name: Install Playwright Browsers
+        run: pnpm --filter @chlorophyll/storybook exec playwright install --with-deps
+
+      - name: Download baseline snapshots
+        uses: actions/download-artifact@v8
+        with:
+          name: vrt-baseline-snapshots
+          path: storybook/tests/e2e/vrt.spec.ts-snapshots/
+
+      - name: Run VRT against baseline
+        id: vrt
+        continue-on-error: true
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results.json
+        run: pnpm --filter @chlorophyll/storybook exec playwright test --reporter=html,json
+
+      - name: Parse test results
+        id: test-results
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f storybook/test-results.json ]; then
+            passed=$(jq '.stats.expected // 0' storybook/test-results.json)
+            failed=$(jq '.stats.unexpected // 0' storybook/test-results.json)
+            flaky=$(jq '.stats.flaky // 0' storybook/test-results.json)
+            skipped=$(jq '.stats.skipped // 0' storybook/test-results.json)
+            total=$((passed + failed + flaky + skipped))
+            echo "total=$total" >> $GITHUB_OUTPUT
+            echo "passed=$passed" >> $GITHUB_OUTPUT
+            echo "failed=$failed" >> $GITHUB_OUTPUT
+            echo "flaky=$flaky" >> $GITHUB_OUTPUT
+            echo "skipped=$skipped" >> $GITHUB_OUTPUT
+          else
+            echo "total=0" >> $GITHUB_OUTPUT
+            echo "passed=0" >> $GITHUB_OUTPUT
+            echo "failed=0" >> $GITHUB_OUTPUT
+            echo "flaky=0" >> $GITHUB_OUTPUT
+            echo "skipped=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Playwright report to S3
+        if: ${{ !cancelled() }}
+        run: |
+          aws configure set default.s3.max_concurrent_requests 50
+
+          S3_BASE="s3://${{ env.S3_UPLOAD_BUCKET }}/chlorophyll/${{ env.COMMIT_SHORT_SHA }}"
+          S3_OPTS="--endpoint-url ${{ env.S3_ENDPOINT }} --only-show-errors"
+
+          aws s3 cp storybook/playwright-report $S3_BASE/playwright-report $S3_OPTS --recursive
+
+      - name: Upload Playwright report as artifact
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: storybook/playwright-report/
+          retention-days: 30

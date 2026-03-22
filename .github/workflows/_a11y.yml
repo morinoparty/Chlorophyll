@@ -1,0 +1,92 @@
+name: Accessibility Test
+
+on:
+  workflow_call:
+    outputs:
+      test_total:
+        value: ${{ jobs.test.outputs.test_total }}
+      test_passed:
+        value: ${{ jobs.test.outputs.test_passed }}
+      test_failed:
+        value: ${{ jobs.test.outputs.test_failed }}
+      test_skipped:
+        value: ${{ jobs.test.outputs.test_skipped }}
+      test_result:
+        value: ${{ jobs.test.outputs.test_result }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      test_total: ${{ steps.parse.outputs.total }}
+      test_passed: ${{ steps.parse.outputs.passed }}
+      test_failed: ${{ steps.parse.outputs.failed }}
+      test_skipped: ${{ steps.parse.outputs.skipped }}
+      test_result: ${{ steps.test.outcome }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # test-storybook uses the same Playwright version as @chlorophyll/storybook (chromium headless shell)
+      - name: Install Playwright Browsers
+        run: pnpm --filter @chlorophyll/storybook exec playwright install chromium --with-deps
+
+      - name: Build Storybook
+        run: pnpm --filter @chlorophyll/storybook build
+
+      - name: Test
+        id: test
+        continue-on-error: true
+        run: pnpm --filter @chlorophyll/storybook test:runner
+
+      - name: Publish test results
+        uses: mikepenz/action-junit-report@v6
+        if: ${{ !cancelled() }}
+        with:
+          report_paths: 'storybook/reports/junit.xml'
+
+      - name: Parse JUnit results
+        id: parse
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f storybook/reports/junit.xml ]; then
+            python3 << 'PYEOF' >> "$GITHUB_OUTPUT"
+          import xml.etree.ElementTree as ET
+
+          tree = ET.parse('storybook/reports/junit.xml')
+          root = tree.getroot()
+
+          # testsuites (root) or individual testsuite
+          if root.tag == 'testsuites':
+              tests = int(root.get('tests', 0))
+              failures = int(root.get('failures', 0))
+              skipped = int(root.get('skipped', 0))
+          else:
+              tests = int(root.get('tests', 0))
+              failures = int(root.get('failures', 0))
+              skipped = int(root.get('skipped', 0))
+
+          passed = tests - failures - skipped
+
+          print(f'total={tests}')
+          print(f'passed={passed}')
+          print(f'failed={failures}')
+          print(f'skipped={skipped}')
+          PYEOF
+          else
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            echo "passed=0" >> "$GITHUB_OUTPUT"
+            echo "failed=0" >> "$GITHUB_OUTPUT"
+            echo "skipped=0" >> "$GITHUB_OUTPUT"
+          fi
