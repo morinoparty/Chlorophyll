@@ -1,5 +1,5 @@
 {
-    "name": "@chlorophyll/react",
+    "name": "@morinoparty/chlorophyll-react",
     "version": "0.0.1",
     "type": "module",
     "main": "./src/index.ts",
@@ -16,7 +16,22 @@
         "./components": {
             "types": "./src/components/index.ts",
             "import": "./src/components/index.ts"
-        }
+        },
+        "./style.css": "./style.css"
+    },
+    "files": [
+        "src",
+        "style.css",
+        "README.md"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/morinoparty/chlorophyll.git",
+        "directory": "packages/react"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://npm.pkg.github.com"
     },
     "scripts": {
         "prepare": "panda codegen",

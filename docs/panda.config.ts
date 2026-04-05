@@ -1,4 +1,4 @@
-import { createPreset, stone } from "@chlorophyll/react/preset";
+import { createPreset, stone } from "@morinoparty/chlorophyll-react/preset";
 import { defineConfig } from "@pandacss/dev";
 
 export default defineConfig({

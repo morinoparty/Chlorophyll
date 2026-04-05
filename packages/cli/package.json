@@ -21,7 +21,7 @@
         "culori": "^4.0.2"
     },
     "devDependencies": {
-        "@chlorophyll/react": "workspace:*",
+        "@morinoparty/chlorophyll-react": "workspace:*",
         "typescript": "~5.9.3",
         "unbuild": "^3.5.0"
     },
