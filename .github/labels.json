@@ -45,6 +45,16 @@
         "description": "Type: Security update"
     },
     {
+        "name": "breaking",
+        "color": "#B60205",
+        "description": "Type: Breaking change (bumps major version)"
+    },
+    {
+        "name": "skip-changelog",
+        "color": "#CCCCCC",
+        "description": "Scope: Exclude from release notes"
+    },
+    {
         "name": "component",
         "color": "#7057FF",
         "description": "Scope: UI Components"

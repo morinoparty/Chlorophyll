@@ -17,7 +17,7 @@ importers:
       '@ark-ui/react':
         specifier: ^5.30.0
         version: 5.30.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@chlorophyll/react':
+      '@morinoparty/chlorophyll-react':
         specifier: workspace:*
         version: link:../packages/react
       '@radix-ui/react-collapsible':
@@ -133,7 +133,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
     devDependencies:
-      '@chlorophyll/react':
+      '@morinoparty/chlorophyll-react':
         specifier: workspace:*
         version: link:../react
       typescript:
@@ -173,7 +173,7 @@ importers:
 
   storybook:
     dependencies:
-      '@chlorophyll/react':
+      '@morinoparty/chlorophyll-react':
         specifier: workspace:*
         version: link:../packages/react
       lucide-react:

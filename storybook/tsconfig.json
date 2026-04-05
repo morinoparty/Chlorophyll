@@ -4,8 +4,8 @@
         "baseUrl": ".",
         "paths": {
             "styled-system/*": ["./styled-system/*"],
-            "@chlorophyll/react": ["../packages/ui/src"],
-            "@chlorophyll/react/*": ["../packages/ui/src/*"]
+            "@morinoparty/chlorophyll-react": ["../packages/ui/src"],
+            "@morinoparty/chlorophyll-react/*": ["../packages/ui/src/*"]
         }
     },
     "include": [
