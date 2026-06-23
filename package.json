@@ -22,5 +22,16 @@
         "yarn": "please use pnpm",
         "npm": "please use pnpm"
     },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "puppeteer"
+        ],
+        "peerDependencyRules": {
+            "allowedVersions": {
+                "storycap>@storybook/manager-api": "10",
+                "storycap>@storybook/preview-api": "10"
+            }
+        }
+    },
     "packageManager": "pnpm@10.28.1"
 }

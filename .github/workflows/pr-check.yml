@@ -28,12 +28,9 @@ jobs:
           echo "commit_sha=$calculatedSha" >> $GITHUB_OUTPUT
 
   # VRT・Preview・A11y を並行実行
+  # VRT は reg-suit + reg-notify-github-plugin が独立して PR コメント / commit status を通知する
   vrt:
-    needs: setup
     uses: ./.github/workflows/_vrt.yml
-    with:
-      commit_sha: ${{ needs.setup.outputs.commit_sha }}
-      base_ref: ${{ github.event.pull_request.base.ref }}
     secrets: inherit
 
   preview:
@@ -45,8 +42,9 @@ jobs:
     secrets: inherit
 
   # PRに統合レポートをコメント
+  # VRT は reg-notify-github-plugin が別コメント / commit status で通知するため、ここでは扱わない
   comment:
-    needs: [setup, vrt, preview, a11y]
+    needs: [setup, preview, a11y]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -54,16 +52,8 @@ jobs:
 
       - name: Create unified PR comment
         env:
-          PLAYWRIGHT_REPORT_URL: "${{ env.PREVIEW_BASE_URL }}/${{ needs.setup.outputs.commit_sha }}/playwright-report/index.html"
           STORYBOOK_URL: ${{ needs.preview.outputs.storybook_url }}
           DOCS_URL: ${{ needs.preview.outputs.docs_url }}
-          VRT_TOTAL: ${{ needs.vrt.outputs.test_total || '0' }}
-          VRT_PASSED: ${{ needs.vrt.outputs.test_passed || '0' }}
-          VRT_FAILED: ${{ needs.vrt.outputs.test_failed || '0' }}
-          VRT_FLAKY: ${{ needs.vrt.outputs.test_flaky || '0' }}
-          VRT_SKIPPED: ${{ needs.vrt.outputs.test_skipped || '0' }}
-          VRT_RESULT: ${{ needs.vrt.outputs.test_result }}
-          VRT_CONCLUSION: ${{ needs.vrt.result }}
           A11Y_TOTAL: ${{ needs.a11y.outputs.test_total || '0' }}
           A11Y_PASSED: ${{ needs.a11y.outputs.test_passed || '0' }}
           A11Y_FAILED: ${{ needs.a11y.outputs.test_failed || '0' }}
@@ -83,7 +73,6 @@ jobs:
             else echo "❌ Failed"; fi
           }
 
-          VRT_STATUS=$(get_status "$VRT_RESULT" "$VRT_CONCLUSION")
           A11Y_STATUS=$(get_status "$A11Y_RESULT" "$A11Y_CONCLUSION")
           LIMIT_TIME=$(date -d "7 days" +%Y-%m-%d)
 
@@ -112,12 +101,11 @@ jobs:
             echo ""
             echo "### 🧪 Test Results"
             echo ""
-            echo "| Test | ✅ Passed | ❌ Failed | 🔄 Flaky | ⏭️ Skipped | Total | Status |"
-            echo "|------|-----------|-----------|----------|------------|-------|--------|"
-            echo "| Visual Regression | ${VRT_PASSED} | ${VRT_FAILED} | ${VRT_FLAKY} | ${VRT_SKIPPED} | ${VRT_TOTAL} | ${VRT_STATUS} |"
-            echo "| Accessibility | ${A11Y_PASSED} | ${A11Y_FAILED} | - | ${A11Y_SKIPPED} | ${A11Y_TOTAL} | ${A11Y_STATUS} |"
+            echo "> Visual Regression Test の結果は reg-suit が別途コメント / commit status で通知します。"
             echo ""
-            echo "📊 [View Playwright Report](${PLAYWRIGHT_REPORT_URL})"
+            echo "| Test | ✅ Passed | ❌ Failed | ⏭️ Skipped | Total | Status |"
+            echo "|------|-----------|-----------|------------|-------|--------|"
+            echo "| Accessibility | ${A11Y_PASSED} | ${A11Y_FAILED} | ${A11Y_SKIPPED} | ${A11Y_TOTAL} | ${A11Y_STATUS} |"
             echo ""
             echo "---"
             echo "Available for 7 days (until ${LIMIT_TIME}) · **Commit:** \`${COMMIT_SHORT_SHA}\`"

@@ -1,47 +1,32 @@
 name: Visual Regression Test
 
+# storycap でスクリーンショットを取得し、reg-suit で差分検出する。
+# - reg-keygen-git-hash-plugin: git 履歴から比較対象のベースコミットを特定
+# - reg-publish-s3-plugin: 期待値スナップショット / 実行結果 / レポートを R2(S3 互換) で授受
+# - reg-notify-github-plugin: PR コメントと commit status で結果を通知
 on:
   workflow_call:
-    inputs:
-      commit_sha:
-        required: true
-        type: string
-      base_ref:
-        required: true
-        type: string
-    outputs:
-      test_total:
-        value: ${{ jobs.compare.outputs.test_total }}
-      test_passed:
-        value: ${{ jobs.compare.outputs.test_passed }}
-      test_failed:
-        value: ${{ jobs.compare.outputs.test_failed }}
-      test_flaky:
-        value: ${{ jobs.compare.outputs.test_flaky }}
-      test_skipped:
-        value: ${{ jobs.compare.outputs.test_skipped }}
-      test_result:
-        value: ${{ jobs.compare.outputs.test_result }}
 
 env:
+  # R2(S3 互換) 認証情報。reg-publish-s3-plugin が AWS SDK 経由で参照する
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_EC2_METADATA_DISABLED: true
   AWS_REGION: auto
-  AWS_CLI_FILE_ENCODING: UTF-8
-  AWS_DEFAULT_S3_SIGNATURE_VERSION: s3v4
+  # regconfig.json が ${VAR} で展開する値
   S3_UPLOAD_BUCKET: ${{ secrets.S3_UPLOAD_BUCKET }}
   S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+  REG_NOTIFY_GITHUB_CLIENT_ID: ${{ secrets.REG_NOTIFY_GITHUB_CLIENT_ID }}
 
 jobs:
-  # mainブランチでベースラインスナップショットを取得
-  baseline:
+  vrt:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.base_ref }}
+          # reg-keygen-git-hash-plugin がベースコミットを辿るため全履歴が必要
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
@@ -51,133 +36,25 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
+      - name: Cache Puppeteer Chromium
+        id: puppeteer-cache
         uses: actions/cache@v5
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-all-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter @chlorophyll/storybook exec playwright install --with-deps
-
-      - name: Install Playwright system dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter @chlorophyll/storybook exec playwright install-deps
+      # puppeteer は onlyBuiltDependencies で許可されており、install 時の postinstall で
+      # Chromium をダウンロードする(キャッシュ済みなら再ダウンロードはスキップされる)
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Storybook
         run: pnpm --filter @chlorophyll/storybook build
 
-      - name: Capture baseline snapshots
-        run: pnpm --filter @chlorophyll/storybook exec playwright test --update-snapshots
+      # storycap(簡易モード)でビルド済み Storybook を巡回し __screenshots__ に保存
+      - name: Capture screenshots (storycap)
+        run: pnpm --filter @chlorophyll/storybook vrt:capture
 
-      - name: Upload baseline snapshots
-        uses: actions/upload-artifact@v7
-        with:
-          name: vrt-baseline-snapshots
-          path: storybook/tests/e2e/vrt.spec.ts-snapshots/
-          retention-days: 1
-
-  # PRブランチでベースラインと比較
-  compare:
-    needs: baseline
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    outputs:
-      test_total: ${{ steps.test-results.outputs.total }}
-      test_passed: ${{ steps.test-results.outputs.passed }}
-      test_failed: ${{ steps.test-results.outputs.failed }}
-      test_flaky: ${{ steps.test-results.outputs.flaky }}
-      test_skipped: ${{ steps.test-results.outputs.skipped }}
-      test_result: ${{ steps.vrt.outcome }}
-    env:
-      COMMIT_SHORT_SHA: ${{ inputs.commit_sha }}
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-all-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter @chlorophyll/storybook exec playwright install --with-deps
-
-      - name: Install Playwright system dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter @chlorophyll/storybook exec playwright install-deps
-
-      - name: Build Storybook
-        run: pnpm --filter @chlorophyll/storybook build
-
-      - name: Download baseline snapshots
-        uses: actions/download-artifact@v8
-        with:
-          name: vrt-baseline-snapshots
-          path: storybook/tests/e2e/vrt.spec.ts-snapshots/
-
-      - name: Run VRT against baseline
-        id: vrt
-        continue-on-error: true
-        env:
-          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results.json
-        run: pnpm --filter @chlorophyll/storybook exec playwright test --reporter=html,json
-
-      - name: Parse test results
-        id: test-results
-        if: ${{ !cancelled() }}
-        run: |
-          if [ -f storybook/test-results.json ]; then
-            passed=$(jq '.stats.expected // 0' storybook/test-results.json)
-            failed=$(jq '.stats.unexpected // 0' storybook/test-results.json)
-            flaky=$(jq '.stats.flaky // 0' storybook/test-results.json)
-            skipped=$(jq '.stats.skipped // 0' storybook/test-results.json)
-            total=$((passed + failed + flaky + skipped))
-            echo "total=$total" >> $GITHUB_OUTPUT
-            echo "passed=$passed" >> $GITHUB_OUTPUT
-            echo "failed=$failed" >> $GITHUB_OUTPUT
-            echo "flaky=$flaky" >> $GITHUB_OUTPUT
-            echo "skipped=$skipped" >> $GITHUB_OUTPUT
-          else
-            echo "total=0" >> $GITHUB_OUTPUT
-            echo "passed=0" >> $GITHUB_OUTPUT
-            echo "failed=0" >> $GITHUB_OUTPUT
-            echo "flaky=0" >> $GITHUB_OUTPUT
-            echo "skipped=0" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Upload Playwright report to S3
-        if: ${{ !cancelled() }}
-        run: |
-          aws configure set default.s3.max_concurrent_requests 50
-
-          S3_BASE="s3://${{ env.S3_UPLOAD_BUCKET }}/chlorophyll/${{ env.COMMIT_SHORT_SHA }}"
-          S3_OPTS="--endpoint-url ${{ env.S3_ENDPOINT }} --only-show-errors"
-
-          aws s3 cp storybook/playwright-report $S3_BASE/playwright-report $S3_OPTS --recursive
-
-      - name: Upload Playwright report as artifact
-        uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: storybook/playwright-report/
-          retention-days: 30
+      # reg-suit がベースラインと比較し、結果を R2 へ公開して GitHub に通知する
+      - name: Run reg-suit
+        run: pnpm --filter @chlorophyll/storybook vrt:run

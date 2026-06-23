@@ -23,7 +23,7 @@ const playerPhraseCardStyles = sva({
         phrase: {
             textStyle: "sm",
             color: "colorPalette.fg.subtle/70",
-            fontWeight: "normal",
+            fontWeight: "medium",
             lineHeight: "[1.2]",
         },
         name: {

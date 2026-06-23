@@ -45,6 +45,7 @@
     },
     "devDependencies": {
         "@pandacss/dev": "^1.7.2",
+        "@pandacss/preset-base": "^1.7.2",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "typescript": "~5.9.3"

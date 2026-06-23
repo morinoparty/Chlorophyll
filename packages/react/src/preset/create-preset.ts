@@ -35,11 +35,9 @@ export const createPreset = (option: PresetOptions) => {
         globalCss: {
             "::selection": {
                 backgroundColor: "colorPalette.5",
-                color: "colorPalette.12",
             },
             ".dark ::selection": {
                 backgroundColor: "colorPalette.dark.4",
-                color: "colorPalette.dark.12",
             },
         },
         conditions: {

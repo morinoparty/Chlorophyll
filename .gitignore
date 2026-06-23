@@ -40,8 +40,10 @@ generated
 **/reports/*
 **/storybook-static/*
 
-# Playwright VRT baseline screenshots (committed for CI)
-# **/tests/e2e/*.ts-snapshots/*
+# Visual Regression Test (storycap + reg-suit)
+# storycap が出力するスクリーンショットと reg-suit の作業ディレクトリ
+**/__screenshots__/
+**/.reg/
 
 **/storycap/*
 

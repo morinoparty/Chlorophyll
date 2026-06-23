@@ -25,17 +25,18 @@ const withTheme: Decorator = (Story, context) => {
 
         // Set palette
         root.setAttribute("data-color-palette", palette);
+
+        // プレビュー全体の背景をテーマの colorPalette.bg トークンで塗る。
+        // colorPalette のクラスを body に付与して --mpc-colors-color-palette-* を解決させる。
+        const paletteClass = css({ colorPalette: palette }).split(" ").filter(Boolean);
+        document.body.classList.add(...paletteClass);
+        document.body.style.backgroundColor = "var(--mpc-colors-color-palette-bg)";
+        return () => {
+            document.body.classList.remove(...paletteClass);
+        };
     }, [colorMode, palette]);
 
     return <Story />;
-};
-
-export const parameters = {
-    screenshot: {
-        provider: {
-            name: "storycap",
-        },
-    },
 };
 
 const preview: Preview = {
