@@ -1,6 +1,6 @@
 name: Visual Regression Test
 
-# storycap でスクリーンショットを取得し、reg-suit で差分検出する。
+# puppeteer(高 DPI)でスクリーンショットを取得し、reg-suit で差分検出する。
 # - reg-keygen-git-hash-plugin: git 履歴から比較対象のベースコミットを特定
 # - reg-publish-s3-plugin: 期待値スナップショット / 実行結果 / レポートを R2(S3 互換) で授受
 # - reg-notify-github-plugin: PR コメントと commit status で結果を通知
@@ -62,8 +62,8 @@ jobs:
       - name: Build Storybook
         run: pnpm --filter @chlorophyll/storybook build
 
-      # storycap(簡易モード)でビルド済み Storybook を巡回し __screenshots__ に保存
-      - name: Capture screenshots (storycap)
+      # puppeteer でビルド済み Storybook を巡回し、高 DPI で __screenshots__ に保存
+      - name: Capture screenshots
         run: pnpm --filter @chlorophyll/storybook vrt:capture
 
       # reg-suit がベースラインと比較し、結果を R2 へ公開して GitHub に通知する
