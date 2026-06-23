@@ -1,0 +1,58 @@
+name-template: "@morinoparty/chlorophyll-react v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+version-template: "$MAJOR.$MINOR.$PATCH"
+
+categories:
+  - title: "🚀 Features"
+    labels:
+      - "enhancement"
+      - "requirement"
+  - title: "🐛 Bug Fixes"
+    labels:
+      - "bug"
+  - title: "♻️ Refactor"
+    labels:
+      - "refactor"
+  - title: "🧪 Tests"
+    labels:
+      - "test"
+  - title: "📚 Documentation"
+    labels:
+      - "document"
+  - title: "🔒 Dependencies"
+    labels:
+      - "dependencies"
+
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
+change-title-escapes: '\<*_&'
+
+# ラベルでバージョンを自動決定する
+version-resolver:
+  major:
+    labels:
+      - "breaking"
+      - "major"
+  minor:
+    labels:
+      - "enhancement"
+      - "requirement"
+      - "minor"
+  patch:
+    labels:
+      - "bug"
+      - "refactor"
+      - "test"
+      - "document"
+      - "dependencies"
+      - "patch"
+  default: patch
+
+exclude-labels:
+  - "duplicate"
+  - "wontfix"
+  - "skip-changelog"
+
+template: |
+  ## Changes
+
+  $CHANGES

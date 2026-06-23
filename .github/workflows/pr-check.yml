@@ -1,0 +1,126 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: write
+  checks: write
+
+env:
+  PREVIEW_BASE_URL: https://moripa-ci.nikomaru.dev/chlorophyll
+
+jobs:
+  # コミットSHAを取得
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.vars.outputs.commit_sha }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short HEAD)
+          echo "commit_sha=$calculatedSha" >> $GITHUB_OUTPUT
+
+  # VRT・Preview・A11y を並行実行
+  vrt:
+    needs: setup
+    uses: ./.github/workflows/_vrt.yml
+    with:
+      commit_sha: ${{ needs.setup.outputs.commit_sha }}
+      base_ref: ${{ github.event.pull_request.base.ref }}
+    secrets: inherit
+
+  preview:
+    uses: ./.github/workflows/_preview-deploy.yml
+    secrets: inherit
+
+  a11y:
+    uses: ./.github/workflows/_a11y.yml
+    secrets: inherit
+
+  # PRに統合レポートをコメント
+  comment:
+    needs: [setup, vrt, preview, a11y]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Create unified PR comment
+        env:
+          PLAYWRIGHT_REPORT_URL: "${{ env.PREVIEW_BASE_URL }}/${{ needs.setup.outputs.commit_sha }}/playwright-report/index.html"
+          STORYBOOK_URL: ${{ needs.preview.outputs.storybook_url }}
+          DOCS_URL: ${{ needs.preview.outputs.docs_url }}
+          VRT_TOTAL: ${{ needs.vrt.outputs.test_total || '0' }}
+          VRT_PASSED: ${{ needs.vrt.outputs.test_passed || '0' }}
+          VRT_FAILED: ${{ needs.vrt.outputs.test_failed || '0' }}
+          VRT_FLAKY: ${{ needs.vrt.outputs.test_flaky || '0' }}
+          VRT_SKIPPED: ${{ needs.vrt.outputs.test_skipped || '0' }}
+          VRT_RESULT: ${{ needs.vrt.outputs.test_result }}
+          VRT_CONCLUSION: ${{ needs.vrt.result }}
+          A11Y_TOTAL: ${{ needs.a11y.outputs.test_total || '0' }}
+          A11Y_PASSED: ${{ needs.a11y.outputs.test_passed || '0' }}
+          A11Y_FAILED: ${{ needs.a11y.outputs.test_failed || '0' }}
+          A11Y_SKIPPED: ${{ needs.a11y.outputs.test_skipped || '0' }}
+          A11Y_RESULT: ${{ needs.a11y.outputs.test_result }}
+          A11Y_CONCLUSION: ${{ needs.a11y.result }}
+          PREVIEW_CONCLUSION: ${{ needs.preview.result }}
+          COMMIT_SHORT_SHA: ${{ needs.setup.outputs.commit_sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # ステータスバッジを判定する関数
+          get_status() {
+            local result="$1" conclusion="$2"
+            if [ "$result" = "success" ]; then echo "✅ Passed"
+            elif [ "$conclusion" = "cancelled" ]; then echo "⏹️ Cancelled"
+            elif [ "$conclusion" = "skipped" ]; then echo "⏭️ Skipped"
+            else echo "❌ Failed"; fi
+          }
+
+          VRT_STATUS=$(get_status "$VRT_RESULT" "$VRT_CONCLUSION")
+          A11Y_STATUS=$(get_status "$A11Y_RESULT" "$A11Y_CONCLUSION")
+          LIMIT_TIME=$(date -d "7 days" +%Y-%m-%d)
+
+          # コメントを構築
+          {
+            echo "## 📋 PR Report"
+            echo ""
+            echo "### 🚀 Preview Deployments"
+            echo ""
+            if [ "$PREVIEW_CONCLUSION" = "success" ]; then
+              echo "<table>"
+              echo "  <tr>"
+              echo "    <th scope=\"row\">Storybook</th>"
+              echo "    <td><a href=\"${STORYBOOK_URL}\">${STORYBOOK_URL}</a></td>"
+              echo "  </tr>"
+              echo "  <tr>"
+              echo "    <th scope=\"row\">Docs</th>"
+              echo "    <td><a href=\"${DOCS_URL}\">${DOCS_URL}</a></td>"
+              echo "  </tr>"
+              echo "</table>"
+            else
+              echo "⚠️ Preview deployment failed or was cancelled."
+            fi
+            echo ""
+            echo "---"
+            echo ""
+            echo "### 🧪 Test Results"
+            echo ""
+            echo "| Test | ✅ Passed | ❌ Failed | 🔄 Flaky | ⏭️ Skipped | Total | Status |"
+            echo "|------|-----------|-----------|----------|------------|-------|--------|"
+            echo "| Visual Regression | ${VRT_PASSED} | ${VRT_FAILED} | ${VRT_FLAKY} | ${VRT_SKIPPED} | ${VRT_TOTAL} | ${VRT_STATUS} |"
+            echo "| Accessibility | ${A11Y_PASSED} | ${A11Y_FAILED} | - | ${A11Y_SKIPPED} | ${A11Y_TOTAL} | ${A11Y_STATUS} |"
+            echo ""
+            echo "📊 [View Playwright Report](${PLAYWRIGHT_REPORT_URL})"
+            echo ""
+            echo "---"
+            echo "Available for 7 days (until ${LIMIT_TIME}) · **Commit:** \`${COMMIT_SHORT_SHA}\`"
+          } > comment.md
+
+          gh pr comment ${{ github.event.number }} --body-file comment.md

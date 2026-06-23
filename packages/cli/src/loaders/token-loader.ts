@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { ColorPaletteSpec, SemanticTokensSpec, SpecData, TokensSpec } from "../types/index.js";
 
 /**
- * Load spec files from @chlorophyll/react styled-system/specs
+ * Load spec files from @morinoparty/chlorophyll-react styled-system/specs
  */
 export async function loadSpecs(): Promise<SpecData> {
     const specsDir = await resolveSpecsPath();

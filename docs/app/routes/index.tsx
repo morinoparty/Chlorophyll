@@ -1,4 +1,4 @@
-import { Button } from "@chlorophyll/react";
+import { Button } from "@morinoparty/chlorophyll-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { sva } from "styled-system/css";
 
