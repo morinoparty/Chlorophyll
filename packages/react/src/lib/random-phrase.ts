@@ -5,8 +5,10 @@ const SEPARATE_MINUTES = 5;
 // JST = UTC+9
 const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
-export const randomPhrase = (target: "first" | "last", hash: string): string => {
-    const seed = generateHash(hash + getSeparateTimeJST(SEPARATE_MINUTES));
+// referenceTime を渡すと時刻バケットを固定でき、描画が決定的になる
+// (デフォルトは現在時刻。テストや VRT では固定値を渡す)
+export const randomPhrase = (target: "first" | "last", hash: string, referenceTime: number = Date.now()): string => {
+    const seed = generateHash(hash + getSeparateTimeJST(SEPARATE_MINUTES, referenceTime));
     const random = new Random(seed);
     const phrases = target === "first" ? firstPhrase : lastPhrase;
     return phrases[random.nextInt(0, phrases.length - 1)];
@@ -23,8 +25,8 @@ function generateHash(str: string): number {
 }
 
 // UTC時刻にJSTオフセットを加算してから時間区切りを計算する
-function getSeparateTimeJST(separateMinutes: number): string {
-    const jst = new Date(Date.now() + JST_OFFSET_MS);
+function getSeparateTimeJST(separateMinutes: number, nowMs: number): string {
+    const jst = new Date(nowMs + JST_OFFSET_MS);
     const year = jst.getUTCFullYear();
     const month = jst.getUTCMonth();
     const day = jst.getUTCDate();

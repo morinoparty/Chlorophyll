@@ -8,6 +8,9 @@ on:
     paths:
       - 'storybook/**'
       - 'packages/react/**'
+      # 依存・ビルド設定の変更も視覚に影響しうるためベースラインを更新する
+      - '**/package.json'
+      - 'pnpm-lock.yaml'
       - '.github/workflows/_vrt.yml'
       - '.github/workflows/vrt-baseline.yml'
 

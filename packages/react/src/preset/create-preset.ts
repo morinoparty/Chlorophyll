@@ -1,6 +1,6 @@
 import { definePreset, type SemanticTokens } from "@pandacss/dev";
 import { breakpoints } from "./breakpoints";
-import { recipes } from "./token/recipes";
+import { recipes, slotRecipes } from "./token/recipes";
 import { globalFontFace, textStyles, tokens } from "./token/reference-tokens";
 import { semanticTokens as defaultSemanticToken } from "./token/semantic-token";
 import { radii } from "./token/semantic-token/radii";
@@ -51,6 +51,9 @@ export const createPreset = (option: PresetOptions) => {
                 textStyles,
                 recipes: {
                     ...recipes,
+                },
+                slotRecipes: {
+                    ...slotRecipes,
                 },
             },
         },
