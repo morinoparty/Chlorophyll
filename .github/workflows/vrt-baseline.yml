@@ -1,0 +1,23 @@
+name: VRT Baseline
+
+# main へのマージ後にスナップショットを取得し、reg-suit のベースラインとして R2 へ公開する。
+# 以降の PR はこのコミットのスナップショットを期待値として比較する。
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'storybook/**'
+      - 'packages/react/**'
+      # 依存・ビルド設定の変更も視覚に影響しうるためベースラインを更新する
+      - '**/package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/_vrt.yml'
+      - '.github/workflows/vrt-baseline.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  vrt:
+    uses: ./.github/workflows/_vrt.yml
+    secrets: inherit

@@ -1,0 +1,27 @@
+- generic [ref=e6]:
+  - generic [ref=e7]:
+    - generic [ref=e8]: Primary
+    - generic [ref=e9]:
+      - button "Small" [ref=e10] [cursor=pointer]
+      - button "Medium" [ref=e11] [cursor=pointer]
+      - button "Large" [ref=e12] [cursor=pointer]
+  - generic [ref=e13]:
+    - generic [ref=e14]: Secondary
+    - generic [ref=e15]:
+      - button "Small" [ref=e16] [cursor=pointer]
+      - button "Medium" [ref=e17] [cursor=pointer]
+      - button "Large" [ref=e18] [cursor=pointer]
+  - generic [ref=e19]:
+    - generic [ref=e20]: With icon
+    - generic [ref=e21]:
+      - button "次へ" [ref=e22] [cursor=pointer]:
+        - text: 次へ
+        - img [ref=e23]
+      - button "次へ" [ref=e25] [cursor=pointer]:
+        - text: 次へ
+        - img [ref=e26]
+  - generic [ref=e28]:
+    - generic [ref=e29]: Disabled
+    - generic [ref=e30]:
+      - button "Primary" [disabled] [ref=e31]
+      - button "Secondary" [disabled] [ref=e32]

@@ -13,7 +13,6 @@
         "stories/**/*.tsx",
         ".storybook/**/*.ts",
         ".storybook/**/*.tsx",
-        "styled-system/**/*.ts",
-        "tests/**/*.ts"
+        "styled-system/**/*.ts"
     ]
 }

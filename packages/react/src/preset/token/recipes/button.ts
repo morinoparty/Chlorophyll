@@ -4,11 +4,13 @@ export const button = defineRecipe({
     className: "button",
     jsx: ["Button"],
     description: "The button component",
+    // size/intent は実行時に動的指定されるため、全 variant の CSS を常に生成する
+    staticCss: ["*"],
     base: {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: "l2",
+        borderRadius: "xl",
         fontWeight: "semibold",
         letterSpacing: "wide",
         isolation: "isolate",
@@ -47,7 +49,8 @@ export const button = defineRecipe({
                     boxShadow: "inner",
                     zIndex: 2,
                 },
-                _hover: {
+                // disabled 状態では hover を効かせない
+                "&:not(:disabled):not([data-disabled]):hover": {
                     bg: "colorPalette.solid.emphasized",
                     boxShadow: "md",
                 },
@@ -67,6 +70,11 @@ export const button = defineRecipe({
             secondary: {
                 bg: "bg.panel",
                 color: "colorPalette.fg",
+                // dark では bg.panel が背景と近く影も沈むため、border で輪郭を出す
+                _dark: {
+                    borderWidth: "1px",
+                    borderColor: "gray.8",
+                },
                 boxShadow: "sm",
                 _after: {
                     content: '""',
@@ -77,7 +85,8 @@ export const button = defineRecipe({
                     boxShadow: "inner",
                     zIndex: 2,
                 },
-                _hover: {
+                // disabled 状態では hover を効かせない
+                "&:not(:disabled):not([data-disabled]):hover": {
                     bg: {
                         _light: "gray.1",
                         _dark: "gray.3",
@@ -98,9 +107,9 @@ export const button = defineRecipe({
             },
         },
         size: {
-            sm: { height: "{sizes.8}", px: "{spacing.4}", fontSize: "xs" },
-            md: { height: "{sizes.20}", px: "{spacing.5}", fontSize: "xs" },
-            lg: { height: "{sizes.12}", px: "{spacing.6}", fontSize: "md" },
+            sm: { height: "{sizes.10}", px: "{spacing.4}", fontSize: "xs" },
+            md: { height: "{sizes.11}", px: "{spacing.5}", fontSize: "sm" },
+            lg: { height: "{sizes.12}", px: "{spacing.6}", py: "{spacing.2}", fontSize: "md" },
         },
     },
     defaultVariants: {

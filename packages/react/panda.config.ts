@@ -4,7 +4,6 @@ import stone from "./src/preset/colors/gray/stone";
 
 export default defineConfig({
     preflight: true,
-    strictTokens: true,
     prefix: "mpc",
     presets: ["@pandacss/preset-base", createPreset({ brandColor: "mori", grayColor: stone, radius: "md" })],
     include: ["./src/**/*.{ts,tsx}"],
