@@ -51,10 +51,13 @@ jobs:
           path: ~/.cache/puppeteer
           key: puppeteer-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      # puppeteer は onlyBuiltDependencies で許可されており、install 時の postinstall で
-      # Chromium をダウンロードする(キャッシュ済みなら再ダウンロードはスキップされる)
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # pnpm のストアキャッシュがあると install 時の postinstall がスキップされ
+      # Chromium が未取得になることがあるため、明示的に取得する(冪等・有れば即終了)
+      - name: Ensure Puppeteer Chromium
+        run: pnpm --filter @chlorophyll/storybook exec puppeteer browsers install chrome
 
       - name: Build Storybook
         run: pnpm --filter @chlorophyll/storybook build
