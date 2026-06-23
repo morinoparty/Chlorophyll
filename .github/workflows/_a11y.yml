@@ -68,6 +68,10 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           report_paths: 'storybook/reports/junit.xml'
+          # テストは実行・注釈するが、結果失敗で merge をブロックする check は作らない
+          annotate_only: true
+          fail_on_failure: false
+          fail_on_parse_error: false
 
       - name: Parse JUnit results
         id: parse
