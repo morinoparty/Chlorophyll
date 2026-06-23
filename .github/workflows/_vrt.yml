@@ -28,6 +28,14 @@ jobs:
           # reg-keygen-git-hash-plugin がベースコミットを辿るため全履歴が必要
           fetch-depth: 0
 
+      # PR では checkout がマージコミットを detached HEAD で取得し、
+      # reg-keygen-git-hash-plugin がブランチ名を取得できず落ちる。
+      # HEAD を名前付きブランチに戻して回避する(PR: head_ref / push: ref_name)。
+      - name: Restore branch name for reg-keygen (detached HEAD workaround)
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: git checkout -B "$BRANCH"
+
       - uses: pnpm/action-setup@v5
         name: Install pnpm
 
