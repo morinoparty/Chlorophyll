@@ -14,6 +14,7 @@ const meta: Meta<typeof Button> = {
     },
     tags: ["autodocs"],
     argTypes: {
+        children: { control: "text" },
         intent: {
             control: "select",
             options: ["primary", "secondary"],
@@ -23,24 +24,38 @@ const meta: Meta<typeof Button> = {
             options: ["sm", "md", "lg"],
         },
     },
+    args: {
+        children: "Button",
+    },
 };
 
 export default meta;
+type Story = StoryObj<typeof Button>;
 
-const input = "Button";
-
-export const Primary: StoryObj<typeof Button> = {
-    render: () => <Button intent="primary">{input}</Button>,
+export const Primary: Story = {
+    args: {
+        intent: "primary",
+        size: "lg",
+        children: "ここを押して、ログイン",
+    },
 };
 
-export const Secondary: StoryObj<typeof Button> = {
-    render: () => <Button intent="secondary">{input}</Button>,
+export const Secondary: Story = {
+    args: {
+        intent: "secondary",
+        children: "ボタンだよー",
+    },
 };
 
-export const WithIcon: StoryObj<typeof Button> = {
-    render: () => (
-        <Button>
-            {input}
+export const WithIcon: Story = {
+    args: {
+        intent: "secondary",
+        size: "sm",
+    },
+
+    render: (args) => (
+        <Button {...args}>
+            {args.children}
             <ArrowRightIcon />
         </Button>
     ),

@@ -8,7 +8,7 @@ export const button = defineRecipe({
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: "l2",
+        borderRadius: "xl",
         fontWeight: "semibold",
         letterSpacing: "wide",
         isolation: "isolate",
@@ -99,8 +99,8 @@ export const button = defineRecipe({
         },
         size: {
             sm: { height: "{sizes.8}", px: "{spacing.4}", fontSize: "xs" },
-            md: { height: "{sizes.20}", px: "{spacing.5}", fontSize: "xs" },
-            lg: { height: "{sizes.12}", px: "{spacing.6}", fontSize: "md" },
+            md: { height: "{sizes.10}", px: "{spacing.5}", fontSize: "sm" },
+            lg: { height: "{sizes.12}", px: "{spacing.6}", py: "{spacing.2}", fontSize: "md" },
         },
     },
     defaultVariants: {
