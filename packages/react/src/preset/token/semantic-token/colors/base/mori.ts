@@ -148,7 +148,10 @@ export const mori = defineSemanticTokens.colors({
         },
         bg: {
             DEFAULT: {
-                value: "{colors.mori.2}",
+                value: {
+                    _light: "{colors.mori.2}",
+                    _dark: "{colors.mori.2}",
+                },
             },
             subtle: {
                 value: "{colors.mori.1}",
@@ -168,12 +171,12 @@ export const mori = defineSemanticTokens.colors({
         fg: {
             DEFAULT: {
                 value: {
-                    _light: "{colors.mori.12}",
+                    _light: "color-mix(in oklch, {colors.mori.12}, {colors.mori.11} 70%)",
                     _dark: "{colors.white}",
                 },
             },
             subtle: {
-                value: "{colors.mori.11}",
+                value: "color-mix(in oklch, {colors.mori.11}, transparent 30%)",
             },
             muted: {
                 value: "{colors.gray.11}",
