@@ -1,6 +1,12 @@
 import { button } from "./button";
+import { playerPhraseCard } from "./player-phrase-card";
 
-// すべてのレシピをエクスポート
+// 単一要素のレシピ
 export const recipes = {
     button,
+};
+
+// 複数スロットを持つレシピ
+export const slotRecipes = {
+    playerPhraseCard,
 };

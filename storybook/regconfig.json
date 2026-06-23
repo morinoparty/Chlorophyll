@@ -1,0 +1,29 @@
+{
+    "core": {
+        "workingDir": ".reg",
+        "actualDir": "__screenshots__",
+        "thresholdRate": 0,
+        "ximgdiff": {
+            "invocationType": "client"
+        }
+    },
+    "plugins": {
+        "reg-keygen-git-hash-plugin": {},
+        "reg-notify-github-plugin": {
+            "prComment": true,
+            "prCommentBehavior": "default",
+            "clientId": "${REG_NOTIFY_GITHUB_CLIENT_ID}"
+        },
+        "reg-publish-s3-plugin": {
+            "bucketName": "${S3_UPLOAD_BUCKET}",
+            "enableACL": false,
+            "pathPrefix": "chlorophyll/vrt",
+            "customDomain": "moripa-ci.nikomaru.dev",
+            "sdkOptions": {
+                "endpoint": "${S3_ENDPOINT}",
+                "region": "auto",
+                "forcePathStyle": true
+            }
+        }
+    }
+}
