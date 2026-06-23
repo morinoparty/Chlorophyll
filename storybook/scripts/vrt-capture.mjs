@@ -26,6 +26,15 @@ const DISABLE_ANIMATION_CSS = `*,*::before,*::after{transition:none!important;an
 // ファイル名に使えない文字を除去する
 const sanitize = (s) => s.replace(/[/\\?%*:|"<>]/g, "-").trim();
 
+// VRT を外部サービスに依存させないため、アバター画像リクエストは決定的な
+// ローカル画像で応答する。URL(playerId を含む)から色を決めて見分けられるようにする。
+const AVATAR_HOST = "mc-heads.net";
+const deterministicAvatar = (url) => {
+    let hue = 0;
+    for (const ch of url) hue = (hue * 31 + ch.charCodeAt(0)) % 360;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" fill="hsl(${hue} 45% 55%)"/></svg>`;
+};
+
 // 既存のサーバーを使う場合は VRT_STORYBOOK_URL を指定(ローカル検証用)。
 // 指定が無ければビルド済み Storybook を http-server で配信する。
 async function startServer() {
@@ -108,6 +117,16 @@ async function main() {
     try {
         const stories = await fetchStories(server.baseUrl);
         const page = await browser.newPage();
+
+        // アバター(mc-heads.net)へのアクセスを横取りして決定的な画像を返す
+        await page.setRequestInterception(true);
+        page.on("request", (req) => {
+            if (req.url().includes(AVATAR_HOST)) {
+                req.respond({ status: 200, contentType: "image/svg+xml", body: deterministicAvatar(req.url()) });
+            } else {
+                req.continue();
+            }
+        });
         let count = 0;
         for (const viewport of VIEWPORTS) {
             for (const story of stories) {
