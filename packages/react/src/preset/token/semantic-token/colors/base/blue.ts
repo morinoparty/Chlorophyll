@@ -171,7 +171,7 @@ export const blue = defineSemanticTokens.colors({
         fg: {
             DEFAULT: {
                 value: {
-                    _light: "{colors.blue.12}",
+                    _light: "color-mix(in oklch, {colors.blue.12}, {colors.blue.11} 70%)",
                     _dark: "{colors.white}",
                 },
             },
@@ -179,7 +179,7 @@ export const blue = defineSemanticTokens.colors({
                 value: "{colors.gray.11}",
             },
             subtle: {
-                value: "{colors.blue.11}",
+                value: "color-mix(in oklch, {colors.blue.11}, transparent 25%)",
             },
         },
         // Solid background
