@@ -37,7 +37,7 @@ export const createPreset = (option: PresetOptions) => {
                 backgroundColor: "colorPalette.5",
             },
             ".dark ::selection": {
-                backgroundColor: "colorPalette.dark.4",
+                backgroundColor: "colorPalette.dark.9/70",
             },
         },
         conditions: {

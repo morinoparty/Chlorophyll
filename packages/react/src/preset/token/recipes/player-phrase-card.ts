@@ -25,14 +25,14 @@ export const playerPhraseCard = defineSlotRecipe({
         },
         phrase: {
             textStyle: "sm",
-            color: "colorPalette.fg.subtle/70",
+            color: "colorPalette.fg/70",
             fontWeight: "medium",
             lineHeight: "[1.2]",
         },
         name: {
             textStyle: "lg",
             marginTop: "1.5",
-            color: "colorPalette.fg.subtle",
+            color: "colorPalette.fg",
             fontWeight: "extrabold",
             fontVariationSettings: "'wght' 800",
             lineHeight: "[1.2]",
