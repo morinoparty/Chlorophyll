@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { css } from "styled-system/css";
 import { Button } from "../../../packages/react";
 
@@ -18,7 +18,7 @@ const meta: Meta<typeof Button> = {
         children: { control: "text" },
         intent: {
             control: "select",
-            options: ["primary", "secondary"],
+            options: ["primary", "secondary", "plain"],
         },
         size: {
             control: "select",
@@ -48,17 +48,30 @@ export const Secondary: Story = {
     },
 };
 
+export const Plain: Story = {
+    args: {
+        intent: "plain",
+        children: "ボタンだよー",
+    },
+};
+
 export const WithIcon: Story = {
     args: {
         intent: "secondary",
-        size: "sm",
+        size: "lg",
     },
 
     render: (args) => (
-        <Button {...args}>
-            {args.children}
-            <ArrowRightIcon />
-        </Button>
+        <div className={showcaseStyles.row}>
+            <Button {...args}>
+                <ArrowLeftIcon />
+                {args.children}
+            </Button>
+            <Button {...args}>
+                {args.children}
+                <ArrowRightIcon />
+            </Button>
+        </div>
     ),
 };
 
@@ -106,13 +119,44 @@ export const Showcase: Story = {
             </div>
 
             <div className={showcaseStyles.section}>
+                <span className={showcaseStyles.label}>Plain</span>
+                <div className={showcaseStyles.row}>
+                    <Button intent="plain" size="sm">
+                        Small
+                    </Button>
+                    <Button intent="plain" size="md">
+                        Medium
+                    </Button>
+                    <Button intent="plain" size="lg">
+                        Large
+                    </Button>
+                </div>
+            </div>
+
+            <div className={showcaseStyles.section}>
                 <span className={showcaseStyles.label}>With icon</span>
                 <div className={showcaseStyles.row}>
+                    <Button intent="primary">
+                        <ArrowLeftIcon />
+                        戻る
+                    </Button>
                     <Button intent="primary">
                         次へ
                         <ArrowRightIcon />
                     </Button>
                     <Button intent="secondary">
+                        <ArrowLeftIcon />
+                        戻る
+                    </Button>
+                    <Button intent="secondary">
+                        次へ
+                        <ArrowRightIcon />
+                    </Button>
+                    <Button intent="plain">
+                        <ArrowLeftIcon />
+                        戻る
+                    </Button>
+                    <Button intent="plain">
                         次へ
                         <ArrowRightIcon />
                     </Button>
@@ -127,6 +171,9 @@ export const Showcase: Story = {
                     </Button>
                     <Button intent="secondary" disabled>
                         Secondary
+                    </Button>
+                    <Button intent="plain" disabled>
+                        Plain
                     </Button>
                 </div>
             </div>
