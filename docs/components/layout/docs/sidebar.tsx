@@ -1,9 +1,13 @@
 "use client";
+import { Button } from "@morinoparty/chlorophyll-react";
 import { cva } from "class-variance-authority";
+import { usePathname } from "fumadocs-core/framework";
 import { Sidebar as SidebarIcon } from "lucide-react";
 import { type ComponentProps, useRef } from "react";
+import { css } from "styled-system/css";
 import { cn } from "../../../lib/cn";
 import { mergeRefs } from "../../../lib/merge-refs";
+import { isActive } from "../../../lib/urls";
 import { buttonVariants } from "../../ui/button";
 import { SearchToggle } from "../search-toggle";
 import * as Base from "../sidebar/base";
@@ -26,7 +30,7 @@ const itemVariants = cva(
 );
 
 function getItemOffset(depth: number) {
-    return `calc(${2 + 3 * depth} * var(--spacing))`;
+    return `calc(${2 + 4 * depth} * var(--spacing))`;
 }
 
 export {
@@ -117,13 +121,11 @@ export function SidebarDrawer({ children, className, ...props }: ComponentProps<
 }
 
 export function SidebarSeparator({ className, style, children, ...props }: ComponentProps<"p">) {
-    const depth = Base.useFolderDepth();
-
     return (
         <Base.SidebarSeparator
             className={cn("[&_svg]:size-4 [&_svg]:shrink-0", className)}
             style={{
-                paddingInlineStart: getItemOffset(depth),
+                // paddingInlineStart: getItemOffset(depth),
                 ...style,
             }}
             {...props}
@@ -135,18 +137,54 @@ export function SidebarSeparator({ className, style, children, ...props }: Compo
 
 export function SidebarItem({ className, style, children, ...props }: ComponentProps<typeof Base.SidebarItem>) {
     const depth = Base.useFolderDepth();
+    const pathname = usePathname();
+    // Base.SidebarItem と同じ判定でアクティブかどうかを求める
+    const active = props.href !== undefined && isActive(props.href, pathname, false);
+
+    // アクティブ時はデザインシステムの Button をそのまま使い、リンクをボタンとして描画する。
+    // asChild で anchor を維持したままボタンの見た目（角丸・影・ベベル）を適用し、
+    // サイドバー幅いっぱい・左寄せに調整する（itemVariants は付けず Button に見た目を任せる）
+    if (active) {
+        return (
+            <Button asChild intent="primary" size="sm" className={css({ width: "full" })}>
+                <Base.SidebarItem
+                    className={cn("[&_svg]:size-4 [&_svg]:stroke-[1.5]", className)}
+                    style={{
+                        justifyContent: "flex-start",
+                        height: "var(--mpc-sizes-9)",
+                        borderRadius: "var(--mpc-radii-lg)",
+                        paddingInlineStart: getItemOffset(depth),
+                        fontSize: "0.875rem", // 他の項目の text-sm に合わせる
+                        fontWeight: 500, // 他の項目の font-weight に合わせる
+                        letterSpacing: "normal",
+                        ...style,
+                    }}
+                    {...props}
+                >
+                    {children}
+                </Base.SidebarItem>
+            </Button>
+        );
+    }
 
     return (
-        <Base.SidebarItem
-            className={cn(itemVariants({ variant: "link", highlight: depth >= 1 }), className)}
-            style={{
-                paddingInlineStart: getItemOffset(depth),
-                ...style,
-            }}
-            {...props}
-        >
-            {children}
-        </Base.SidebarItem>
+        <Button asChild intent="plain" size="sm" className={css({ width: "full" })}>
+            <Base.SidebarItem
+                className={cn("[&_svg]:size-4 [&_svg]:stroke-[1.5]", className)}
+                style={{
+                    justifyContent: "flex-start",
+                    height: "var(--mpc-sizes-9)",
+                    paddingInlineStart: getItemOffset(depth),
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    letterSpacing: "normal",
+                    ...style,
+                }}
+                {...props}
+            >
+                {children}
+            </Base.SidebarItem>
+        </Button>
     );
 }
 

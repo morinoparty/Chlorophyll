@@ -3,7 +3,7 @@ import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
 import { button } from "styled-system/recipes";
 
 interface ButtonProps extends HTMLArkProps<"button"> {
-    intent?: "primary" | "secondary";
+    intent?: "primary" | "secondary" | "plain";
     size?: "sm" | "md" | "lg";
 }
 
