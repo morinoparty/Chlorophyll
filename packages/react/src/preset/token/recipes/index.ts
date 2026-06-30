@@ -1,3 +1,4 @@
+import { accordion } from "./accordion";
 import { button } from "./button";
 import { list } from "./list";
 import { playerPhraseCard } from "./player-phrase-card";
@@ -11,4 +12,5 @@ export const recipes = {
 export const slotRecipes = {
     playerPhraseCard,
     list,
+    accordion,
 };
