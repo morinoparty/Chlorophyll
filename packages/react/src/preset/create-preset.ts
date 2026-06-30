@@ -49,6 +49,14 @@ export const createPreset = (option: PresetOptions) => {
                 semanticTokens,
                 breakpoints,
                 textStyles,
+                // 開閉系コンポーネント(Accordion など)の表示アニメーション
+                keyframes: {
+                    // 開いたときに上から滑り込みながらフェードインする
+                    slideDownIn: {
+                        from: { opacity: "0", transform: "translateY(-4px)" },
+                        to: { opacity: "1", transform: "translateY(0)" },
+                    },
+                },
                 recipes: {
                     ...recipes,
                 },
