@@ -68,5 +68,15 @@
         "name": "a11y",
         "color": "#0052CC",
         "description": "Scope: Accessibility"
+    },
+    {
+        "name": "minecraft",
+        "color": "#755238",
+        "description": "Scope: Minecraft"
+    },
+    {
+        "name": "morinoparty",
+        "color": "#01805c",
+        "description": "Scope: Morinoparty"
     }
 ]

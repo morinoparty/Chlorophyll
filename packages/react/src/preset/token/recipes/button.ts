@@ -10,6 +10,7 @@ export const button = defineRecipe({
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
+        gap: "2",
         borderRadius: "xl",
         fontWeight: "semibold",
         letterSpacing: "wide",
@@ -28,7 +29,6 @@ export const button = defineRecipe({
             fontSize: "1.4em",
             width: "0.9em",
             height: "0.9em",
-            marginLeft: "[0.3em]",
         },
         _disabled: {
             cursor: "not-allowed",
@@ -39,20 +39,28 @@ export const button = defineRecipe({
             primary: {
                 bg: "colorPalette.solid",
                 color: "colorPalette.contrast",
-                boxShadow: "raised",
+                // 濃い solid 色の上では小さい影が沈んで浮き上がって見えないため、
+                // しっかり浮き上がる柔らかい影に見えるよう lg を使う
+                boxShadow: "lg",
                 _after: {
                     content: '""',
                     position: "absolute",
                     inset: "0",
                     borderRadius: "inherit",
                     pointerEvents: "none",
-                    boxShadow: "inner",
+                    // 上辺に光のハイライト・下辺に内側の影を入れ、
+                    // 上から光が当たって隆起しているような立体感を出す
+                    boxShadow: "[inset 0 1.5px 0 0 rgba(255,255,255,0.34), inset 0 -2.5px 5px 0 rgba(0,0,0,0.27)]",
                     zIndex: 2,
                 },
                 // disabled 状態では hover を効かせない
                 "&:not(:disabled):not([data-disabled]):hover": {
                     bg: "colorPalette.solid.emphasized",
-                    boxShadow: "md",
+                    boxShadow: "xl",
+                    // hover で隆起感を少し強め、押し上がる印象にする
+                    _after: {
+                        boxShadow: "[inset 0 1.5px 0 0 rgba(255,255,255,0.38), inset 0 -3px 6px 0 rgba(0,0,0,0.3)]",
+                    },
                 },
                 _focusVisible: {
                     outline: "none",
@@ -82,7 +90,13 @@ export const button = defineRecipe({
                     inset: "0",
                     borderRadius: "inherit",
                     pointerEvents: "none",
-                    boxShadow: "inner",
+                    // 上辺にハイライト・下辺にやわらかい影を入れて控えめな立体感を出す。
+                    // light は白い面なので濃い影だと汚れて見えるため薄く、
+                    // dark は暗いパネルに合わせてハイライトを抑え影をやや強める
+                    boxShadow: {
+                        _light: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -2px 4px 0 rgba(0,0,0,0.08)]",
+                        _dark: "[inset 0 1px 0 0 rgba(255,255,255,0.08), inset 0 -2px 4px 0 rgba(0,0,0,0.25)]",
+                    },
                     zIndex: 2,
                 },
                 // disabled 状態では hover を効かせない
@@ -90,6 +104,13 @@ export const button = defineRecipe({
                     bg: {
                         _light: "gray.1",
                         _dark: "gray.3",
+                    },
+                    // hover で下辺の影を少し深め、立体感を強める
+                    _after: {
+                        boxShadow: {
+                            _light: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -3px 5px 0 rgba(0,0,0,0.1)]",
+                            _dark: "[inset 0 1px 0 0 rgba(255,255,255,0.08), inset 0 -3px 5px 0 rgba(0,0,0,0.3)]",
+                        },
                     },
                 },
                 _focusVisible: {
@@ -103,6 +124,25 @@ export const button = defineRecipe({
                     borderColor: "border.subtle",
                     color: "colorPalette.fg.muted",
                     boxShadow: "xs",
+                },
+            },
+            plain: {
+                bg: "transparent",
+                color: "colorPalette.fg.muted",
+                boxShadow: "none",
+                "&:not(:disabled):not([data-disabled]):hover": {
+                    bg: "colorPalette.surface",
+                    color: "colorPalette.fg",
+                },
+                _focusVisible: {
+                    outline: "none",
+                    ringWidth: "2",
+                    ringColor: "colorPalette.a4",
+                    ringOffset: "0",
+                },
+                _disabled: {
+                    color: "colorPalette.fg.muted",
+                    opacity: "disabled",
                 },
             },
         },
