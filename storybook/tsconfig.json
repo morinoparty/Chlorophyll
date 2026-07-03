@@ -13,6 +13,7 @@
         "stories/**/*.tsx",
         ".storybook/**/*.ts",
         ".storybook/**/*.tsx",
-        "styled-system/**/*.ts"
+        "styled-system/**/*.ts",
+        "vite-env.d.ts"
     ]
 }
