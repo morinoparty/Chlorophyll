@@ -7,6 +7,7 @@ import craftingTableSide from "./assets/crafting_table_side.png";
 import craftingTableTop from "./assets/crafting_table_top.png";
 import diamondSword from "./assets/diamond_sword.png";
 import enderPearl from "./assets/ender_pearl.png";
+import blockBlockModel from "./assets/models/block/block.json?url";
 import craftingTableBlockModel from "./assets/models/block/crafting_table.json?url";
 import oakLogBlockModel from "./assets/models/block/oak_log.json?url";
 import stoneBlockModel from "./assets/models/block/stone.json?url";
@@ -19,11 +20,14 @@ import stickItemModel from "./assets/models/item/stick.json?url";
 import stoneItemModel from "./assets/models/item/stone.json?url";
 import oakLog from "./assets/oak_log.png";
 import oakLogTop from "./assets/oak_log_top.png";
+import oakPlanks from "./assets/oak_planks.png";
 import stick from "./assets/stick.png";
 import stone from "./assets/stone.png";
 
 // テクスチャファイル名 -> Storybook にバンドルされたサンプル画像 URL の対応表。
-// ライブラリ本体はテクスチャを同梱しないため、利用側がこの resolveTexture を用意する
+// ライブラリ本体はテクスチャを同梱しないため、利用側がこの resolveTexture を用意する。
+// 3D 立方体は 6 面すべてにテクスチャが要る(下面など画面には映らない面も含む)ため、
+// oak_planks.png (crafting_table の底面)のような非表示面のテクスチャも同梱している
 const TEXTURE_MAP: Record<string, string> = {
     "apple.png": apple,
     "crafting_table_front.png": craftingTableFront,
@@ -33,6 +37,7 @@ const TEXTURE_MAP: Record<string, string> = {
     "ender_pearl.png": enderPearl,
     "oak_log.png": oakLog,
     "oak_log_top.png": oakLogTop,
+    "oak_planks.png": oakPlanks,
     "stick.png": stick,
     "stone.png": stone,
 };
@@ -52,6 +57,7 @@ const MODEL_MAP: Record<string, string> = {
     "block/stone.json": stoneBlockModel,
     "block/oak_log.json": oakLogBlockModel,
     "block/crafting_table.json": craftingTableBlockModel,
+    "block/block.json": blockBlockModel,
 };
 
 const resolveModel = (path: string) => MODEL_MAP[path] ?? "";
