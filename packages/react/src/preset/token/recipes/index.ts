@@ -2,6 +2,7 @@ import { accordion } from "./accordion";
 import { badge } from "./badge";
 import { button } from "./button";
 import { list } from "./list";
+import { minecraftItem } from "./minecraft-item";
 import { playerPhraseCard } from "./player-phrase-card";
 
 // 単一要素のレシピ
@@ -15,4 +16,5 @@ export const slotRecipes = {
     playerPhraseCard,
     list,
     accordion,
+    minecraftItem,
 };

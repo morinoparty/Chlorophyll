@@ -13,6 +13,10 @@
         "stories/**/*.tsx",
         ".storybook/**/*.ts",
         ".storybook/**/*.tsx",
-        "styled-system/**/*.ts"
+        "styled-system/**/*.ts",
+        "vite-env.d.ts",
+        // MinecraftItem(react-three-fiber)の JSX 要素("mesh" 等)を型解決するための
+        // ambient 拡張。import だけでは自動適用されないため明示的に include する
+        "../packages/react/src/components/minecraft-item/three-jsx.d.ts"
     ]
 }
