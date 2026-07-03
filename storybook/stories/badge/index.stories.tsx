@@ -4,7 +4,7 @@ import { css } from "styled-system/css";
 import { Badge } from "../../../packages/react";
 
 const meta: Meta<typeof Badge> = {
-    title: "COMPONENTS/Badge",
+    title: "DATA DISPLAY/Badge",
     component: Badge,
     parameters: {
         layout: "centered",
