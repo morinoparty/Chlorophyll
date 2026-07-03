@@ -30,7 +30,7 @@ const TEXTURE_MAP: Record<string, string> = {
 const resolveTexture = (fileName: string) => TEXTURE_MAP[fileName] ?? "";
 
 const meta: Meta<typeof MinecraftItem> = {
-    title: "COMPONENTS/MinecraftItem",
+    title: "MINECRAFT/Items",
     component: MinecraftItem,
     parameters: {
         layout: "centered",
