@@ -41,10 +41,78 @@ jobs:
     uses: ./.github/workflows/_a11y.yml
     secrets: inherit
 
+  # @morinoparty/chlorophyll-react の npm パッケージサイズ(pnpm pack の tarball 実サイズ)を
+  # main と PR ブランチで比較する。バンドラーを持たないソース配布パッケージのため、
+  # webpack 等の bundle size ではなく実際に配布される tarball のサイズを見る
+  bundle-size:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_size: ${{ steps.compare.outputs.pr_size }}
+      main_size: ${{ steps.compare.outputs.main_size }}
+      diff_size: ${{ steps.compare.outputs.diff_size }}
+      diff_percent: ${{ steps.compare.outputs.diff_percent }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: pr
+
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          path: main
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: "pnpm"
+          cache-dependency-path: |
+            pr/pnpm-lock.yaml
+            main/pnpm-lock.yaml
+
+      - name: Pack PR branch
+        id: pr_pack
+        working-directory: pr
+        run: |
+          pnpm install --frozen-lockfile
+          mkdir -p /tmp/pr-pack
+          (cd packages/react && pnpm pack --pack-destination /tmp/pr-pack)
+          echo "size=$(stat -c%s /tmp/pr-pack/*.tgz)" >> "$GITHUB_OUTPUT"
+
+      - name: Pack main branch
+        id: main_pack
+        working-directory: main
+        run: |
+          pnpm install --frozen-lockfile
+          mkdir -p /tmp/main-pack
+          (cd packages/react && pnpm pack --pack-destination /tmp/main-pack)
+          echo "size=$(stat -c%s /tmp/main-pack/*.tgz)" >> "$GITHUB_OUTPUT"
+
+      - name: Compare sizes
+        id: compare
+        env:
+          PR_SIZE: ${{ steps.pr_pack.outputs.size }}
+          MAIN_SIZE: ${{ steps.main_pack.outputs.size }}
+        run: |
+          DIFF=$((PR_SIZE - MAIN_SIZE))
+          if [ "$MAIN_SIZE" -gt 0 ]; then
+            PERCENT=$(awk "BEGIN { printf \"%.2f\", ($DIFF / $MAIN_SIZE) * 100 }")
+          else
+            PERCENT="0.00"
+          fi
+          echo "pr_size=$PR_SIZE" >> "$GITHUB_OUTPUT"
+          echo "main_size=$MAIN_SIZE" >> "$GITHUB_OUTPUT"
+          echo "diff_size=$DIFF" >> "$GITHUB_OUTPUT"
+          echo "diff_percent=$PERCENT" >> "$GITHUB_OUTPUT"
+
   # PRに統合レポートをコメント
   # VRT は reg-notify-github-plugin が別コメント / commit status で通知するため、ここでは扱わない
   comment:
-    needs: [setup, preview, a11y]
+    needs: [setup, preview, a11y, bundle-size]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -61,6 +129,11 @@ jobs:
           A11Y_RESULT: ${{ needs.a11y.outputs.test_result }}
           A11Y_CONCLUSION: ${{ needs.a11y.result }}
           PREVIEW_CONCLUSION: ${{ needs.preview.result }}
+          PKG_MAIN_SIZE: ${{ needs.bundle-size.outputs.main_size }}
+          PKG_PR_SIZE: ${{ needs.bundle-size.outputs.pr_size }}
+          PKG_DIFF_SIZE: ${{ needs.bundle-size.outputs.diff_size }}
+          PKG_DIFF_PERCENT: ${{ needs.bundle-size.outputs.diff_percent }}
+          BUNDLE_SIZE_CONCLUSION: ${{ needs.bundle-size.result }}
           COMMIT_SHORT_SHA: ${{ needs.setup.outputs.commit_sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -75,6 +148,11 @@ jobs:
 
           A11Y_STATUS=$(get_status "$A11Y_RESULT" "$A11Y_CONCLUSION")
           LIMIT_TIME=$(date -d "7 days" +%Y-%m-%d)
+
+          # バイト数を人が読める KB 表記に変換する(小数点2桁)
+          to_kb() {
+            awk "BEGIN { printf \"%.2f KB\", $1 / 1024 }"
+          }
 
           # コメントを構築
           {
@@ -106,6 +184,30 @@ jobs:
             echo "| Test | ✅ Passed | ❌ Failed | ⏭️ Skipped | Total | Status |"
             echo "|------|-----------|-----------|------------|-------|--------|"
             echo "| Accessibility | ${A11Y_PASSED} | ${A11Y_FAILED} | ${A11Y_SKIPPED} | ${A11Y_TOTAL} | ${A11Y_STATUS} |"
+            echo ""
+            echo "---"
+            echo ""
+            echo "### 📦 Package Size (@morinoparty/chlorophyll-react)"
+            echo ""
+            if [ "$BUNDLE_SIZE_CONCLUSION" = "success" ]; then
+              MAIN_KB=$(to_kb "$PKG_MAIN_SIZE")
+              PR_KB=$(to_kb "$PKG_PR_SIZE")
+              DIFF_KB=$(to_kb "$PKG_DIFF_SIZE")
+              if [ "$PKG_DIFF_SIZE" -gt 0 ]; then
+                DIFF_LABEL="🔺 +${DIFF_KB} (+${PKG_DIFF_PERCENT}%)"
+              elif [ "$PKG_DIFF_SIZE" -lt 0 ]; then
+                DIFF_LABEL="🔻 ${DIFF_KB} (${PKG_DIFF_PERCENT}%)"
+              else
+                DIFF_LABEL="変化なし"
+              fi
+              echo "npm パッケージ tarball (\`pnpm pack\`) の実サイズ比較 (ソース配布のためバンドラー出力ではありません)"
+              echo ""
+              echo "| main | PR | 差分 |"
+              echo "|------|-----|------|"
+              echo "| ${MAIN_KB} | ${PR_KB} | ${DIFF_LABEL} |"
+            else
+              echo "⚠️ Package size measurement failed or was cancelled."
+            fi
             echo ""
             echo "---"
             echo "Available for 7 days (until ${LIMIT_TIME}) · **Commit:** \`${COMMIT_SHORT_SHA}\`"
