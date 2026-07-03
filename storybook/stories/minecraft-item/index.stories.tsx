@@ -7,6 +7,16 @@ import craftingTableSide from "./assets/crafting_table_side.png";
 import craftingTableTop from "./assets/crafting_table_top.png";
 import diamondSword from "./assets/diamond_sword.png";
 import enderPearl from "./assets/ender_pearl.png";
+import craftingTableBlockModel from "./assets/models/block/crafting_table.json?url";
+import oakLogBlockModel from "./assets/models/block/oak_log.json?url";
+import stoneBlockModel from "./assets/models/block/stone.json?url";
+import appleItemModel from "./assets/models/item/apple.json?url";
+import craftingTableItemModel from "./assets/models/item/crafting_table.json?url";
+import diamondSwordItemModel from "./assets/models/item/diamond_sword.json?url";
+import enderPearlItemModel from "./assets/models/item/ender_pearl.json?url";
+import oakLogItemModel from "./assets/models/item/oak_log.json?url";
+import stickItemModel from "./assets/models/item/stick.json?url";
+import stoneItemModel from "./assets/models/item/stone.json?url";
 import oakLog from "./assets/oak_log.png";
 import oakLogTop from "./assets/oak_log_top.png";
 import stick from "./assets/stick.png";
@@ -29,6 +39,23 @@ const TEXTURE_MAP: Record<string, string> = {
 
 const resolveTexture = (fileName: string) => TEXTURE_MAP[fileName] ?? "";
 
+// モデル JSON のパス("item/stone.json" 等) -> バンドルされたサンプル JSON URL の対応表。
+// MinecraftItem はこの JSON を実際に読んで平面/ブロックの種別と面テクスチャを判定する
+const MODEL_MAP: Record<string, string> = {
+    "item/diamond_sword.json": diamondSwordItemModel,
+    "item/apple.json": appleItemModel,
+    "item/ender_pearl.json": enderPearlItemModel,
+    "item/stick.json": stickItemModel,
+    "item/stone.json": stoneItemModel,
+    "item/oak_log.json": oakLogItemModel,
+    "item/crafting_table.json": craftingTableItemModel,
+    "block/stone.json": stoneBlockModel,
+    "block/oak_log.json": oakLogBlockModel,
+    "block/crafting_table.json": craftingTableBlockModel,
+};
+
+const resolveModel = (path: string) => MODEL_MAP[path] ?? "";
+
 const meta: Meta<typeof MinecraftItem> = {
     title: "MINECRAFT/Items",
     component: MinecraftItem,
@@ -42,9 +69,11 @@ const meta: Meta<typeof MinecraftItem> = {
             control: "select",
             options: ["sm", "md", "lg"],
         },
+        resolveModel: { control: false },
         resolveTexture: { control: false },
     },
     args: {
+        resolveModel,
         resolveTexture,
         size: "md",
     },
@@ -101,41 +130,86 @@ export const Showcase: Story = {
             <div className={showcaseStyles.section}>
                 <span className={showcaseStyles.label}>Flat items</span>
                 <div className={showcaseStyles.row}>
-                    <MinecraftItem id="diamond_sword" resolveTexture={resolveTexture} size="sm" />
-                    <MinecraftItem id="apple" resolveTexture={resolveTexture} size="sm" />
-                    <MinecraftItem id="ender_pearl" resolveTexture={resolveTexture} size="sm" />
-                    <MinecraftItem id="stick" resolveTexture={resolveTexture} size="sm" />
+                    <MinecraftItem
+                        id="diamond_sword"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="sm"
+                    />
+                    <MinecraftItem id="apple" resolveModel={resolveModel} resolveTexture={resolveTexture} size="sm" />
+                    <MinecraftItem
+                        id="ender_pearl"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="sm"
+                    />
+                    <MinecraftItem id="stick" resolveModel={resolveModel} resolveTexture={resolveTexture} size="sm" />
                 </div>
                 <div className={showcaseStyles.row}>
-                    <MinecraftItem id="diamond_sword" resolveTexture={resolveTexture} size="md" />
-                    <MinecraftItem id="apple" resolveTexture={resolveTexture} size="md" />
-                    <MinecraftItem id="ender_pearl" resolveTexture={resolveTexture} size="md" />
-                    <MinecraftItem id="stick" resolveTexture={resolveTexture} size="md" />
+                    <MinecraftItem
+                        id="diamond_sword"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="md"
+                    />
+                    <MinecraftItem id="apple" resolveModel={resolveModel} resolveTexture={resolveTexture} size="md" />
+                    <MinecraftItem
+                        id="ender_pearl"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="md"
+                    />
+                    <MinecraftItem id="stick" resolveModel={resolveModel} resolveTexture={resolveTexture} size="md" />
                 </div>
                 <div className={showcaseStyles.row}>
-                    <MinecraftItem id="diamond_sword" resolveTexture={resolveTexture} size="lg" />
-                    <MinecraftItem id="apple" resolveTexture={resolveTexture} size="lg" />
-                    <MinecraftItem id="ender_pearl" resolveTexture={resolveTexture} size="lg" />
-                    <MinecraftItem id="stick" resolveTexture={resolveTexture} size="lg" />
+                    <MinecraftItem
+                        id="diamond_sword"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="lg"
+                    />
+                    <MinecraftItem id="apple" resolveModel={resolveModel} resolveTexture={resolveTexture} size="lg" />
+                    <MinecraftItem
+                        id="ender_pearl"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="lg"
+                    />
+                    <MinecraftItem id="stick" resolveModel={resolveModel} resolveTexture={resolveTexture} size="lg" />
                 </div>
             </div>
 
             <div className={showcaseStyles.section}>
                 <span className={showcaseStyles.label}>Block items</span>
                 <div className={showcaseStyles.row}>
-                    <MinecraftItem id="stone" resolveTexture={resolveTexture} size="sm" />
-                    <MinecraftItem id="oak_log" resolveTexture={resolveTexture} size="sm" />
-                    <MinecraftItem id="crafting_table" resolveTexture={resolveTexture} size="sm" />
+                    <MinecraftItem id="stone" resolveModel={resolveModel} resolveTexture={resolveTexture} size="sm" />
+                    <MinecraftItem id="oak_log" resolveModel={resolveModel} resolveTexture={resolveTexture} size="sm" />
+                    <MinecraftItem
+                        id="crafting_table"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="sm"
+                    />
                 </div>
                 <div className={showcaseStyles.row}>
-                    <MinecraftItem id="stone" resolveTexture={resolveTexture} size="md" />
-                    <MinecraftItem id="oak_log" resolveTexture={resolveTexture} size="md" />
-                    <MinecraftItem id="crafting_table" resolveTexture={resolveTexture} size="md" />
+                    <MinecraftItem id="stone" resolveModel={resolveModel} resolveTexture={resolveTexture} size="md" />
+                    <MinecraftItem id="oak_log" resolveModel={resolveModel} resolveTexture={resolveTexture} size="md" />
+                    <MinecraftItem
+                        id="crafting_table"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="md"
+                    />
                 </div>
                 <div className={showcaseStyles.row}>
-                    <MinecraftItem id="stone" resolveTexture={resolveTexture} size="lg" />
-                    <MinecraftItem id="oak_log" resolveTexture={resolveTexture} size="lg" />
-                    <MinecraftItem id="crafting_table" resolveTexture={resolveTexture} size="lg" />
+                    <MinecraftItem id="stone" resolveModel={resolveModel} resolveTexture={resolveTexture} size="lg" />
+                    <MinecraftItem id="oak_log" resolveModel={resolveModel} resolveTexture={resolveTexture} size="lg" />
+                    <MinecraftItem
+                        id="crafting_table"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="lg"
+                    />
                 </div>
             </div>
         </div>

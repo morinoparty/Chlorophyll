@@ -1,11 +1,14 @@
 "use client";
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
+import { useEffect, useState } from "react";
 import { minecraftItem } from "styled-system/recipes";
-import { MINECRAFT_ITEMS, type MinecraftItemId } from "./minecraft-items";
+import { type ResolvedMinecraftItem, resolveMinecraftItem } from "./resolve-minecraft-item";
 
 interface MinecraftItemProps extends HTMLArkProps<"div"> {
-    /** 表示するアイテムの ID。既知の ID は補完対象になるが、未収録の ID も文字列として受け付ける */
-    id: MinecraftItemId | (string & {});
+    /** 表示するアイテムの ID(例: "stone" / "diamond_sword")。Minecraft のアイテム ID とそのまま対応する */
+    id: string;
+    /** モデル JSON のファイルパス(例: "item/stone.json" / "block/stone.json")から実際の URL を解決する関数 */
+    resolveModel: (path: string) => string;
     /** テクスチャのファイル名から実際に表示する URL を解決する関数。ライブラリ側はテクスチャ画像を同梱しないため必須 */
     resolveTexture: (fileName: string) => string;
     /** アイテムスロットの大きさ */
@@ -13,21 +16,38 @@ interface MinecraftItemProps extends HTMLArkProps<"div"> {
 }
 
 // Minecraft のインベントリ GUI と同じ見た目でアイテム/ブロックを描画するコンポーネント。
-// MINECRAFT_ITEMS のメタデータから種別を判定し、
-// 平面アイテムは 1 枚絵、ブロックは 3 面等角図として自動で描き分ける
-const MinecraftItem = ({ className, id, resolveTexture, size, ...props }: MinecraftItemProps) => {
+// id からモデル JSON (item/*.json -> block/*.json) を実際にたどって種別と面テクスチャを判定するため、
+// このコンポーネント自身はどのアイテムが平面でどのアイテムがブロックかを一切決め打ちしない。
+// 単一立方体に帰着しない形状(階段・柵・植物など)は非対応として何も描画しない
+const MinecraftItem = ({ className, id, resolveModel, resolveTexture, size, ...props }: MinecraftItemProps) => {
     const styles = minecraftItem({ size });
-    // 未収録の ID は定義が見つからないため、何も描画せず穏やかに諦める
-    const definition = MINECRAFT_ITEMS[id as MinecraftItemId];
+    const [resolved, setResolved] = useState<ResolvedMinecraftItem | null>(null);
 
-    if (!definition) {
+    useEffect(() => {
+        // id が変わっている間に前回の解決結果が残らないよう、まず一旦クリアする
+        setResolved(null);
+        let cancelled = false;
+
+        resolveMinecraftItem(id, { resolveModel }).then((result) => {
+            if (!cancelled) {
+                setResolved(result);
+            }
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [id, resolveModel]);
+
+    // 解決中、または非対応の形状だった場合は何も描画しない
+    if (!resolved) {
         return null;
     }
 
-    if (definition.type === "flat") {
+    if (resolved.type === "flat") {
         return (
             <ark.div {...props} className={styles.root.concat(" ", className || "")}>
-                <img className={styles.flat} src={resolveTexture(definition.texture)} alt={id} />
+                <img className={styles.flat} src={resolveTexture(resolved.texture)} alt={id} />
             </ark.div>
         );
     }
@@ -35,16 +55,15 @@ const MinecraftItem = ({ className, id, resolveTexture, size, ...props }: Minecr
     return (
         <ark.div {...props} className={styles.root.concat(" ", className || "")}>
             {/* 上面: もっとも明るい面 */}
-            <div className={styles.top} style={{ backgroundImage: `url(${resolveTexture(definition.top)})` }} />
-            {/* 左面(西向き): もっとも暗い面 */}
-            <div className={styles.left} style={{ backgroundImage: `url(${resolveTexture(definition.left)})` }} />
-            {/* 右面(南向き): 中間の明るさの面 */}
-            <div className={styles.right} style={{ backgroundImage: `url(${resolveTexture(definition.right)})` }} />
+            <div className={styles.top} style={{ backgroundImage: `url(${resolveTexture(resolved.top)})` }} />
+            {/* 左面(east 相当): もっとも暗い面 */}
+            <div className={styles.left} style={{ backgroundImage: `url(${resolveTexture(resolved.left)})` }} />
+            {/* 右面(north 相当): 中間の明るさの面 */}
+            <div className={styles.right} style={{ backgroundImage: `url(${resolveTexture(resolved.right)})` }} />
         </ark.div>
     );
 };
 
 export { MinecraftItem };
 export type { MinecraftItemProps };
-export type { MinecraftItemDefinition, MinecraftItemId, MinecraftItemType } from "./minecraft-items";
-export { MINECRAFT_ITEMS } from "./minecraft-items";
+export type { ResolvedMinecraftItem } from "./resolve-minecraft-item";
