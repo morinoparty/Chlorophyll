@@ -4,7 +4,7 @@ import { css } from "styled-system/css";
 import { Button } from "../../../packages/react";
 
 const meta: Meta<typeof Button> = {
-    title: "COMPONENTS/Button",
+    title: "FORM/Button",
     component: Button,
     parameters: {
         layout: "centered",
