@@ -44,6 +44,13 @@ export const badge = defineRecipe({
                 borderColor: "colorPalette.solid",
                 color: "colorPalette.fg",
             },
+            // 淡い背景 + 枠線: subtle よりも輪郭を出しつつ outline より主張を抑えたい場面向け
+            surface: {
+                bg: "colorPalette.surface",
+                borderWidth: "1px",
+                borderColor: "colorPalette.7",
+                color: "colorPalette.fg",
+            },
         },
         size: {
             // 12px 相当のコンパクトなタグ

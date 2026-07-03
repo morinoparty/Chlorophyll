@@ -14,12 +14,17 @@ const meta: Meta<typeof Badge> = {
         children: { control: "text" },
         variant: {
             control: "select",
-            options: ["solid", "subtle", "outline"],
+            options: ["solid", "subtle", "outline", "surface"],
         },
         size: {
             control: "select",
             options: ["sm", "md"],
         },
+        status: {
+            control: "select",
+            options: [undefined, "success", "warning", "error", "info"],
+        },
+        dot: { control: "boolean" },
     },
     args: {
         children: "Badge",
@@ -48,6 +53,55 @@ export const Outline: Story = {
         variant: "outline",
         children: "保留中",
     },
+};
+
+export const Surface: Story = {
+    args: {
+        variant: "surface",
+        children: "レビュー中",
+    },
+};
+
+export const Status: Story = {
+    args: {
+        children: "Status",
+    },
+    render: (args) => (
+        <div className={showcaseStyles.row}>
+            <Badge {...args} status="success">
+                成功
+            </Badge>
+            <Badge {...args} status="warning">
+                警告
+            </Badge>
+            <Badge {...args} status="error">
+                エラー
+            </Badge>
+            <Badge {...args} status="info">
+                情報
+            </Badge>
+        </div>
+    ),
+};
+
+export const Dot: Story = {
+    args: {
+        variant: "subtle",
+        dot: true,
+    },
+    render: (args) => (
+        <div className={showcaseStyles.row}>
+            <Badge {...args} status="success">
+                稼働中
+            </Badge>
+            <Badge {...args} status="warning">
+                メンテナンス中
+            </Badge>
+            <Badge {...args} status="error">
+                停止中
+            </Badge>
+        </div>
+    ),
 };
 
 export const WithIcon: Story = {
@@ -113,6 +167,43 @@ export const Showcase: Story = {
                     </Badge>
                     <Badge variant="outline" size="md">
                         Medium
+                    </Badge>
+                </div>
+            </div>
+
+            <div className={showcaseStyles.section}>
+                <span className={showcaseStyles.label}>Surface</span>
+                <div className={showcaseStyles.row}>
+                    <Badge variant="surface" size="sm">
+                        Small
+                    </Badge>
+                    <Badge variant="surface" size="md">
+                        Medium
+                    </Badge>
+                </div>
+            </div>
+
+            <div className={showcaseStyles.section}>
+                <span className={showcaseStyles.label}>Status</span>
+                <div className={showcaseStyles.row}>
+                    <Badge status="success">成功</Badge>
+                    <Badge status="warning">警告</Badge>
+                    <Badge status="error">エラー</Badge>
+                    <Badge status="info">情報</Badge>
+                </div>
+            </div>
+
+            <div className={showcaseStyles.section}>
+                <span className={showcaseStyles.label}>Dot</span>
+                <div className={showcaseStyles.row}>
+                    <Badge variant="subtle" status="success" dot>
+                        稼働中
+                    </Badge>
+                    <Badge variant="subtle" status="warning" dot>
+                        メンテナンス中
+                    </Badge>
+                    <Badge variant="subtle" status="error" dot>
+                        停止中
                     </Badge>
                 </div>
             </div>
