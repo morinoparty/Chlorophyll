@@ -9,12 +9,20 @@ import diamondSword from "./assets/diamond_sword.png";
 import enderPearl from "./assets/ender_pearl.png";
 import blockBlockModel from "./assets/models/block/block.json?url";
 import craftingTableBlockModel from "./assets/models/block/crafting_table.json?url";
+import cubeBlockModel from "./assets/models/block/cube.json?url";
+import cubeAllBlockModel from "./assets/models/block/cube_all.json?url";
+import cubeBottomTopBlockModel from "./assets/models/block/cube_bottom_top.json?url";
+import cubeColumnBlockModel from "./assets/models/block/cube_column.json?url";
+import cubeTopBlockModel from "./assets/models/block/cube_top.json?url";
+import fenceInventoryBlockModel from "./assets/models/block/fence_inventory.json?url";
+import oakFenceInventoryBlockModel from "./assets/models/block/oak_fence_inventory.json?url";
 import oakLogBlockModel from "./assets/models/block/oak_log.json?url";
 import stoneBlockModel from "./assets/models/block/stone.json?url";
 import appleItemModel from "./assets/models/item/apple.json?url";
 import craftingTableItemModel from "./assets/models/item/crafting_table.json?url";
 import diamondSwordItemModel from "./assets/models/item/diamond_sword.json?url";
 import enderPearlItemModel from "./assets/models/item/ender_pearl.json?url";
+import oakFenceItemModel from "./assets/models/item/oak_fence.json?url";
 import oakLogItemModel from "./assets/models/item/oak_log.json?url";
 import stickItemModel from "./assets/models/item/stick.json?url";
 import stoneItemModel from "./assets/models/item/stone.json?url";
@@ -54,10 +62,20 @@ const MODEL_MAP: Record<string, string> = {
     "item/stone.json": stoneItemModel,
     "item/oak_log.json": oakLogItemModel,
     "item/crafting_table.json": craftingTableItemModel,
+    "item/oak_fence.json": oakFenceItemModel,
     "block/stone.json": stoneBlockModel,
     "block/oak_log.json": oakLogBlockModel,
     "block/crafting_table.json": craftingTableBlockModel,
     "block/block.json": blockBlockModel,
+    "block/oak_fence_inventory.json": oakFenceInventoryBlockModel,
+    "block/fence_inventory.json": fenceInventoryBlockModel,
+    // 単一立方体の実体(elements)を持つ共通テンプレート群。cube_all/cube_column 等は
+    // テクスチャ変数を付け替えるだけで、実体は block/cube.json が持っている
+    "block/cube.json": cubeBlockModel,
+    "block/cube_all.json": cubeAllBlockModel,
+    "block/cube_column.json": cubeColumnBlockModel,
+    "block/cube_bottom_top.json": cubeBottomTopBlockModel,
+    "block/cube_top.json": cubeTopBlockModel,
 };
 
 const resolveModel = (path: string) => MODEL_MAP[path] ?? "";
@@ -118,6 +136,11 @@ export const OakLog: Story = {
 
 export const CraftingTable: Story = {
     args: { id: "crafting_table" },
+};
+
+// 単一の立方体ではなく、支柱+横棒からなる複数の直方体で構成される形状の例
+export const OakFence: Story = {
+    args: { id: "oak_fence" },
 };
 
 // 一覧表示用レイアウト
@@ -196,6 +219,12 @@ export const Showcase: Story = {
                         resolveTexture={resolveTexture}
                         size="sm"
                     />
+                    <MinecraftItem
+                        id="oak_fence"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="sm"
+                    />
                 </div>
                 <div className={showcaseStyles.row}>
                     <MinecraftItem id="stone" resolveModel={resolveModel} resolveTexture={resolveTexture} size="md" />
@@ -206,12 +235,24 @@ export const Showcase: Story = {
                         resolveTexture={resolveTexture}
                         size="md"
                     />
+                    <MinecraftItem
+                        id="oak_fence"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="md"
+                    />
                 </div>
                 <div className={showcaseStyles.row}>
                     <MinecraftItem id="stone" resolveModel={resolveModel} resolveTexture={resolveTexture} size="lg" />
                     <MinecraftItem id="oak_log" resolveModel={resolveModel} resolveTexture={resolveTexture} size="lg" />
                     <MinecraftItem
                         id="crafting_table"
+                        resolveModel={resolveModel}
+                        resolveTexture={resolveTexture}
+                        size="lg"
+                    />
+                    <MinecraftItem
+                        id="oak_fence"
                         resolveModel={resolveModel}
                         resolveTexture={resolveTexture}
                         size="lg"

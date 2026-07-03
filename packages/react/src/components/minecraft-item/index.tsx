@@ -2,7 +2,7 @@
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
 import { useEffect, useState } from "react";
 import { minecraftItem } from "styled-system/recipes";
-import { MinecraftBlockCube } from "./minecraft-block-cube";
+import { MinecraftBlockModel } from "./minecraft-block-model";
 import { type ResolvedMinecraftItem, resolveMinecraftItem } from "./resolve-minecraft-item";
 
 interface MinecraftItemProps extends HTMLArkProps<"div"> {
@@ -24,13 +24,13 @@ const CANVAS_PIXEL_SIZE: Record<NonNullable<MinecraftItemProps["size"]>, number>
 };
 
 // Minecraft のインベントリ GUI と同じ見た目でアイテム/ブロックを描画するコンポーネント。
-// id からモデル JSON (item/*.json -> block/*.json) を実際にたどって種別・面テクスチャ・
-// GUI 回転角を判定するため、このコンポーネント自身はどのアイテムが平面でどれがブロックか、
-// ブロックをどの角度で見せるかを一切決め打ちしない。
-// ブロックは react-three-fiber で実際の立方体として描画する(CSS の skew による疑似立体だと
+// id からモデル JSON (item/*.json -> block/*.json) を実際にたどって種別・形状(1 つ以上の
+// 直方体)・GUI 回転角を判定するため、このコンポーネント自身はどのアイテムが平面でどれが
+// ブロックか、ブロックがどんな形かを一切決め打ちしない。
+// ブロックは react-three-fiber で実際の立体として描画する(CSS の skew による疑似立体だと
 // テクスチャの中身まで一緒に回転してしまい、木目のような方向性のあるテクスチャの向きが
 // 崩れてしまうため、本物の 3D 回転を使う)。
-// 単一立方体に帰着しない形状(階段・柵・植物など)は非対応として何も描画しない
+// モデル JSON の parent 連鎖のどこにも elements が見つからない形状は非対応として描画しない
 const MinecraftItem = ({ className, id, resolveModel, resolveTexture, size, ...props }: MinecraftItemProps) => {
     const styles = minecraftItem({ size });
     const [resolved, setResolved] = useState<ResolvedMinecraftItem | null>(null);
@@ -66,17 +66,11 @@ const MinecraftItem = ({ className, id, resolveModel, resolveTexture, size, ...p
 
     return (
         <ark.div {...props} className={styles.root.concat(" ", className || "")}>
-            <MinecraftBlockCube
+            <MinecraftBlockModel
+                elements={resolved.elements}
                 rotation={resolved.rotation}
+                resolveTexture={resolveTexture}
                 pixelSize={CANVAS_PIXEL_SIZE[size ?? "md"]}
-                faces={{
-                    up: resolveTexture(resolved.up),
-                    down: resolveTexture(resolved.down),
-                    north: resolveTexture(resolved.north),
-                    south: resolveTexture(resolved.south),
-                    east: resolveTexture(resolved.east),
-                    west: resolveTexture(resolved.west),
-                }}
             />
         </ark.div>
     );

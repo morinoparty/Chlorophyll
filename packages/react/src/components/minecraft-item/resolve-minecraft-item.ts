@@ -1,13 +1,30 @@
 // Minecraft のアイテム/ブロックモデル JSON (assets/minecraft/models/**) を実際に読み、
-// 平面(flat)かブロック(block)か、ブロックならどのテクスチャがどの面に来るか、
-// GUI でどの角度に回すかを機械的に導出する。
-// 手動でアイテムごとに種別・面テクスチャ・回転角を決め打ちしない(= 実データに追従する)ためのモジュール
+// 平面(flat)かブロック(block)か、ブロックならどんな形状(1つ以上の直方体の集まり)で
+// どのテクスチャをどう貼るか、GUI でどの角度に回すかを機械的に導出する。
+// 手動でアイテムごとに種別・形状・回転角を決め打ちしない(= 実データに追従する)ためのモジュール
 
 type MinecraftFace = "up" | "down" | "north" | "south" | "east" | "west";
+
+const FACES: MinecraftFace[] = ["up", "down", "north", "south", "east", "west"];
+
+interface MinecraftModelFace {
+    texture: string;
+    /** テクスチャ上の切り出し範囲(px, 0-16)。省略時は要素の座標から機械的に決まる */
+    uv?: [number, number, number, number];
+}
+
+interface MinecraftModelElement {
+    /** 直方体の始点(0-16 のブロックローカル座標) */
+    from: [number, number, number];
+    /** 直方体の終点(0-16 のブロックローカル座標) */
+    to: [number, number, number];
+    faces?: Partial<Record<MinecraftFace, MinecraftModelFace>>;
+}
 
 interface MinecraftModel {
     parent?: string;
     textures?: Record<string, string>;
+    elements?: MinecraftModelElement[];
     display?: {
         gui?: {
             rotation?: number[];
@@ -15,40 +32,38 @@ interface MinecraftModel {
     };
 }
 
+// 1 面分の、解決済みテクスチャファイル名と切り出し範囲(px, 0-16)
+interface ResolvedFace {
+    texture: string;
+    uv: [number, number, number, number];
+}
+
+// モデルを構成する直方体 1 つ分。from/to は 0-16 のブロックローカル座標のまま保持する
+interface ResolvedElement {
+    from: [number, number, number];
+    to: [number, number, number];
+    faces: Partial<Record<MinecraftFace, ResolvedFace>>;
+}
+
 type ResolvedMinecraftItem =
     | { type: "flat"; texture: string }
     | {
           type: "block";
-          up: string;
-          down: string;
-          north: string;
-          south: string;
-          east: string;
-          west: string;
-          /** GUI 表示時にブロックを回す角度(度)。block/block.json の display.gui.rotation そのもの */
+          /** 立方体 1 個とは限らない(階段・フェンス等は複数の直方体からなる) */
+          elements: ResolvedElement[];
+          /** GUI 表示時にブロックを回す角度(度)。定義しているモデルがなければ block/block.json の既定値 */
           rotation: [number, number, number];
       };
 
-// 単一の 16x16x16 立方体に帰着する「末端」ブロックモデルの面 -> テクスチャ変数名の対応。
-// これらは Mojang のバニラ定義そのものであり、実質的に変化しない安定した対応表なので固定値として持つ
-const CUBE_FACE_ALIASES: Record<string, Record<MinecraftFace, string>> = {
-    "block/cube": { up: "up", down: "down", north: "north", south: "south", east: "east", west: "west" },
-    "block/cube_all": { up: "all", down: "all", north: "all", south: "all", east: "all", west: "all" },
-    "block/cube_column": { up: "end", down: "end", north: "side", south: "side", east: "side", west: "side" },
-    "block/cube_bottom_top": { up: "top", down: "bottom", north: "side", south: "side", east: "side", west: "side" },
-    "block/cube_top": { up: "top", down: "side", north: "side", south: "side", east: "side", west: "side" },
-};
-
-// GUI 表示時の回転(display.gui.rotation)が見つからない場合のフォールバック値。
+// GUI 表示時の回転(display.gui.rotation)がどのモデルにも見つからない場合のフォールバック値。
 // block/block.json(全ブロックの根)で定義されている既定値そのもの
 const DEFAULT_GUI_ROTATION: [number, number, number] = [30, 225, 0];
 
-// 連鎖をたどる parent の最大ホップ数。階段・柵・植物等の複雑形状は
-// この対応表に決して到達しないため、上限に達したら「非対応」として諦める
-const MAX_PARENT_HOPS = 6;
+// 連鎖をたどる parent の最大ホップ数。無限ループの安全弁
+const MAX_PARENT_HOPS = 8;
 
 // モデル JSON の取得結果をキャッシュする。同じアイテムが複数箇所(sm/md/lg など)で
-// 描画されても、また block/block.json のような共通ファイルも fetch は 1 回だけで済む
+// 描画されても、また共通の親モデルも fetch は 1 回だけで済む
 const modelCache = new Map<string, Promise<MinecraftModel | null>>();
 
 const fetchModel = (url: string): Promise<MinecraftModel | null> => {
@@ -86,37 +101,69 @@ const resolveTextureVariable = (value: string, textures: Record<string, string>)
     return current.startsWith("#") ? null : current;
 };
 
-// 末端の面エイリアス表と、蓄積済みテクスチャ変数マップから 6 面すべてのテクスチャを導出する
-const resolveFaces = (
-    aliases: Record<MinecraftFace, string>,
-    textures: Record<string, string>,
-): Record<MinecraftFace, string> | null => {
-    const resolveFace = (face: MinecraftFace): string | null => {
-        const varName = aliases[face];
-        const raw = textures[varName];
-        if (!raw) return null;
-        const resolved = resolveTextureVariable(raw, textures);
-        return resolved ? toTextureFileName(resolved) : null;
-    };
-
-    const up = resolveFace("up");
-    const down = resolveFace("down");
-    const north = resolveFace("north");
-    const south = resolveFace("south");
-    const east = resolveFace("east");
-    const west = resolveFace("west");
-    if (!up || !down || !north || !south || !east || !west) return null;
-
-    return { up, down, north, south, east, west };
+// uv が省略された面のデフォルト切り出し範囲を、要素の座標から機械的に求める
+// (Minecraft の仕様: 面に対応する 2 軸をそのまま uv に使う)
+const defaultUv = (
+    face: MinecraftFace,
+    from: [number, number, number],
+    to: [number, number, number],
+): [number, number, number, number] => {
+    const [x1, y1, z1] = from;
+    const [x2, y2, z2] = to;
+    switch (face) {
+        case "up":
+        case "down":
+            return [x1, z1, x2, z2];
+        case "north":
+        case "south":
+            return [x1, y1, x2, y2];
+        default:
+            return [z1, y1, z2, y2];
+    }
 };
 
-// item/<id>.json が参照するブロックモデルの parent 連鎖をたどり、6 面のテクスチャを導出する。
-// 単一立方体に帰着しない形状(階段・柵・植物など)に到達したら null を返す
-const resolveBlockFaces = async (
+// モデルの elements をテクスチャ変数まで解決した ResolvedElement[] に変換する。
+// いずれかの面のテクスチャ参照が解決できない場合は非対応として null を返す
+const resolveElements = (
+    elements: MinecraftModelElement[],
+    textures: Record<string, string>,
+): ResolvedElement[] | null => {
+    const resolved: ResolvedElement[] = [];
+
+    for (const element of elements) {
+        const faces: Partial<Record<MinecraftFace, ResolvedFace>> = {};
+
+        for (const face of FACES) {
+            const faceDef = element.faces?.[face];
+            if (!faceDef) continue;
+
+            const rawTexture = resolveTextureVariable(faceDef.texture, textures);
+            if (!rawTexture) return null;
+
+            faces[face] = {
+                texture: toTextureFileName(rawTexture),
+                uv: faceDef.uv ?? defaultUv(face, element.from, element.to),
+            };
+        }
+
+        resolved.push({ from: element.from, to: element.to, faces });
+    }
+
+    return resolved;
+};
+
+// item/<id>.json が参照するブロックモデルの parent 連鎖をたどり、
+// 直方体の集まり(elements)と GUI 回転角を導出する。
+// elements を持つ最初の(= 葉に最も近い)モデルがそのブロックの実体の形状。
+// display.gui.rotation も同様に、連鎖の中で最初に見つかったものを優先する
+// (block/block.json の既定値のまま使えるブロックもあれば、階段やフェンスのように
+// 独自の角度を定義するブロックもあるため)
+const resolveBlockModel = async (
     itemParent: string,
     resolveModel: (path: string) => string,
-): Promise<Record<MinecraftFace, string> | null> => {
+): Promise<{ elements: ResolvedElement[]; rotation: [number, number, number] } | null> => {
     const textures: Record<string, string> = {};
+    let guiRotation: [number, number, number] | null = null;
     let currentPath = itemParent;
 
     for (let hop = 0; hop < MAX_PARENT_HOPS; hop += 1) {
@@ -130,27 +177,26 @@ const resolveBlockFaces = async (
             }
         }
 
-        const parent = model.parent ? stripNamespace(model.parent) : null;
-        if (parent && parent in CUBE_FACE_ALIASES) {
-            return resolveFaces(CUBE_FACE_ALIASES[parent], textures);
+        if (guiRotation === null) {
+            const rotation = model.display?.gui?.rotation;
+            if (rotation?.length === 3 && rotation.every((value) => typeof value === "number")) {
+                guiRotation = [rotation[0], rotation[1], rotation[2]];
+            }
         }
+
+        if (model.elements?.length) {
+            const elements = resolveElements(model.elements, textures);
+            if (!elements) return null;
+            return { elements, rotation: guiRotation ?? DEFAULT_GUI_ROTATION };
+        }
+
+        const parent = model.parent ? stripNamespace(model.parent) : null;
         if (!parent?.startsWith("block/")) return null;
         currentPath = parent;
     }
 
-    // ホップ上限に達した = 単純な立方体に帰着しない複雑な形状 -> 非対応
+    // ホップ上限に達した = 通常のブロックモデルとして解決できない -> 非対応
     return null;
-};
-
-// 全ブロック共通の根である block/block.json から GUI 表示時の回転角を読む。
-// 通常どのブロックでも上書きされない共通値のため、取得できなければ既定値にフォールバックする
-const resolveGuiRotation = async (resolveModel: (path: string) => string): Promise<[number, number, number]> => {
-    const model = await fetchModel(resolveModel("block/block.json"));
-    const rotation = model?.display?.gui?.rotation;
-    if (rotation?.length === 3 && rotation.every((value) => typeof value === "number")) {
-        return [rotation[0], rotation[1], rotation[2]];
-    }
-    return DEFAULT_GUI_ROTATION;
 };
 
 interface ResolveMinecraftItemOptions {
@@ -158,8 +204,9 @@ interface ResolveMinecraftItemOptions {
     resolveModel: (path: string) => string;
 }
 
-// id からモデル JSON を実際にたどり、平面/ブロックの種別・面テクスチャ・GUI 回転角を導出する。
-// 単一立方体に帰着しない形状(階段・柵・植物など)は null を返す(= 非対応として描画しない)
+// id からモデル JSON を実際にたどり、平面/ブロックの種別・形状・GUI 回転角を導出する。
+// モデルが見つからない、あるいは parent 連鎖のどこにも elements が現れない場合は
+// null を返す(= 非対応として描画しない)
 const resolveMinecraftItem = async (
     id: string,
     { resolveModel }: ResolveMinecraftItemOptions,
@@ -176,14 +223,11 @@ const resolveMinecraftItem = async (
     const itemParent = itemModel.parent ? stripNamespace(itemModel.parent) : null;
     if (!itemParent?.startsWith("block/")) return null;
 
-    const [faces, rotation] = await Promise.all([
-        resolveBlockFaces(itemParent, resolveModel),
-        resolveGuiRotation(resolveModel),
-    ]);
-    if (!faces) return null;
+    const block = await resolveBlockModel(itemParent, resolveModel);
+    if (!block) return null;
 
-    return { type: "block", ...faces, rotation };
+    return { type: "block", ...block };
 };
 
 export { resolveMinecraftItem };
-export type { ResolvedMinecraftItem, MinecraftFace };
+export type { ResolvedMinecraftItem, ResolvedElement, ResolvedFace, MinecraftFace };
