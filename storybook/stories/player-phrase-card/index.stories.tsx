@@ -6,7 +6,7 @@ import { PlayerPhraseCard } from "../../../packages/react/src/components/player-
 const FIXED_TIME = Date.UTC(2024, 0, 1, 0, 0, 0);
 
 const meta: Meta<typeof PlayerPhraseCard> = {
-    title: "COMPONENTS/PlayerPhraseCard",
+    title: "BRAND/PlayerPhraseCard",
     component: PlayerPhraseCard,
     parameters: {
         layout: "centered",
