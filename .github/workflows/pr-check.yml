@@ -61,9 +61,17 @@ jobs:
           ref: main
           path: main
 
+      # pnpm/action-setup はルート package.json の packageManager 欄から自動でバージョンを
+      # 拾うが、このジョブは checkout 先が pr/main サブディレクトリなので自動検出できない。
+      # PR 側の package.json から明示的にバージョンを読み取って渡す
+      - name: Resolve pnpm version
+        id: pnpm_version
+        run: echo "version=$(node -p "require('./pr/package.json').packageManager.split('@')[1]")" >> "$GITHUB_OUTPUT"
+
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
+          version: ${{ steps.pnpm_version.outputs.version }}
           run_install: false
 
       - uses: actions/setup-node@v6
