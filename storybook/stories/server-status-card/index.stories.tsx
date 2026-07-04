@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ServerStatusCard } from "../../../packages/react";
 
 const meta: Meta<typeof ServerStatusCard> = {
-    title: "MINECRAFT/ServerStatusCard",
+    title: "BLOCK/ServerStatusCard",
     component: ServerStatusCard,
     parameters: {
         layout: "centered",

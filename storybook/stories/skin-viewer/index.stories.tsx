@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { SkinViewer } from "../../../packages/react";
 
 const meta: Meta<typeof SkinViewer> = {
-    title: "BLOCK/SkinViewer",
+    title: "MINECRAFT/SkinViewer",
     component: SkinViewer,
     parameters: {
         layout: "centered",
