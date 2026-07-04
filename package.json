@@ -25,7 +25,11 @@
     "pnpm": {
         "onlyBuiltDependencies": [
             "puppeteer"
-        ]
+        ],
+        "overrides": {
+            "three": "^0.185.1",
+            "@types/three": "^0.185.0"
+        }
     },
     "packageManager": "pnpm@10.28.1"
 }
