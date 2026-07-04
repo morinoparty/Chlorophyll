@@ -3,15 +3,16 @@ import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
 import { useEffect, useState } from "react";
 import { minecraftItem } from "styled-system/recipes";
 import { MinecraftBlockModel } from "./minecraft-block-model";
+import { useMinecraftAssets } from "./minecraft-provider";
 import { type ResolvedMinecraftItem, resolveMinecraftItem } from "./resolve-minecraft-item";
 
 interface MinecraftItemProps extends HTMLArkProps<"div"> {
     /** 表示するアイテムの ID(例: "stone" / "diamond_sword")。Minecraft のアイテム ID とそのまま対応する */
     id: string;
-    /** モデル JSON のファイルパス(例: "item/stone.json" / "block/stone.json")から実際の URL を解決する関数 */
-    resolveModel: (path: string) => string;
-    /** テクスチャのファイル名から実際に表示する URL を解決する関数。ライブラリ側はテクスチャ画像を同梱しないため必須 */
-    resolveTexture: (fileName: string) => string;
+    /** モデル JSON のファイルパス(例: "item/stone.json" / "block/stone.json")から実際の URL を解決する関数。省略した場合は、囲んでいる MinecraftProvider から解決関数を受け取る */
+    resolveModel?: (path: string) => string;
+    /** テクスチャのファイル名から実際に表示する URL を解決する関数。ライブラリ側はテクスチャ画像を同梱しないため必須。省略した場合は、囲んでいる MinecraftProvider から解決関数を受け取る */
+    resolveTexture?: (fileName: string) => string;
     /** アイテムスロットの大きさ */
     size?: "sm" | "md" | "lg";
 }
@@ -31,11 +32,31 @@ const CANVAS_PIXEL_SIZE: Record<NonNullable<MinecraftItemProps["size"]>, number>
 // テクスチャの中身まで一緒に回転してしまい、木目のような方向性のあるテクスチャの向きが
 // 崩れてしまうため、本物の 3D 回転を使う)。
 // モデル JSON の parent 連鎖のどこにも elements が見つからない形状は非対応として描画しない
-const MinecraftItem = ({ className, id, resolveModel, resolveTexture, size, ...props }: MinecraftItemProps) => {
+const MinecraftItem = ({
+    className,
+    id,
+    resolveModel: resolveModelProp,
+    resolveTexture: resolveTextureProp,
+    size,
+    ...props
+}: MinecraftItemProps) => {
+    // props で個別に渡された場合はそれを優先し、なければ MinecraftProvider から受け取る
+    const assets = useMinecraftAssets();
+    const resolveModel = resolveModelProp ?? assets?.resolveModel;
+    const resolveTexture = resolveTextureProp ?? assets?.resolveTexture;
+
+    // Hooks は早期 throw より前に、レンダーのたびに必ず同じ順序・回数で呼び出す必要があるため
+    // (Rules of Hooks)、resolveModel/resolveTexture の有無チェックはすべての hooks の後に行う
     const styles = minecraftItem({ size });
     const [resolved, setResolved] = useState<ResolvedMinecraftItem | null>(null);
 
     useEffect(() => {
+        // resolveModel が無い場合は、この後の throw でレンダリングが中断されるため
+        // ここでは何もせず早期リターンする
+        if (!resolveModel) {
+            return;
+        }
+
         // id が変わっている間に前回の解決結果が残らないよう、まず一旦クリアする
         setResolved(null);
         let cancelled = false;
@@ -50,6 +71,12 @@ const MinecraftItem = ({ className, id, resolveModel, resolveTexture, size, ...p
             cancelled = true;
         };
     }, [id, resolveModel]);
+
+    if (!resolveModel || !resolveTexture) {
+        throw new Error(
+            "MinecraftItem requires resolveModel/resolveTexture, either as props or via a wrapping MinecraftProvider.",
+        );
+    }
 
     // 解決中、または非対応の形状だった場合は何も描画しない
     if (!resolved) {
@@ -78,4 +105,6 @@ const MinecraftItem = ({ className, id, resolveModel, resolveTexture, size, ...p
 
 export { MinecraftItem };
 export type { MinecraftItemProps };
+export type { MinecraftAssetsResolver, MinecraftProviderProps } from "./minecraft-provider";
+export { MinecraftProvider } from "./minecraft-provider";
 export type { ResolvedMinecraftItem } from "./resolve-minecraft-item";
