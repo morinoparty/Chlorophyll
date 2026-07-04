@@ -1,12 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "styled-system/css";
-import { MinecraftItem } from "../../../packages/react";
-import apple from "./assets/apple.png";
-import craftingTableFront from "./assets/crafting_table_front.png";
-import craftingTableSide from "./assets/crafting_table_side.png";
-import craftingTableTop from "./assets/crafting_table_top.png";
-import diamondSword from "./assets/diamond_sword.png";
-import enderPearl from "./assets/ender_pearl.png";
+import { MinecraftItem, MinecraftProvider } from "../../../packages/react";
 import blockBlockModel from "./assets/models/block/block.json?url";
 import craftingTableBlockModel from "./assets/models/block/crafting_table.json?url";
 import cubeBlockModel from "./assets/models/block/cube.json?url";
@@ -26,11 +20,17 @@ import oakFenceItemModel from "./assets/models/item/oak_fence.json?url";
 import oakLogItemModel from "./assets/models/item/oak_log.json?url";
 import stickItemModel from "./assets/models/item/stick.json?url";
 import stoneItemModel from "./assets/models/item/stone.json?url";
-import oakLog from "./assets/oak_log.png";
-import oakLogTop from "./assets/oak_log_top.png";
-import oakPlanks from "./assets/oak_planks.png";
-import stick from "./assets/stick.png";
-import stone from "./assets/stone.png";
+import apple from "./assets/textures/apple.png";
+import craftingTableFront from "./assets/textures/crafting_table_front.png";
+import craftingTableSide from "./assets/textures/crafting_table_side.png";
+import craftingTableTop from "./assets/textures/crafting_table_top.png";
+import diamondSword from "./assets/textures/diamond_sword.png";
+import enderPearl from "./assets/textures/ender_pearl.png";
+import oakLog from "./assets/textures/oak_log.png";
+import oakLogTop from "./assets/textures/oak_log_top.png";
+import oakPlanks from "./assets/textures/oak_planks.png";
+import stick from "./assets/textures/stick.png";
+import stone from "./assets/textures/stone.png";
 
 // テクスチャファイル名 -> Storybook にバンドルされたサンプル画像 URL の対応表。
 // ライブラリ本体はテクスチャを同梱しないため、利用側がこの resolveTexture を用意する。
@@ -141,6 +141,29 @@ export const CraftingTable: Story = {
 // 単一の立方体ではなく、支柱+横棒からなる複数の直方体で構成される形状の例
 export const OakFence: Story = {
     args: { id: "oak_fence" },
+};
+
+// --- MinecraftProvider ---
+
+const providerStyles = {
+    row: css({ display: "flex", gap: "4", alignItems: "center", flexWrap: "wrap" }),
+};
+
+// resolveModel/resolveTexture を各 MinecraftItem に個別に渡す代わりに、MinecraftProvider を
+// 一箇所でラップするだけで済むことを示す。assets には .storybook/main.ts の staticDirs で
+// 公開しているローカルパス(/minecraft-assets/models, /minecraft-assets/textures)を渡している
+export const WithProvider: Story = {
+    parameters: { layout: "padded" },
+    render: () => (
+        <MinecraftProvider assets="/minecraft-assets">
+            <div className={providerStyles.row}>
+                <MinecraftItem id="diamond_sword" size="md" />
+                <MinecraftItem id="stone" size="md" />
+                <MinecraftItem id="oak_log" size="md" />
+                <MinecraftItem id="oak_fence" size="md" />
+            </div>
+        </MinecraftProvider>
+    ),
 };
 
 // 一覧表示用レイアウト
