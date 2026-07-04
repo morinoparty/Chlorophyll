@@ -10,6 +10,8 @@ export const playerPhraseCard = defineSlotRecipe({
     base: {
         root: {
             display: "grid",
+            // PlayerAvatar(#48)は md 固定(48px)なので、グリッド 1 列目もそれに合わせる
+            gridTemplateColumns: "48px 1fr",
             gap: "3",
         },
         body: {
@@ -30,23 +32,6 @@ export const playerPhraseCard = defineSlotRecipe({
             fontVariationSettings: "'wght' 800",
             lineHeight: "[1.2]",
         },
-    },
-    // グリッド 1 列目の幅は PlayerAvatar(#48)の一辺の大きさに合わせる
-    variants: {
-        size: {
-            sm: {
-                root: { gridTemplateColumns: "32px 1fr" },
-            },
-            md: {
-                root: { gridTemplateColumns: "48px 1fr" },
-            },
-            lg: {
-                root: { gridTemplateColumns: "64px 1fr" },
-            },
-        },
-    },
-    defaultVariants: {
-        size: "md",
     },
     // 利用者側で動的に使われても CSS が出るよう全 variant を生成する
     staticCss: ["*"],

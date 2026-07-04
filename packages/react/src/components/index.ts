@@ -21,7 +21,6 @@ export {
     PlayerPhraseCard,
     type PlayerPhraseCardBodyProps,
     type PlayerPhraseCardRootProps,
-    type PlayerPhraseCardSize,
 } from "./player-phrase-card";
 export { ServerStatusCard, type ServerStatusCardProps } from "./server-status-card";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";
