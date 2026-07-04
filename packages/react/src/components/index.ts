@@ -16,4 +16,10 @@ export {
     type MinecraftProviderProps,
     type ResolvedMinecraftItem,
 } from "./minecraft-item";
-export { PlayerPhraseCard, type PlayerPhraseCardProps } from "./player-phrase-card";
+export { PlayerAvatar, type PlayerAvatarProps, type PlayerAvatarSize } from "./player-avatar";
+export {
+    PlayerPhraseCard,
+    type PlayerPhraseCardBodyProps,
+    type PlayerPhraseCardRootProps,
+} from "./player-phrase-card";
+export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";

@@ -25,31 +25,40 @@ const meta: Meta<typeof PlayerPhraseCard> = {
 export default meta;
 type Story = StoryObj<typeof PlayerPhraseCard>;
 
+// Compound Component パターンのため、Root は Avatar/Body/Phrase/Name を子として組み立てる
+const renderCard = (playerId: string, playerName: string) => (
+    <PlayerPhraseCard playerId={playerId} playerName={playerName} referenceTime={FIXED_TIME}>
+        <PlayerPhraseCard.Avatar />
+        <PlayerPhraseCard.Body>
+            <PlayerPhraseCard.Phrase />
+            <PlayerPhraseCard.Name />
+        </PlayerPhraseCard.Body>
+    </PlayerPhraseCard>
+);
+
+// Controls パネルで playerId/playerName を編集できるよう、args をそのまま Root に渡す
 export const Default: Story = {
     args: {
         playerId: "389b1a68-f647-4dd0-a421-61b6c22fdebe",
         playerName: "Chocolatt",
     },
+    render: (args) => (
+        <PlayerPhraseCard {...args}>
+            <PlayerPhraseCard.Avatar />
+            <PlayerPhraseCard.Body>
+                <PlayerPhraseCard.Phrase />
+                <PlayerPhraseCard.Name />
+            </PlayerPhraseCard.Body>
+        </PlayerPhraseCard>
+    ),
 };
 
 export const MultiplePlayers: Story = {
     render: () => (
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <PlayerPhraseCard
-                playerId="389b1a68-f647-4dd0-a421-61b6c22fdebe"
-                playerName="Chocolatt"
-                referenceTime={FIXED_TIME}
-            />
-            <PlayerPhraseCard
-                playerId="75ba1a8c-4e02-4b4b-abe3-92ef4af6147c"
-                playerName="Yahirrro"
-                referenceTime={FIXED_TIME}
-            />
-            <PlayerPhraseCard
-                playerId="f8b761ec-4a54-48eb-a040-c5604042bcc9"
-                playerName="_NIKOMARU"
-                referenceTime={FIXED_TIME}
-            />
+            {renderCard("389b1a68-f647-4dd0-a421-61b6c22fdebe", "Chocolatt")}
+            {renderCard("75ba1a8c-4e02-4b4b-abe3-92ef4af6147c", "Yahirrro")}
+            {renderCard("f8b761ec-4a54-48eb-a040-c5604042bcc9", "_NIKOMARU")}
         </div>
     ),
 };
