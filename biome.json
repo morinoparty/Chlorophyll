@@ -7,7 +7,7 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "includes": ["**"]
+        "includes": ["**", "!**/.claude/worktrees"]
     },
     "formatter": {
         "enabled": true,
