@@ -2,11 +2,15 @@
 import { createContext, type ReactNode, useContext } from "react";
 import { playerPhraseCard } from "styled-system/recipes";
 import { randomPhrase } from "../../lib/random-phrase";
+import { PlayerAvatar, type PlayerAvatarSize } from "../player-avatar";
+
+type PlayerPhraseCardSize = PlayerAvatarSize;
 
 interface PlayerPhraseCardContextValue {
     playerId: string;
     playerName: string;
     phrase: string;
+    size: PlayerPhraseCardSize;
 }
 
 // Root で計算した値(playerId/playerName/生成済みフレーズ)を配下の各パーツに配る Context
@@ -25,36 +29,34 @@ interface PlayerPhraseCardRootProps {
     playerName: string;
     /** フレーズ生成に使う基準時刻(ms)。未指定なら現在時刻(VRT では固定して決定的にする) */
     referenceTime?: number;
+    /** Avatar の大きさ。root 側のグリッド 1 列目もこれに合わせて変わる */
+    size?: PlayerPhraseCardSize;
     children: ReactNode;
 }
 
 // カード全体を包む Root。playerId/playerName/referenceTime からフレーズを生成し、
 // 配下の Avatar/Body/Phrase/Name に Context 経由で配る
-const PlayerPhraseCardRoot = ({ playerId, playerName, referenceTime, children }: PlayerPhraseCardRootProps) => {
-    const styles = playerPhraseCard();
+const PlayerPhraseCardRoot = ({
+    playerId,
+    playerName,
+    referenceTime,
+    size = "md",
+    children,
+}: PlayerPhraseCardRootProps) => {
+    const styles = playerPhraseCard({ size });
     const phrase = `あの${randomPhrase("first", playerId, referenceTime)}${randomPhrase("last", playerId, referenceTime)}`;
 
     return (
-        <PlayerPhraseCardContext.Provider value={{ playerId, playerName, phrase }}>
+        <PlayerPhraseCardContext.Provider value={{ playerId, playerName, phrase, size }}>
             <div className={styles.root}>{children}</div>
         </PlayerPhraseCardContext.Provider>
     );
 };
 
-// プレイヤーのアバター画像。playerId から mc-heads.net の画像を表示する
+// プレイヤーのアバター画像。実体は PlayerAvatar(#48)にそのまま委譲する
 const PlayerPhraseCardAvatar = () => {
-    const { playerId, playerName } = usePlayerPhraseCardContext("Avatar");
-    const styles = playerPhraseCard();
-
-    return (
-        <img
-            className={styles.avatar}
-            src={`https://mc-heads.net/avatar/${playerId}/48`}
-            alt={playerName}
-            width={48}
-            height={48}
-        />
-    );
+    const { playerId, playerName, size } = usePlayerPhraseCardContext("Avatar");
+    return <PlayerAvatar playerId={playerId} playerName={playerName} size={size} />;
 };
 
 interface PlayerPhraseCardBodyProps {
@@ -91,4 +93,4 @@ const PlayerPhraseCard = Object.assign(PlayerPhraseCardRoot, {
 });
 
 export { PlayerPhraseCard };
-export type { PlayerPhraseCardRootProps, PlayerPhraseCardBodyProps };
+export type { PlayerPhraseCardRootProps, PlayerPhraseCardBodyProps, PlayerPhraseCardSize };

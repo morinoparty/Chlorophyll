@@ -3,6 +3,7 @@ import { badge } from "./badge";
 import { button } from "./button";
 import { list } from "./list";
 import { minecraftItem } from "./minecraft-item";
+import { playerAvatar } from "./player-avatar";
 import { playerPhraseCard } from "./player-phrase-card";
 import { serverStatusCard } from "./server-status-card";
 import { skinViewer } from "./skin-viewer";
@@ -16,6 +17,7 @@ export const recipes = {
 
 // 複数スロットを持つレシピ
 export const slotRecipes = {
+    playerAvatar,
     playerPhraseCard,
     list,
     accordion,

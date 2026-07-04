@@ -6,17 +6,11 @@ export const playerPhraseCard = defineSlotRecipe({
     description: "The player phrase card component",
     // プリセット側でスロットの CSS を生成し、パッケージ利用者がソースを
     // スキャンしなくてもスタイルが当たるようにする
-    slots: ["root", "avatar", "body", "phrase", "name"],
+    slots: ["root", "body", "phrase", "name"],
     base: {
         root: {
             display: "grid",
-            gridTemplateColumns: "48px 1fr",
             gap: "3",
-        },
-        avatar: {
-            width: "[48px]",
-            height: "[48px]",
-            borderRadius: "lg",
         },
         body: {
             display: "flex",
@@ -36,6 +30,23 @@ export const playerPhraseCard = defineSlotRecipe({
             fontVariationSettings: "'wght' 800",
             lineHeight: "[1.2]",
         },
+    },
+    // グリッド 1 列目の幅は PlayerAvatar(#48)の一辺の大きさに合わせる
+    variants: {
+        size: {
+            sm: {
+                root: { gridTemplateColumns: "32px 1fr" },
+            },
+            md: {
+                root: { gridTemplateColumns: "48px 1fr" },
+            },
+            lg: {
+                root: { gridTemplateColumns: "64px 1fr" },
+            },
+        },
+    },
+    defaultVariants: {
+        size: "md",
     },
     // 利用者側で動的に使われても CSS が出るよう全 variant を生成する
     staticCss: ["*"],

@@ -15,6 +15,10 @@ const meta: Meta<typeof PlayerPhraseCard> = {
     argTypes: {
         playerId: { control: "text" },
         playerName: { control: "text" },
+        size: {
+            control: "select",
+            options: ["sm", "md", "lg"],
+        },
     },
     args: {
         // 既定で決定的に描画する
@@ -59,6 +63,29 @@ export const MultiplePlayers: Story = {
             {renderCard("389b1a68-f647-4dd0-a421-61b6c22fdebe", "Chocolatt")}
             {renderCard("75ba1a8c-4e02-4b4b-abe3-92ef4af6147c", "Yahirrro")}
             {renderCard("f8b761ec-4a54-48eb-a040-c5604042bcc9", "_NIKOMARU")}
+        </div>
+    ),
+};
+
+export const Sizes: Story = {
+    parameters: { layout: "padded" },
+    render: () => (
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {(["sm", "md", "lg"] as const).map((size) => (
+                <PlayerPhraseCard
+                    key={size}
+                    playerId="389b1a68-f647-4dd0-a421-61b6c22fdebe"
+                    playerName="Chocolatt"
+                    referenceTime={FIXED_TIME}
+                    size={size}
+                >
+                    <PlayerPhraseCard.Avatar />
+                    <PlayerPhraseCard.Body>
+                        <PlayerPhraseCard.Phrase />
+                        <PlayerPhraseCard.Name />
+                    </PlayerPhraseCard.Body>
+                </PlayerPhraseCard>
+            ))}
         </div>
     ),
 };
