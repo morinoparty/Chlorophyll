@@ -15,6 +15,11 @@ const config: StorybookConfig = {
         name: "@storybook/react-vite",
         options: {},
     },
-    staticDirs: [{ from: "../../docs/public/", to: "/" }],
+    staticDirs: [
+        { from: "../../docs/public/", to: "/" },
+        // MinecraftProvider の "assets" にローカルパスを渡すデモ用。models/ textures/ の
+        // 構成のまま /minecraft-assets 配下に公開する
+        { from: "../stories/minecraft-item/assets", to: "/minecraft-assets" },
+    ],
 };
 export default config;
