@@ -17,4 +17,5 @@ export {
     type ResolvedMinecraftItem,
 } from "./minecraft-item";
 export { PlayerPhraseCard, type PlayerPhraseCardProps } from "./player-phrase-card";
+export { ServerStatusCard, type ServerStatusCardProps } from "./server-status-card";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";

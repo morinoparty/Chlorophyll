@@ -4,6 +4,7 @@ import { button } from "./button";
 import { list } from "./list";
 import { minecraftItem } from "./minecraft-item";
 import { playerPhraseCard } from "./player-phrase-card";
+import { serverStatusCard } from "./server-status-card";
 import { skinViewer } from "./skin-viewer";
 
 // 単一要素のレシピ
@@ -19,4 +20,5 @@ export const slotRecipes = {
     list,
     accordion,
     minecraftItem,
+    serverStatusCard,
 };
