@@ -81,6 +81,20 @@ export const Clickable: Story = {
     ),
 };
 
+// 背景を透過する ghost variant。
+// 白カードを敷かず、preview が塗るページの地色(colorPalette.bg)に直接馴染ませて見せる
+export const Ghost: Story = {
+    render: () => (
+        <div style={{ width: PANEL_WIDTH }}>
+            <List.Root variant="ghost">
+                <List.Item>誰かに送る</List.Item>
+                <List.Item>口座の記録</List.Item>
+                <List.Item>貯める</List.Item>
+            </List.Root>
+        </div>
+    ),
+};
+
 // disabled な行を含むサンプル
 export const WithDisabled: Story = {
     render: () => (

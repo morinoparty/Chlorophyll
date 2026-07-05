@@ -4,14 +4,22 @@ import { ChevronDownIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { accordion } from "styled-system/recipes";
 
-// variant を持たないためスロットクラスは一度だけ解決すれば済む
+// root 以外のスロットは variant に依存しないため一度だけ解決すれば済む
 const styles = accordion();
 
-type AccordionRootProps = ComponentProps<typeof ArkAccordion.Root>;
+// パネル(白カード)か、背景を透過してページ地に馴染ませる ghost か
+type AccordionVariant = "panel" | "ghost";
+
+type AccordionRootProps = ComponentProps<typeof ArkAccordion.Root> & {
+    /** 背景の見せ方。panel(白カード) / ghost(背景透過) */
+    variant?: AccordionVariant;
+};
 
 // アコーディオン全体を包むパネル
-const AccordionRoot = ({ className, ...props }: AccordionRootProps) => {
-    return <ArkAccordion.Root {...props} className={styles.root.concat(" ", className || "")} />;
+const AccordionRoot = ({ className, variant = "panel", ...props }: AccordionRootProps) => {
+    // 背景色は variant で変わるため root だけ variant 込みで解決する
+    const rootClass = accordion({ variant }).root;
+    return <ArkAccordion.Root {...props} className={rootClass.concat(" ", className || "")} />;
 };
 
 type AccordionItemProps = ComponentProps<typeof ArkAccordion.Item>;
@@ -51,4 +59,10 @@ const Accordion = Object.assign(AccordionRoot, {
 });
 
 export { Accordion };
-export type { AccordionRootProps, AccordionItemProps, AccordionItemTriggerProps, AccordionItemContentProps };
+export type {
+    AccordionRootProps,
+    AccordionItemProps,
+    AccordionItemTriggerProps,
+    AccordionItemContentProps,
+    AccordionVariant,
+};
