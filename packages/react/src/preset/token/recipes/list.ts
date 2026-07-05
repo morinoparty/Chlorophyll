@@ -9,10 +9,9 @@ export const list = defineSlotRecipe({
     slots: ["root", "item", "label", "icon"],
     base: {
         root: {
-            // Figma: 白いパネルの上に行を縦に並べたナビゲーション用リスト
+            // 行を縦に並べたナビゲーション用リスト。背景色は variant で切り替える
             display: "flex",
             flexDirection: "column",
-            bg: "bg.panel",
             // 16px = radii.2xl。角丸でカード状に見せる
             borderRadius: "2xl",
             // パネル端の余白は item 側に含めるため root には padding を持たせない。
@@ -67,6 +66,16 @@ export const list = defineSlotRecipe({
         },
     },
     variants: {
+        // 背景の見せ方。白いカードにまとめる panel と、
+        // 背景を透過してページ地の上に直接並べる ghost を用意する
+        variant: {
+            panel: {
+                root: { bg: "bg.panel" },
+            },
+            ghost: {
+                root: { bg: "transparent" },
+            },
+        },
         size: {
             // Figma 準拠の標準サイズ
             md: {
@@ -103,6 +112,7 @@ export const list = defineSlotRecipe({
         },
     },
     defaultVariants: {
+        variant: "panel",
         size: "md",
     },
     // 利用者側で動的に使われても CSS が出るよう全 variant を生成する

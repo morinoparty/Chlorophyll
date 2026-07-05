@@ -1,106 +1,85 @@
-# 🌿 Chlorophyll 🌿
+# 🌿 Chlorophyll
+
+[![Documentation](https://shieldcn.dev/badge/Documentation-read-396E56.svg?logo=readthedocs&logoColor=white)][docs]
+[![Storybook](https://shieldcn.dev/badge/Storybook-live-FF4785.svg?logo=storybook&logoColor=white)][storybook]
+[![GitHub Packages](https://shieldcn.dev/badge/GitHub_Packages-chlorophyll--react-181717.svg?logo=github&logoColor=white)][npm]
 
 > [!WARNING]
 > This project is currently under development.
 
-## ✨ About the Project
-Chlorophyll is a modern and user-friendly UI component library built with React and TypeScript.
+A modern UI component library for React, built with TypeScript, Panda CSS, and Ark UI.
 
 ## 🛠 Tech Stack
-- 🎨 **Language**: TypeScript
-- ⚛️ **Framework**: React
-- 🎯 **CSS Library**: PandaCSS
-- 🎭 **Headless Library**: Ark UI
 
-## 🚀 Setting Up the Development Environment
-
-### 🎯 Check UI Components
-```bash
-pnpm run dev
-```
-
-## 🧪 Testing
-
-### Install dependencies
-```bash
-pnpm dlx playwright install --with-deps
-```
-
-### 🎯 Check UI Components
-```bash
-pnpm run test:runner
-```
-
-### 🎯 Check VRT
-```bash
-pnpm run test:vrt
-```
-
+**TypeScript** · **React** · **Panda CSS** · **Ark UI**
 
 ## 📦 Installation
 
-1. Install PandaCSS
+The package is hosted on GitHub Packages. Point the `@morinoparty` scope at the registry in your `.npmrc`:
 
-[Getting Started - PandaCSS](https://panda-css.com/docs/overview/getting-started#framework-guides)
-
-2. Install React Aria
-```bash
-pnpm add 
-
-3. Install the Panda Preset
-```bash
-pnpm add @ark-ui/react
+```ini
+@morinoparty:registry=https://npm.pkg.github.com
 ```
 
+```bash
+pnpm add @morinoparty/chlorophyll-react
+```
+
+Add the Panda preset to `panda.config.ts`:
+
 ```ts
-import { defineConfig } from '@pandacss/dev'
-import { createPreset } from '@moripa/chlorophyll-preset'
-import mori from '@moripa/chlorophyll-preset/colors/accent/mori'
-import stone from '@moripa/chlorophyll-preset/colors/base/stone'
+import { defineConfig } from "@pandacss/dev";
+import { createPreset, stone } from "@morinoparty/chlorophyll-react/preset";
 
 export default defineConfig({
   preflight: true,
-  presets: [createPreset({ accentColor: mori, grayColor: stone, radius: 'sm' })],
-  include: ['./src/**/*.{js,jsx,ts,tsx}'],
-  jsxFramework: 'react',
-  outdir: 'styled-system',
-})
+  presets: ["@pandacss/preset-base", createPreset({ brandColor: "mori", grayColor: stone, radius: "md" })],
+  include: ["./src/**/*.{ts,tsx}"],
+  jsxFramework: "react",
+  outdir: "styled-system",
+});
 ```
-
-4. Path alias
-tsconfig.json
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@styled-system/*": ["./styled-system/*"]
-    }
-  }
-}
-```
-
 
 ## 📖 Usage
-```tsx
-import { Button } from '@moripa/chlorophyll';
 
-function App() {
-  return (
-    <Button>Click me!</Button>
-  );
+```tsx
+import { Button } from "@morinoparty/chlorophyll-react";
+
+export function App() {
+  return <Button>Click me!</Button>;
 }
 ```
 
-[token](https://946d07e9-color-palette.nikomaru.workers.dev/?min=0.1&max=0.98&length=15&chroma=0.085&data=[{%22colorValue%22%3A%22rgba(57%2C+110%2C+86%2C+1)%22%2C%22colorId%22%3A%22mori%22%2C%22uniqueId%22%3A1}%2C{%22colorValue%22%3A%22rgba(59%2C+149%2C+155%2C+1)%22%2C%22colorId%22%3A%22umi%22%2C%22uniqueId%22%3A2}])
+See the [documentation][docs] and [Storybook][storybook] for the full component list and design tokens.
 
-## 🤝 Contribution
-Contributions are welcome! Follow these steps to participate:
+## 🚀 Development
+
+```bash
+pnpm install
+pnpm dev            # all packages
+pnpm dev:docs       # docs only
+pnpm dev:storybook  # storybook only
+```
+
+### Testing
+
+```bash
+pnpm dlx playwright install --with-deps
+pnpm test           # component tests
+pnpm test:vrt       # visual regression tests
+```
+
+## 🤝 Contributing
 
 1. Fork this repository
 2. Create a new branch
 3. Commit your changes
-4. Create a pull request
+4. Open a pull request
+
+[docs]: https://chlorophyll-docs.nikomaru.workers.dev/docs/getting-started/introduction/
+[storybook]: https://chlorophyll-storybook.nikomaru.workers.dev
+[npm]: https://github.com/morinoparty/chlorophyll/pkgs/npm/chlorophyll-react
 
 ---
-Made with 💚 by Morino party team
+
+Made with 💚 by Morino Party

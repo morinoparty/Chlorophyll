@@ -53,6 +53,23 @@ export const Multiple: Story = {
     ),
 };
 
+// 背景を透過する ghost variant。
+// 白カードを敷かず、preview が塗るページの地色(colorPalette.bg)に直接馴染ませて見せる
+export const Ghost: Story = {
+    render: () => (
+        <div style={{ width: PANEL_WIDTH }}>
+            <Accordion.Root variant="ghost" defaultValue={["send"]} collapsible>
+                {items.map((item) => (
+                    <Accordion.Item key={item.value} value={item.value}>
+                        <Accordion.ItemTrigger>{item.title}</Accordion.ItemTrigger>
+                        <Accordion.ItemContent>{item.body}</Accordion.ItemContent>
+                    </Accordion.Item>
+                ))}
+            </Accordion.Root>
+        </div>
+    ),
+};
+
 // disabled な項目を含む
 export const WithDisabled: Story = {
     render: () => (

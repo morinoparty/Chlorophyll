@@ -8,10 +8,9 @@ export const accordion = defineSlotRecipe({
     slots: ["root", "item", "itemTrigger", "itemContent", "itemIndicator"],
     base: {
         root: {
-            // List と同じく白いパネルにまとめ、角丸でカード状に見せる
+            // 角丸でカード状に見せる。背景色は variant(panel/ghost)で切り替える
             display: "flex",
             flexDirection: "column",
-            bg: "bg.panel",
             borderRadius: "2xl",
             // 角丸からはみ出す trigger の hover 背景を切り取る
             overflow: "hidden",
@@ -88,6 +87,22 @@ export const accordion = defineSlotRecipe({
                 animationTimingFunction: "easeOut",
             },
         },
+    },
+    variants: {
+        // 背景の見せ方。白いカードにまとめる panel と、
+        // 背景を透過してページ地の上に直接並べる ghost を用意する
+        variant: {
+            panel: {
+                root: { bg: "bg.panel" },
+            },
+            ghost: {
+                // 親の背景をそのまま透かし、区切り線だけで項目を仕切る
+                root: { bg: "transparent" },
+            },
+        },
+    },
+    defaultVariants: {
+        variant: "panel",
     },
     // 利用者側で動的に使われても CSS が出るよう全 variant を生成する
     staticCss: ["*"],
