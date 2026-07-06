@@ -13,13 +13,13 @@ const meta: Meta<typeof PlayerMap> = {
         playerName: { control: "text" },
         size: {
             control: "select",
-            options: ["sm", "md", "lg"],
+            options: ["md", "lg", "xl"],
         },
     },
     args: {
         playerId: "389b1a68-f647-4dd0-a421-61b6c22fdebe",
         playerName: "Chocolatt",
-        size: "sm",
+        size: "md",
     },
 };
 
@@ -32,9 +32,9 @@ export const Sizes: Story = {
     parameters: { layout: "padded" },
     render: (args) => (
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            <PlayerMap {...args} size="sm" />
             <PlayerMap {...args} size="md" />
             <PlayerMap {...args} size="lg" />
+            <PlayerMap {...args} size="xl" />
         </div>
     ),
 };

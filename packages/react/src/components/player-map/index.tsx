@@ -1,15 +1,15 @@
 "use client";
 import { playerMap } from "styled-system/recipes";
 
-// チップの大きさ。外枠(白 + 薄緑リング)を含めたアバターの寸法に対応する
-type PlayerMapSize = "sm" | "md" | "lg";
+// MoriPath 版に合わせた 3 サイズ(md がデフォルト)
+type PlayerMapSize = "md" | "lg" | "xl";
 
-// size ごとの、mc-heads.net に要求するアバター画像の実ピクセルサイズ。
-// 外枠(白 2px + 薄緑 2px)を含めた寸法に合わせておけば、頭は十分な解像度で表示できる
+// size ごとに mc-heads.net へ要求するアバター画像の実ピクセルサイズ。
+// レシピの avatar 幅・高さと一致させる
 const AVATAR_PIXEL_SIZE: Record<PlayerMapSize, number> = {
-    sm: 28,
-    md: 40,
-    lg: 52,
+    md: 32,
+    lg: 36,
+    xl: 48,
 };
 
 interface PlayerMapProps {
@@ -21,23 +21,21 @@ interface PlayerMapProps {
     size?: PlayerMapSize;
 }
 
-// 地図上に置くプレイヤーマーカー。頭(アバター)を「白 2px + 薄緑 2px」の枠で囲み、
-// 名前を添えた白フチ + 薄緑のチップ。地図のどんな背景に載せても浮いて見えるようにする
-const PlayerMap = ({ playerId, playerName, size = "sm" }: PlayerMapProps) => {
+// 地図上に置くプレイヤーマーカー。アバター画像に名前を添えた、白フチ + 淡い下地のチップ。
+// MoriPath の player-map をそのまま移植している
+const PlayerMap = ({ playerId, playerName, size = "md" }: PlayerMapProps) => {
     const styles = playerMap({ size });
     const pixelSize = AVATAR_PIXEL_SIZE[size];
 
     return (
         <div className={styles.root}>
-            <span className={styles.avatar}>
-                <img
-                    className={styles.avatarImage}
-                    src={`https://mc-heads.net/avatar/${playerId}/${pixelSize}`}
-                    alt={playerName}
-                    width={pixelSize}
-                    height={pixelSize}
-                />
-            </span>
+            <img
+                className={styles.avatar}
+                src={`https://mc-heads.net/avatar/${playerId}/${pixelSize}`}
+                alt={playerName}
+                width={pixelSize}
+                height={pixelSize}
+            />
             <span className={styles.name}>{playerName}</span>
         </div>
     );
