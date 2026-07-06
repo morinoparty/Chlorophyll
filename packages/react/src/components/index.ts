@@ -17,6 +17,7 @@ export {
     type ResolvedMinecraftItem,
 } from "./minecraft-item";
 export { PlayerAvatar, type PlayerAvatarProps, type PlayerAvatarSize } from "./player-avatar";
+export { PlayerMap, type PlayerMapProps, type PlayerMapSize } from "./player-map";
 export {
     PlayerPhraseCard,
     type PlayerPhraseCardBodyProps,

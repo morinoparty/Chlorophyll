@@ -4,6 +4,7 @@ import { button } from "./button";
 import { list } from "./list";
 import { minecraftItem } from "./minecraft-item";
 import { playerAvatar } from "./player-avatar";
+import { playerMap } from "./player-map";
 import { playerPhraseCard } from "./player-phrase-card";
 import { skinViewer } from "./skin-viewer";
 
@@ -17,6 +18,7 @@ export const recipes = {
 // 複数スロットを持つレシピ
 export const slotRecipes = {
     playerAvatar,
+    playerMap,
     playerPhraseCard,
     list,
     accordion,
