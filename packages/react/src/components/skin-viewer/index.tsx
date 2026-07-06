@@ -39,6 +39,11 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     autoRotate?: boolean;
     /** 再生するアニメーション。"none" ならポーズしたまま静止表示する */
     animation?: SkinViewerAnimation;
+    /**
+     * マウス操作(回転・ズーム・パン)を受け付けるか。false にすると操作を全てロックした
+     * 表示専用モードになる。autoRotate による自動回転は操作ロックとは独立して機能する
+     */
+    interactive?: boolean;
 }
 
 const DEFAULT_WIDTH = 300;
@@ -59,11 +64,12 @@ const SkinViewer = ({
     height = DEFAULT_HEIGHT,
     autoRotate = true,
     animation = "idle",
+    interactive = true,
     ...props
 }: SkinViewerProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const viewerRef = useRef<SkinViewer3D | null>(null);
-    const styles = skinViewerRecipe();
+    const styles = skinViewerRecipe({ interactive });
 
     // マウント時に 1 度だけ SkinViewer3D を生成し、アンマウント時に必ず dispose する。
     // WebGL コンテキストはリークしやすく、StrictMode の二重実行下でも安全なように
@@ -101,6 +107,16 @@ const SkinViewer = ({
         }
         viewer.autoRotate = autoRotate;
     }, [autoRotate]);
+
+    // マウス操作の受け付けを OrbitControls の enabled で一括制御する。
+    // false で回転・ズーム・パンを全てロックし、表示専用にする
+    useEffect(() => {
+        const viewer = viewerRef.current;
+        if (!viewer) {
+            return;
+        }
+        viewer.controls.enabled = interactive;
+    }, [interactive]);
 
     useEffect(() => {
         const viewer = viewerRef.current;
