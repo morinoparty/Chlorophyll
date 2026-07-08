@@ -16,6 +16,11 @@ type Story = StoryObj<typeof NewsCard>;
 // morino.party で実際に使われている画像・プレイヤーを利用する
 const THUMBNAIL = "https://morino.party/assets/image/guide/guide-use-train.webp";
 const PLAYER = { playerId: "75ba1a8c-4e02-4b4b-abe3-92ef4af6147c", playerName: "Yahirrro" };
+const PLAYERS = [
+    PLAYER,
+    { playerId: "389b1a68-f647-4dd0-a421-61b6c22fdebe", playerName: "Chocolatt" },
+    { playerId: "f8b761ec-4a54-48eb-a040-c5604042bcc9", playerName: "_NIKOMARU" },
+];
 
 export const Default: Story = {
     render: () => (
@@ -28,7 +33,7 @@ export const Default: Story = {
                 </NewsCard.Content>
                 <NewsCard.Footer>
                     <NewsCard.Date dateTime="2026-05-18">2026/05/18</NewsCard.Date>
-                    <NewsCard.Author {...PLAYER} />
+                    <NewsCard.Author players={[PLAYER]} />
                 </NewsCard.Footer>
             </NewsCard.Root>
         </div>
@@ -47,7 +52,7 @@ export const WithoutImage: Story = {
                 </NewsCard.Content>
                 <NewsCard.Footer>
                     <NewsCard.Date dateTime="2026-05-18">2026/5/18</NewsCard.Date>
-                    <NewsCard.Author {...PLAYER} />
+                    <NewsCard.Author players={[PLAYER]} />
                 </NewsCard.Footer>
             </NewsCard.Root>
         </div>
@@ -66,7 +71,26 @@ export const LongTitle: Story = {
                 </NewsCard.Content>
                 <NewsCard.Footer>
                     <NewsCard.Date dateTime="2026-04-02">2026/04/02</NewsCard.Date>
-                    <NewsCard.Author {...PLAYER} />
+                    <NewsCard.Author players={[PLAYER]} />
+                </NewsCard.Footer>
+            </NewsCard.Root>
+        </div>
+    ),
+};
+
+// 投稿者が複数の場合は、2 人目以降が少し傾いて背後に重なる
+export const MultipleAuthors: Story = {
+    render: () => (
+        <div style={{ width: "320px" }}>
+            <NewsCard.Root>
+                <NewsCard.Thumbnail src={THUMBNAIL} alt="もりもと駅の様子" />
+                <NewsCard.Content>
+                    <NewsCard.Category>イベント情報</NewsCard.Category>
+                    <NewsCard.Title>合同イベントのお知らせ</NewsCard.Title>
+                </NewsCard.Content>
+                <NewsCard.Footer>
+                    <NewsCard.Date dateTime="2026-06-01">2026/06/01</NewsCard.Date>
+                    <NewsCard.Author players={PLAYERS} />
                 </NewsCard.Footer>
             </NewsCard.Root>
         </div>
@@ -86,7 +110,7 @@ export const AsLink: Story = {
                     </NewsCard.Content>
                     <NewsCard.Footer>
                         <NewsCard.Date dateTime="2026-05-18">2026/5/18</NewsCard.Date>
-                        <NewsCard.Author {...PLAYER} />
+                        <NewsCard.Author players={[PLAYER]} />
                     </NewsCard.Footer>
                 </a>
             </NewsCard.Root>
@@ -106,7 +130,7 @@ export const Grid: Story = {
                 </NewsCard.Content>
                 <NewsCard.Footer>
                     <NewsCard.Date dateTime="2026-05-18">2026/5/18</NewsCard.Date>
-                    <NewsCard.Author {...PLAYER} />
+                    <NewsCard.Author players={[PLAYER]} />
                 </NewsCard.Footer>
             </NewsCard.Root>
             <NewsCard.Root>
@@ -117,7 +141,7 @@ export const Grid: Story = {
                 </NewsCard.Content>
                 <NewsCard.Footer>
                     <NewsCard.Date dateTime="2026-05-18">2026/05/18</NewsCard.Date>
-                    <NewsCard.Author {...PLAYER} />
+                    <NewsCard.Author players={[PLAYER]} />
                 </NewsCard.Footer>
             </NewsCard.Root>
             <NewsCard.Root>
@@ -128,7 +152,7 @@ export const Grid: Story = {
                 </NewsCard.Content>
                 <NewsCard.Footer>
                     <NewsCard.Date dateTime="2026-04-02">2026/04/02</NewsCard.Date>
-                    <NewsCard.Author {...PLAYER} />
+                    <NewsCard.Author players={[PLAYER]} />
                 </NewsCard.Footer>
             </NewsCard.Root>
         </div>

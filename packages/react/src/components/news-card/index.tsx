@@ -65,16 +65,32 @@ const NewsCardDate = ({ className, ...props }: NewsCardDateProps) => {
     return <ark.time {...props} className={cx(styles.date, className)} />;
 };
 
-interface NewsCardAuthorProps {
+interface NewsCardPlayer {
     /** 投稿者(プレイヤー)の UUID */
     playerId: string;
     /** 投稿者のプレイヤー名 */
     playerName: string;
 }
 
-// 投稿者のアバター。実体は PlayerAvatar(#48)にそのまま委譲する
-const NewsCardAuthor = ({ playerId, playerName }: NewsCardAuthorProps) => {
-    return <PlayerAvatar playerId={playerId} playerName={playerName} size="sm" />;
+interface NewsCardAuthorProps {
+    /** 投稿者の一覧。先頭が最前面に表示され、2 人目以降は少し傾けて背後に重なる */
+    players: NewsCardPlayer[];
+}
+
+// 投稿者のアバター。複数人の場合は扇状に重ねて表示し、hover で広がって各人が見える。
+// "group" クラスを付けて、この領域への hover を子(author)の展開スタイルから参照する。
+// アバターの実体は PlayerAvatar(#48)にそのまま委譲する
+const NewsCardAuthor = ({ players }: NewsCardAuthorProps) => {
+    const styles = newsCard();
+    return (
+        <span className={cx(styles.authors, "group")}>
+            {players.map((player) => (
+                <span key={player.playerId} className={styles.author}>
+                    <PlayerAvatar playerId={player.playerId} playerName={player.playerName} size="sm" />
+                </span>
+            ))}
+        </span>
+    );
 };
 
 // Compound Component パターン: NewsCard.Root / Thumbnail / Content / Category / Title / Footer / Date / Author
@@ -90,4 +106,4 @@ const NewsCard = Object.assign(NewsCardRoot, {
 });
 
 export { NewsCard };
-export type { NewsCardThumbnailProps, NewsCardDateProps, NewsCardAuthorProps };
+export type { NewsCardThumbnailProps, NewsCardDateProps, NewsCardAuthorProps, NewsCardPlayer };
