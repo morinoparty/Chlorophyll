@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SkinViewer } from "../../../packages/react";
+import { MinecraftProvider, SkinViewer } from "../../../packages/react";
 
 const meta: Meta<typeof SkinViewer> = {
     title: "MINECRAFT/SkinViewer",
@@ -58,4 +58,19 @@ export const NonInteractive: Story = {
         autoRotate: false,
         animation: "none",
     },
+};
+
+// MinecraftProvider の config.skinUrl でスキンテクスチャの取得先を差し替えた例。
+// `skinUrl: (uuid) => ...` の形で任意の画像サービスや自前 API を使える
+export const WithCustomSkinUrl: Story = {
+    render: (args) => (
+        <MinecraftProvider
+            config={{
+                // mc-heads.net の代わりに minotar.net から取得する(ハイフン無し UUID 形式)
+                skinUrl: (playerId) => `https://minotar.net/skin/${playerId.replaceAll("-", "")}`,
+            }}
+        >
+            <SkinViewer {...args} />
+        </MinecraftProvider>
+    ),
 };

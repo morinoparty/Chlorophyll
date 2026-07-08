@@ -2,8 +2,8 @@
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
 import { useEffect, useState } from "react";
 import { minecraftItem } from "styled-system/recipes";
+import { useMinecraftConfig } from "../minecraft-provider";
 import { MinecraftBlockModel } from "./minecraft-block-model";
-import { useMinecraftAssets } from "./minecraft-provider";
 import { type ResolvedMinecraftItem, resolveMinecraftItem } from "./resolve-minecraft-item";
 
 interface MinecraftItemProps extends HTMLArkProps<"div"> {
@@ -41,9 +41,9 @@ const MinecraftItem = ({
     ...props
 }: MinecraftItemProps) => {
     // props で個別に渡された場合はそれを優先し、なければ MinecraftProvider から受け取る
-    const assets = useMinecraftAssets();
-    const resolveModel = resolveModelProp ?? assets?.resolveModel;
-    const resolveTexture = resolveTextureProp ?? assets?.resolveTexture;
+    const config = useMinecraftConfig();
+    const resolveModel = resolveModelProp ?? config.resolveModel;
+    const resolveTexture = resolveTextureProp ?? config.resolveTexture;
 
     // Hooks は早期 throw より前に、レンダーのたびに必ず同じ順序・回数で呼び出す必要があるため
     // (Rules of Hooks)、resolveModel/resolveTexture の有無チェックはすべての hooks の後に行う
@@ -105,6 +105,4 @@ const MinecraftItem = ({
 
 export { MinecraftItem };
 export type { MinecraftItemProps };
-export type { MinecraftAssetsResolver, MinecraftProviderProps } from "./minecraft-provider";
-export { MinecraftProvider } from "./minecraft-provider";
 export type { ResolvedMinecraftItem } from "./resolve-minecraft-item";

@@ -9,6 +9,7 @@ import {
     WaveAnimation,
 } from "skinview3d";
 import { skinViewer as skinViewerRecipe } from "styled-system/recipes";
+import { useMinecraftConfig } from "../minecraft-provider";
 
 type SkinViewerAnimation = "idle" | "walking" | "running" | "wave" | "none";
 
@@ -27,7 +28,7 @@ const ANIMATION_FACTORY: Record<
 };
 
 interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height"> {
-    /** プレイヤーの UUID。skinUrl 省略時、この ID から mc-heads.net の skin テクスチャ URL を組み立てる */
+    /** プレイヤーの UUID。skinUrl 省略時、MinecraftProvider の skinUrl でスキンテクスチャの URL に解決される */
     playerId?: string;
     /** skin テクスチャ画像の URL。指定した場合 playerId より優先される */
     skinUrl?: string;
@@ -49,10 +50,6 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
 const DEFAULT_WIDTH = 300;
 const DEFAULT_HEIGHT = 400;
 
-// playerId から mc-heads.net の skin テクスチャ URL を組み立てる。
-// ライブラリ側は skin 画像を同梱しないため、skinUrl 未指定時のみ使うフォールバック
-const buildSkinUrl = (playerId: string): string => `https://mc-heads.net/skin/${playerId}`;
-
 // Minecraft のプレイヤースキンを 3D で表示するコンポーネント。
 // skinview3d は react-three-fiber を介さず自前で WebGLRenderer / requestAnimationFrame ループを
 // 持つため、canvas の ref を直接渡して命令的に SkinViewer3D インスタンスを生成・破棄する
@@ -70,6 +67,8 @@ const SkinViewer = ({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const viewerRef = useRef<SkinViewer3D | null>(null);
     const styles = skinViewerRecipe({ interactive });
+    // skinUrl 未指定時に playerId からテクスチャ URL を解決する(既定は mc-heads.net)
+    const { skinUrl: resolveSkinUrl } = useMinecraftConfig();
 
     // マウント時に 1 度だけ SkinViewer3D を生成し、アンマウント時に必ず dispose する。
     // WebGL コンテキストはリークしやすく、StrictMode の二重実行下でも安全なように
@@ -130,14 +129,14 @@ const SkinViewer = ({
     // 不正な URL でも例外で落ちないよう catch で握りつぶす(表示は前回のスキンのまま残る)
     useEffect(() => {
         const viewer = viewerRef.current;
-        const resolvedSkinUrl = skinUrl ?? (playerId ? buildSkinUrl(playerId) : undefined);
+        const resolvedSkinUrl = skinUrl ?? (playerId ? resolveSkinUrl(playerId) : undefined);
         if (!viewer || !resolvedSkinUrl) {
             return;
         }
         viewer.loadSkin(resolvedSkinUrl)?.catch(() => {
             // 読み込み失敗時は何もしない(前回表示していたスキンのままにする)
         });
-    }, [skinUrl, playerId]);
+    }, [skinUrl, playerId, resolveSkinUrl]);
 
     return (
         <ark.canvas
