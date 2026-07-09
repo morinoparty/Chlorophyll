@@ -42,8 +42,8 @@ const Badge = ({ className, variant, size, status, dot, children, ...props }: Ba
 // ドット単体には意味がないため、装飾として扱い aria-hidden にする
 const dotStyle = css({
     display: "inline-block",
-    width: "0.5em",
-    height: "0.5em",
+    width: "0.55em",
+    height: "0.55em",
     borderRadius: "full",
     bg: "colorPalette.solid",
     flexShrink: 0,
