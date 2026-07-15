@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CopyableCode } from "./copyable-code";
+import { MotionBall, parseDurationSeconds, parseEaseValue } from "./motion-preview";
 import { tokenTableStyles } from "./shared-styles";
 import { parseTokensByType, type TokenType } from "./token-parser";
 
@@ -22,9 +23,11 @@ export function TokenTable({ type, previewType, showDescription = false, descrip
             case "fontWeight":
                 return <span style={{ fontWeight: stringValue }}>The quick brown fox</span>;
             case "duration":
-                return <span>{stringValue}</span>;
+                // トークンの持続時間そのままでボールを動かし、速さの違いを見せる
+                return <MotionBall duration={parseDurationSeconds(stringValue)} ease={[0.4, 0, 0.2, 1]} />;
             case "easing":
-                return <span>{stringValue}</span>;
+                // カーブの違いに集中できるよう長さは 1.5 秒に揃える
+                return <MotionBall duration={1.5} ease={parseEaseValue(stringValue)} />;
             case "letterSpacing":
                 return <span style={{ letterSpacing: stringValue }}>The quick brown fox</span>;
             case "lineHeight":
@@ -80,7 +83,8 @@ export function TokenTable({ type, previewType, showDescription = false, descrip
                                 {/* クリックでトークン名をコピーできる */}
                                 <CopyableCode text={`${type}.${token.name}`} />
                             </td>
-                            <td className={styles.tdMuted}>
+                            {/* 値は折り返さず 1 行で見せる（横スクロールはラッパーが受ける） */}
+                            <td className={styles.tdMuted} style={{ whiteSpace: "nowrap" }}>
                                 <code>{String(token.value)}</code>
                             </td>
                             {previewType && <td className={styles.td}>{renderPreview(token.value)}</td>}

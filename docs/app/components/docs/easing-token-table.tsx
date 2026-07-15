@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "motion/react";
 import { sva } from "styled-system/css";
-import { parseTokensByType, type Token } from "./token-parser";
+import { CopyableCode } from "./copyable-code";
+import { MotionBall, parseEaseValue } from "./motion-preview";
+import { parseTokensByType } from "./token-parser";
 
 const tableStyles = sva({
     slots: ["tableWrapper", "table", "th", "td", "tdMuted"],
@@ -44,41 +45,6 @@ const tableStyles = sva({
     },
 });
 
-const previewStyles = sva({
-    slots: ["track", "ball"],
-    base: {
-        track: {
-            position: "relative",
-            width: "full",
-            height: "6",
-            borderRadius: "full",
-            backgroundColor: "colorPalette.bg.subtle",
-            overflow: "hidden",
-        },
-        ball: {
-            position: "absolute",
-            top: "1",
-            left: "0",
-            width: "4",
-            height: "4",
-            borderRadius: "full",
-            backgroundColor: "colorPalette.solid",
-        },
-    },
-});
-
-/**
- * Parse cubic-bezier CSS value into [x1, y1, x2, y2] for motion's ease prop.
- */
-function parseEaseValue(value: string): [number, number, number, number] | "linear" {
-    if (value === "linear") return "linear";
-    const match = value.match(/cubic-bezier\(([^)]+)\)/);
-    if (!match) return "linear";
-    const parts = match[1].split(",").map((s) => Number.parseFloat(s.trim()));
-    if (parts.length !== 4 || parts.some(Number.isNaN)) return "linear";
-    return parts as [number, number, number, number];
-}
-
 const descriptions: Record<string, string> = {
     linear: "一定速度のアニメーション",
     easeIn: "加速するアニメーション",
@@ -87,28 +53,6 @@ const descriptions: Record<string, string> = {
     emphasizedDecelerate: "強調された減速",
     emphasizedAccelerate: "強調された加速",
 };
-
-function EasingBall({ token }: { token: Token }) {
-    const ease = parseEaseValue(String(token.value));
-    const preview = previewStyles();
-
-    return (
-        <div className={preview.track}>
-            <motion.div
-                className={preview.ball}
-                initial={{ left: "0px" }}
-                animate={{ left: "calc(100% - 1rem)" }}
-                transition={{
-                    duration: 1.5,
-                    ease,
-                    repeat: Number.POSITIVE_INFINITY,
-                    repeatType: "loop",
-                    repeatDelay: 0.8,
-                }}
-            />
-        </div>
-    );
-}
 
 export function EasingTokenTable() {
     const styles = tableStyles();
@@ -129,13 +73,15 @@ export function EasingTokenTable() {
                     {tokens.map((token) => (
                         <tr key={token.name}>
                             <td className={styles.td}>
-                                <code>easings.{token.name}</code>
+                                <CopyableCode text={`easings.${token.name}`} />
                             </td>
-                            <td className={styles.tdMuted}>
+                            {/* 値は折り返さず 1 行で見せる（横スクロールはラッパーが受ける） */}
+                            <td className={styles.tdMuted} style={{ whiteSpace: "nowrap" }}>
                                 <code>{String(token.value)}</code>
                             </td>
                             <td className={styles.td} style={{ minWidth: "160px" }}>
-                                <EasingBall token={token} />
+                                {/* カーブの違いに集中できるよう長さは 1.5 秒に揃える */}
+                                <MotionBall duration={1.5} ease={parseEaseValue(String(token.value))} />
                             </td>
                             <td className={styles.tdMuted}>{descriptions[token.name] || ""}</td>
                         </tr>
