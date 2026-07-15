@@ -12,9 +12,12 @@ export const badge = defineRecipe({
         alignItems: "center",
         justifyContent: "center",
         gap: "1",
-        // 角丸でピル状に見せる
-        borderRadius: "md",
-        fontWeight: "medium",
+        // 完全な角丸でピル状にし、ステータス/ラベルのタグとして読ませる
+        borderRadius: "full",
+        // button 一家と揃えたセミボールド。小さな文字でもくっきり読ませる
+        fontWeight: "semibold",
+        // 短いラベルを詰まって見せないよう、わずかに字間を開ける
+        letterSpacing: "wide",
         // 折り返さず 1 行で表示する
         whiteSpace: "nowrap",
         verticalAlign: "middle",
@@ -41,7 +44,8 @@ export const badge = defineRecipe({
             // 枠線のみ: 背景を持たせたくない場面向け
             outline: {
                 borderWidth: "1px",
-                borderColor: "colorPalette.solid",
+                // surface と同じ scale 7 に揃え、solid(scale 9)ほど枠線が主張しないようにする
+                borderColor: "colorPalette.7",
                 color: "colorPalette.fg",
             },
             // 淡い背景 + 枠線: subtle よりも輪郭を出しつつ outline より主張を抑えたい場面向け
@@ -53,17 +57,17 @@ export const badge = defineRecipe({
             },
         },
         size: {
-            // 12px 相当のコンパクトなタグ
+            // コンパクトなタグ
             sm: {
-                // 左右 6px / 上下 2px
-                px: "1.5",
+                // ピル状に見せるため左右をやや広めに。左右 8px / 上下 2px
+                px: "2",
                 py: "0.5",
                 fontSize: "xs",
             },
             // 標準サイズ
             md: {
-                // 左右 8px / 上下 4px
-                px: "2",
+                // ピル状に見せるため左右をやや広めに。左右 10px / 上下 4px
+                px: "2.5",
                 py: "1",
                 fontSize: "sm",
             },

@@ -191,9 +191,12 @@ export const yellow = defineSemanticTokens.colors({
                 value: "{colors.yellow.10}",
             },
         },
-        // Text on solid background (yellow needs dark text for contrast)
+        // Text on solid background (yellow needs dark text for contrast).
+        // yellow.solid(scale 9) は明るく、ライト/ダーク両テーマでほぼ同じ明るさのため、
+        // テーマ分岐する yellow.12 だとダーク時に淡いインクとなり文字が読めなくなる。
+        // どちらのテーマでも常に暗いインク(light ランプの 12)を重ねてコントラストを確保する。
         contrast: {
-            value: "{colors.yellow.12}",
+            value: "{colors.yellow.light.12}",
         },
     },
 });
