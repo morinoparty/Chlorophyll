@@ -6,6 +6,7 @@ import { durations } from "./durations";
 import { easings } from "./easings";
 import { fontSizes } from "./font-size";
 import { fontWeights } from "./font-weight";
+import { fonts } from "./fonts";
 import { letterSpacings } from "./letter-spacing";
 import { lineHeights } from "./line-height";
 import { opacity } from "./opacity";
@@ -23,6 +24,7 @@ export const tokens = defineTokens({
     colors,
     durations,
     easings,
+    fonts,
     fontSizes,
     fontWeights,
     letterSpacings,

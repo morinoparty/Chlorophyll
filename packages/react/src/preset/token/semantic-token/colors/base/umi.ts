@@ -134,5 +134,11 @@ export const umi = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.white}",
         },
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        focus: {
+            ring: {
+                value: "{colors.umi.a4}",
+            },
+        },
     },
 });

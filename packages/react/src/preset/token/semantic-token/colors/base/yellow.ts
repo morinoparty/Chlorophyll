@@ -128,5 +128,11 @@ export const yellow = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.yellow.light.12}",
         },
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        focus: {
+            ring: {
+                value: "{colors.yellow.a4}",
+            },
+        },
     },
 });

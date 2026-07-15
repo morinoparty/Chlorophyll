@@ -126,5 +126,11 @@ export const blue = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.white}",
         },
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        focus: {
+            ring: {
+                value: "{colors.blue.a4}",
+            },
+        },
     },
 });

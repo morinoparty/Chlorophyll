@@ -50,6 +50,7 @@
 | `{brand}.solid` | `var(--mpc-colors-{brand}-solid)` | `{brand}.9` | アクセントの塗り色（ボタン等） |
 | `{brand}.solid.emphasized` | `var(--mpc-colors-{brand}-solid-emphasized)` | `{brand}.10` | solid の強調色（hover 等） |
 | `{brand}.contrast` | `var(--mpc-colors-{brand}-contrast)` | `white` | solid 上のコントラスト色 |
+| `{brand}.focus.ring` | `var(--mpc-colors-{brand}-focus-ring)` | `{brand}.a4` | brand に追従するフォーカスリング |
 
 補足: `contrast` は brand ごとに参照が異なる場合がある（実装値は styled-system の生成結果を確認すること）。
 

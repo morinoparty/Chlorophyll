@@ -108,7 +108,8 @@ export const mori = defineSemanticTokens.colors({
                 value: "color-mix(in oklch, {colors.mori.12}, {colors.mori.11} 70%)",
             },
             subtle: {
-                value: "color-mix(in oklch, {colors.mori.11}, transparent 30%)",
+                // 透過率は gray.fg.subtle / fg.subtle と揃える
+                value: "color-mix(in oklch, {colors.mori.11}, transparent 25%)",
             },
             muted: {
                 value: "{colors.gray.11}",
@@ -128,6 +129,12 @@ export const mori = defineSemanticTokens.colors({
         },
         contrast: {
             value: "{colors.white}",
+        },
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        focus: {
+            ring: {
+                value: "{colors.mori.a4}",
+            },
         },
     },
 });

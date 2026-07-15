@@ -27,6 +27,7 @@ const ROLE_RULES = {
     solid: "アクセントの塗り色（ボタン等）",
     "solid.emphasized": "solid の強調色（hover 等）",
     contrast: "solid 上のコントラスト色",
+    "focus.ring": "brand に追従するフォーカスリング",
 };
 
 // グローバルトークン（brand に依存しない）の一行ルール。
@@ -121,7 +122,7 @@ function buildMarkdown(tokens) {
     const globalTokens = tokens.filter(
         (t) => !BRAND_NAMES.some((brand) => t.name === brand || t.name.startsWith(`${brand}.`)),
     );
-    // "mori" を代表ブランドとして使い、全ブランド共通のロールパターン（bg/surface/fg/solid/contrast）を作る。
+    // "mori" を代表ブランドとして使い、全ブランド共通のロールパターン（bg/surface/fg/solid/contrast 等）を作る。
     // mori/umi にしか無い secondary 系は別テーブルで明示する。
     const representativeBrand = "mori";
     const representativeTokens = tokens.filter(
