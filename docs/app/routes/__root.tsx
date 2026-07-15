@@ -53,7 +53,8 @@ function RootComponent() {
                     color: "colorPalette.fg",
                 })}
             >
-                <RootProvider>
+                {/* light モードのみサポートするため、fumadocs のテーマ解決を light に固定する */}
+                <RootProvider theme={{ forcedTheme: "light", defaultTheme: "light" }}>
                     <ThemeScript />
                     {!isDocsPage && <Header />}
                     <main
