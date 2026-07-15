@@ -47,8 +47,9 @@ export function getRouter() {
         defaultPreload: "intent",
         // 遷移が一瞬固まって見えないよう、保留中はスピナーを表示する。
         defaultPendingComponent: PendingSpinner,
-        // 150ms 以内に完了する遷移ではスピナーを出さず、ちらつきを防ぐ。
-        defaultPendingMs: 150,
+        // 通常の遷移（キャッシュ済みツリー + MDX チャンク取得）ではスピナーを出さず、
+        // 本当に時間のかかる遷移だけに限定してちらつきを防ぐ。
+        defaultPendingMs: 600,
         // 一度表示したら最低 300ms は維持して、点滅を防ぐ。
         defaultPendingMinMs: 300,
     });

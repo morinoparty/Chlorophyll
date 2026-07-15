@@ -17,9 +17,11 @@ export const Route = createFileRoute("/docs/$")({
     shouldReload: false,
     loader: async ({ params }) => {
         const slugs = params._splat?.split("/") ?? [];
-        const data = await serverLoader({ data: slugs });
-        await clientLoader.preload(data.path);
-        return data;
+        // ページ固有の path と、全ページ共通のページツリーを並行で取得する
+        const [{ path }, pageTree] = await Promise.all([serverPagePath({ data: slugs }), loadPageTree()]);
+        await clientLoader.preload(path);
+        // deserializePageTree がツリーをミューテートするため、利用側にはコピーを渡す
+        return { path, pageTree: structuredClone(pageTree) };
     },
 });
 
@@ -33,22 +35,29 @@ function getSerializedPageTree() {
     return serializedPageTreeCache;
 }
 
-const serverLoader = createServerFn({
+// ページ固有の情報（MDX の path）だけを返す軽量なサーバー関数。
+// ページツリーを毎回運ばないことで、ナビゲーションごとの転送量と待ち時間を抑える
+const serverPagePath = createServerFn({
     method: "GET",
 })
     .inputValidator((slugs: string[]) => slugs)
     .handler(async ({ data: slugs }) => {
         const page = source.getPage(slugs);
         if (!page) throw notFound();
-
-        // キャッシュしたツリーは SSR 中に fumadocs の deserializePageTree が
-        // React 要素を書き込んでミューテートするため、リクエストごとにコピーを返す。
-        // （共有オブジェクトをそのまま返すと 2 リクエスト目以降のシリアライズが壊れる）
-        return {
-            path: page.path,
-            pageTree: structuredClone(await getSerializedPageTree()),
-        };
+        return { path: page.path };
     });
+
+// ページツリー全体を返すサーバー関数。ツリーはビルド時に不変なので、
+// クライアント側では最初の 1 回だけ取得して以降はキャッシュを使い回す
+const serverPageTree = createServerFn({
+    method: "GET",
+}).handler(async () => structuredClone(await getSerializedPageTree()));
+
+let pageTreePromiseCache: ReturnType<typeof serverPageTree> | undefined;
+function loadPageTree() {
+    pageTreePromiseCache ??= serverPageTree();
+    return pageTreePromiseCache;
+}
 
 const clientLoader = browserCollections.docs.createClientLoader({
     component({ toc, frontmatter, default: MDX }) {
