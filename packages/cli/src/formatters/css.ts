@@ -48,27 +48,6 @@ export function formatCSS(specs: SpecData, options: CSSOptions = {}): string {
             }
 
             lines.push("");
-            lines.push(`  /* ${palette} palette - dark mode */`);
-
-            // Dark 1-12
-            for (let i = 1; i <= 12; i++) {
-                const token = colorsCategory.values.find((t) => t.name === `${palette}.dark.${i}`);
-                if (token) {
-                    const hexValue = convertToHex(String(token.value));
-                    lines.push(`  --mpc-colors-${palette}-dark-${i}: ${hexValue};`);
-                }
-            }
-
-            // Dark a1-a12
-            for (let i = 1; i <= 12; i++) {
-                const token = colorsCategory.values.find((t) => t.name === `${palette}.dark.a${i}`);
-                if (token) {
-                    const hexValue = convertToHex(String(token.value));
-                    lines.push(`  --mpc-colors-${palette}-dark-a${i}: ${hexValue};`);
-                }
-            }
-
-            lines.push("");
         }
     }
 
@@ -76,9 +55,9 @@ export function formatCSS(specs: SpecData, options: CSSOptions = {}): string {
     lines.push("");
 
     // ===============================
-    // Semantic Tokens (Light Mode)
+    // Semantic Tokens
     // ===============================
-    lines.push("/* ===== Semantic Tokens (Light Mode) ===== */");
+    lines.push("/* ===== Semantic Tokens ===== */");
     lines.push(":root {");
 
     // Find semantic colors
@@ -110,59 +89,11 @@ export function formatCSS(specs: SpecData, options: CSSOptions = {}): string {
                 const semanticName = token.name.replace(`${palette}.`, "");
                 const cssVarName = `--mpc-colors-${palette}-${semanticName.replace(/\./g, "-")}`;
 
-                // Get the light value (check both "light" and "_light" conditions)
-                const lightCondition = token.values.find((v) => v.condition === "light" || v.condition === "_light");
+                // Light mode only: token values are flat, so only the base condition exists
                 const baseCondition = token.values.find((v) => v.condition === "base");
-                const value = lightCondition?.value || baseCondition?.value || "";
+                const value = baseCondition?.value || "";
 
                 // Convert reference to CSS variable
-                const cssValue = convertReferenceToVar(value, palette);
-                lines.push(`  ${cssVarName}: ${cssValue};`);
-            }
-
-            lines.push("");
-        }
-    }
-
-    lines.push("}");
-    lines.push("");
-
-    // ===============================
-    // Semantic Tokens (Dark Mode)
-    // ===============================
-    lines.push("/* ===== Semantic Tokens (Dark Mode) ===== */");
-    lines.push(".dark, [data-theme='dark'] {");
-
-    if (semanticColorsCategory) {
-        for (const palette of targetPalettes) {
-            lines.push(`  /* ${palette} palette semantic tokens - dark */`);
-
-            // 1-12 mapped to dark tokens
-            for (let i = 1; i <= 12; i++) {
-                lines.push(`  --mpc-colors-${palette}-${i}: var(--mpc-colors-${palette}-dark-${i});`);
-            }
-
-            // a1-a12 mapped to dark tokens
-            for (let i = 1; i <= 12; i++) {
-                lines.push(`  --mpc-colors-${palette}-a${i}: var(--mpc-colors-${palette}-dark-a${i});`);
-            }
-
-            lines.push("");
-
-            // Semantic tokens with dark values
-            const paletteTokens = semanticColorsCategory.values.filter(
-                (t) => t.name.startsWith(`${palette}.`) && !t.name.match(/^\w+\.\d+$/) && !t.name.match(/^\w+\.a\d+$/),
-            );
-
-            for (const token of paletteTokens) {
-                const semanticName = token.name.replace(`${palette}.`, "");
-                const cssVarName = `--mpc-colors-${palette}-${semanticName.replace(/\./g, "-")}`;
-
-                // Get the dark value (check both "dark" and "_dark" conditions)
-                const darkCondition = token.values.find((v) => v.condition === "dark" || v.condition === "_dark");
-                const baseCondition = token.values.find((v) => v.condition === "base");
-                const value = darkCondition?.value || baseCondition?.value || "";
-
                 const cssValue = convertReferenceToVar(value, palette);
                 lines.push(`  ${cssVarName}: ${cssValue};`);
             }
@@ -197,12 +128,14 @@ export function formatCSS(specs: SpecData, options: CSSOptions = {}): string {
         const semanticNames = [
             "bg",
             "bg-subtle",
+            "bg-secondary",
             "surface",
             "surface-hover",
             "surface-active",
             "fg",
             "fg-subtle",
             "fg-muted",
+            "fg-secondary",
             "solid",
             "solid-emphasized",
             "contrast",

@@ -3,7 +3,6 @@ import { Github } from "lucide-react";
 import { css, sva } from "styled-system/css";
 import { ColorPaletteToggle } from "../color-palette-toggle";
 import { MobileNav } from "../mobile-nav";
-import { ThemeToggle } from "../theme-toggle";
 
 const headerStyles = sva({
     slots: ["root", "container", "logo", "logoIcon", "logoText", "rightSection", "nav", "navLink", "icons", "iconLink"],
@@ -124,7 +123,6 @@ export function Header() {
                                 })}
                             />
                         </a>
-                        <ThemeToggle className={styles.iconLink} />
                         <ColorPaletteToggle className={styles.iconLink} />
                     </div>
 

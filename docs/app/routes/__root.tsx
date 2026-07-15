@@ -79,11 +79,6 @@ function ThemeScript() {
             dangerouslySetInnerHTML={{
                 __html: `
           (function() {
-            // Mode (light/dark)
-            const mode = localStorage.getItem('mode') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-mode', mode);
-            document.documentElement.classList.toggle('dark', mode === 'dark');
-
             // Color Theme (mori/umi)
             const colorTheme = localStorage.getItem('color-theme') || 'mori';
             document.documentElement.setAttribute('data-color-theme', colorTheme);

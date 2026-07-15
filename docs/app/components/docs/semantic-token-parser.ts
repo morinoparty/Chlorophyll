@@ -7,11 +7,10 @@ export interface SemanticToken {
     cssVar: string;
 }
 
-// Extended semantic token with light/dark values for shadows
+// Extended semantic token with a resolved value for shadows
 export interface SemanticTokenWithConditions {
     name: string;
-    lightValue: string;
-    darkValue: string;
+    value: string;
     cssVar: string;
 }
 
@@ -32,21 +31,14 @@ export function parseSemanticTokensByType(type: SemanticTokenType, filterPrefix?
         }));
 }
 
-// Parse shadow tokens with light/dark condition values
+// Parse shadow tokens with their resolved value
 export function parseShadowTokens(): SemanticTokenWithConditions[] {
     const data = semanticTokensSpec.data.find((d) => d.type === "shadows");
     if (!data) return [];
 
     return data.values.map((token) => ({
         name: token.name,
-        lightValue:
-            token.values.find((v) => v.condition === "light")?.value ||
-            token.values.find((v) => v.condition === "base")?.value ||
-            "",
-        darkValue:
-            token.values.find((v) => v.condition === "dark")?.value ||
-            token.values.find((v) => v.condition === "base")?.value ||
-            "",
+        value: token.values.find((v) => v.condition === "base")?.value || "",
         cssVar: token.cssVar,
     }));
 }

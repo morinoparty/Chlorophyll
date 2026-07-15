@@ -1,6 +1,5 @@
 import "../src/index.css";
 import type { Decorator, Preview } from "@storybook/react-vite";
-import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import { themes } from "storybook/theming";
 import { css } from "styled-system/css";
@@ -9,19 +8,12 @@ import { registerAPCACheck } from "./a11y";
 const apca = registerAPCACheck("silver");
 
 const withTheme: Decorator = (Story, context) => {
-    const colorMode = context.globals.colorMode || "light";
     const palette = context.globals.palette || "mori";
     useEffect(() => {
         const root = document.documentElement;
 
-        // Set color mode
-        if (colorMode === "dark") {
-            root.classList.add("dark");
-            root.setAttribute("data-theme", "dark");
-        } else {
-            root.classList.remove("dark");
-            root.setAttribute("data-theme", "light");
-        }
+        // ライトモード固定なので data-theme は常に light を設定する
+        root.setAttribute("data-theme", "light");
 
         // Set palette
         root.setAttribute("data-color-palette", palette);
@@ -34,25 +26,13 @@ const withTheme: Decorator = (Story, context) => {
         return () => {
             document.body.classList.remove(...paletteClass);
         };
-    }, [colorMode, palette]);
+    }, [palette]);
 
     return <Story />;
 };
 
 const preview: Preview = {
     globalTypes: {
-        colorMode: {
-            description: "Color mode",
-            defaultValue: "light",
-            toolbar: {
-                title: "Color Mode",
-                icon: "circlehollow",
-                items: [
-                    { value: "light", icon: "sun", title: "Light" },
-                    { value: "dark", icon: "moon", title: "Dark" },
-                ],
-            },
-        },
         palette: {
             description: "Color palette",
             defaultValue: "mori",
@@ -127,19 +107,16 @@ const preview: Preview = {
     decorators: [
         withTheme,
         (Story, context) => {
-            const colorMode = context.globals.colorMode || "light";
             const palette = context.globals.palette || "mori";
             return (
-                <ThemeProvider forcedTheme={colorMode} enableSystem={false}>
-                    <div
-                        className={css({
-                            colorPalette: palette,
-                            textStyle: "body",
-                        })}
-                    >
-                        <Story />
-                    </div>
-                </ThemeProvider>
+                <div
+                    className={css({
+                        colorPalette: palette,
+                        textStyle: "body",
+                    })}
+                >
+                    <Story />
+                </div>
             );
         },
     ],
