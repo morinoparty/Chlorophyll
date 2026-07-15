@@ -8,8 +8,8 @@ import { useState } from "react";
 import { sva } from "styled-system/css";
 
 const navigation = [
-    { title: "Docs", href: "/docs/" },
-    { title: "Components", href: "/docs/" },
+    // ヘッダーのナビと同じ実在ページへ揃える（ベアの /docs はページ実体がなく 404 になる）
+    { title: "Docs", href: "/docs/getting-started/introduction" },
     { title: "Theme", href: "/docs/theme" },
 ];
 

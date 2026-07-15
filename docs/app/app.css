@@ -37,3 +37,29 @@
     /* Ring */
     --color-fd-ring: var(--mpc-colors-color-palette-surface-hover);
 }
+
+/* テキストのフチをなめらかにする */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* トップページの入場アニメーション。data-chl-enter を持つ要素で使う */
+@keyframes chl-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* モーション削減設定では入場アニメーションを無効化する。
+   アニメーション本体はクラス側で定義しているため important なしで上書きできる */
+@media (prefers-reduced-motion: reduce) {
+    [data-chl-enter] {
+        animation: none;
+    }
+}
