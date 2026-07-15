@@ -82,9 +82,9 @@ export const umi = defineSemanticTokens.colors({
             subtle: {
                 value: "{colors.umi.1}",
             },
-            // secondary スタイルの塗り面として使う白背景
+            // secondary スタイルの塗り面として使う、umi を効かせた背景色
             secondary: {
-                value: "{colors.white}",
+                value: "{colors.umi.10}",
             },
         },
         // Surface semantic tokens (component backgrounds)
@@ -110,9 +110,9 @@ export const umi = defineSemanticTokens.colors({
             subtle: {
                 value: "color-mix(in oklch, {colors.umi.11}, transparent 25%)",
             },
-            // bg.secondary（白）の上に載せる、umi ブルーの前景色
+            // bg.secondary（濃い umi）の上に載せる前景色。白抜きで読ませる
             secondary: {
-                value: "{colors.umi.10}",
+                value: "{colors.white}",
             },
         },
         // Solid background

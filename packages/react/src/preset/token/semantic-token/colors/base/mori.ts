@@ -81,9 +81,9 @@ export const mori = defineSemanticTokens.colors({
             subtle: {
                 value: "{colors.mori.1}",
             },
-            // button.secondary などのセカンダリ面が使う、白塗りの背景色
+            // button.secondary などのセカンダリ面が使う、mori を効かせた背景色
             secondary: {
-                value: "{colors.white}",
+                value: "{colors.mori.10}",
             },
         },
         surface: {
@@ -107,9 +107,9 @@ export const mori = defineSemanticTokens.colors({
             muted: {
                 value: "{colors.gray.11}",
             },
-            // bg.secondary（白）の上に載せる、mori グリーンの前景色
+            // bg.secondary（濃い mori）の上に載せる前景色。白抜きで読ませる
             secondary: {
-                value: "{colors.mori.10}",
+                value: "{colors.white}",
             },
         },
         solid: {

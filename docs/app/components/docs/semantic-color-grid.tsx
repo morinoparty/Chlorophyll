@@ -112,7 +112,7 @@ interface SemanticColorGroup {
 const colorPaletteGroups: SemanticColorGroup[] = [
     {
         title: "Background",
-        description: "ページやセクション全体の背景に使う、最も薄い階調のトークン",
+        description: "ページやセクション、セカンダリ面の背景に使うトークン",
         tokens: [
             {
                 name: "colorPalette.bg",
@@ -129,8 +129,8 @@ const colorPaletteGroups: SemanticColorGroup[] = [
             {
                 name: "colorPalette.bg.secondary",
                 cssVar: "--mpc-colors-color-palette-bg-secondary",
-                reference: "white",
-                description: "Secondary surface (white fill)",
+                reference: "colorPalette.10",
+                description: "Secondary surface (solid fill)",
             },
         ],
     },
@@ -211,8 +211,8 @@ const colorPaletteGroups: SemanticColorGroup[] = [
             {
                 name: "colorPalette.fg.secondary",
                 cssVar: "--mpc-colors-color-palette-fg-secondary",
-                reference: "colorPalette.10",
-                description: "Text on bg.secondary (white)",
+                reference: "white",
+                description: "Text on bg.secondary",
                 previewTextOn: "--mpc-colors-color-palette-bg-secondary",
             },
         ],
