@@ -8,10 +8,9 @@ import { defineSemanticTokens } from "@pandacss/dev";
 export const focus = defineSemanticTokens.colors({
     focus: {
         ring: {
-            // デフォルトフォーカスリング
-            DEFAULT: {
-                value: "colorPalette.8",
-            },
+            // デフォルトのフォーカスリングは定義しない。
+            // セマンティックトークンからは仮想の colorPalette を参照できないため、
+            // 各レシピで ringColor: "colorPalette.a4" のように直接指定している
             // エラー時のフォーカスリング
             error: {
                 value: "{colors.red.8}",

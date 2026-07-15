@@ -97,6 +97,12 @@ export const mori = defineSemanticTokens.colors({
                 value: "{colors.mori.5}",
             },
         },
+        // Border semantic tokens (Step 7: コンポーネントの枠線)
+        border: {
+            DEFAULT: {
+                value: "{colors.mori.7}",
+            },
+        },
         fg: {
             DEFAULT: {
                 value: "color-mix(in oklch, {colors.mori.12}, {colors.mori.11} 70%)",

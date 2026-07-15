@@ -47,8 +47,8 @@ export const newsCard = defineSlotRecipe({
             overflow: "hidden",
             borderRadius: "2xl",
             // 画像がない場合のプレースホルダー面。淡い colorPalette の面で塗る
-            bg: "colorPalette.3",
-            color: "colorPalette.8",
+            bg: "colorPalette.surface",
+            color: "colorPalette.fg.subtle",
         },
         image: {
             width: "full",

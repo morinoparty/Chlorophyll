@@ -95,6 +95,12 @@ export const gray = defineSemanticTokens.colors({
                 value: "{colors.gray.5}",
             },
         },
+        // Border semantic tokens (Step 7: コンポーネントの枠線)
+        border: {
+            DEFAULT: {
+                value: "{colors.gray.7}",
+            },
+        },
         // Foreground semantic tokens
         fg: {
             DEFAULT: {
