@@ -12,8 +12,7 @@ export function baseOptions(): BaseLayoutProps {
             transparentMode: "top",
         },
         themeSwitch: {
-            enabled: true,
-            mode: "light-dark",
+            enabled: false,
         },
         paletteSwitch: {
             enabled: true,

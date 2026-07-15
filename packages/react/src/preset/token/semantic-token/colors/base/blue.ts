@@ -3,148 +3,76 @@ import { defineSemanticTokens } from "@pandacss/dev";
 export const blue = defineSemanticTokens.colors({
     blue: {
         1: {
-            value: {
-                _light: "{colors.blue.light.1}",
-                _dark: "{colors.blue.dark.1}",
-            },
+            value: "{colors.blue.light.1}",
         },
         2: {
-            value: {
-                _light: "{colors.blue.light.2}",
-                _dark: "{colors.blue.dark.2}",
-            },
+            value: "{colors.blue.light.2}",
         },
         3: {
-            value: {
-                _light: "{colors.blue.light.3}",
-                _dark: "{colors.blue.dark.3}",
-            },
+            value: "{colors.blue.light.3}",
         },
         4: {
-            value: {
-                _light: "{colors.blue.light.4}",
-                _dark: "{colors.blue.dark.4}",
-            },
+            value: "{colors.blue.light.4}",
         },
         5: {
-            value: {
-                _light: "{colors.blue.light.5}",
-                _dark: "{colors.blue.dark.5}",
-            },
+            value: "{colors.blue.light.5}",
         },
         6: {
-            value: {
-                _light: "{colors.blue.light.6}",
-                _dark: "{colors.blue.dark.6}",
-            },
+            value: "{colors.blue.light.6}",
         },
         7: {
-            value: {
-                _light: "{colors.blue.light.7}",
-                _dark: "{colors.blue.dark.7}",
-            },
+            value: "{colors.blue.light.7}",
         },
         8: {
-            value: {
-                _light: "{colors.blue.light.8}",
-                _dark: "{colors.blue.dark.8}",
-            },
+            value: "{colors.blue.light.8}",
         },
         9: {
-            value: {
-                _light: "{colors.blue.light.9}",
-                _dark: "{colors.blue.dark.9}",
-            },
+            value: "{colors.blue.light.9}",
         },
         10: {
-            value: {
-                _light: "{colors.blue.light.10}",
-                _dark: "{colors.blue.dark.10}",
-            },
+            value: "{colors.blue.light.10}",
         },
         11: {
-            value: {
-                _light: "{colors.blue.light.11}",
-                _dark: "{colors.blue.dark.11}",
-            },
+            value: "{colors.blue.light.11}",
         },
         12: {
-            value: {
-                _light: "{colors.blue.light.12}",
-                _dark: "{colors.blue.dark.12}",
-            },
+            value: "{colors.blue.light.12}",
         },
         a1: {
-            value: {
-                _light: "{colors.blue.light.a1}",
-                _dark: "{colors.blue.dark.a1}",
-            },
+            value: "{colors.blue.light.a1}",
         },
         a2: {
-            value: {
-                _light: "{colors.blue.light.a2}",
-                _dark: "{colors.blue.dark.a2}",
-            },
+            value: "{colors.blue.light.a2}",
         },
         a3: {
-            value: {
-                _light: "{colors.blue.light.a3}",
-                _dark: "{colors.blue.dark.a3}",
-            },
+            value: "{colors.blue.light.a3}",
         },
         a4: {
-            value: {
-                _light: "{colors.blue.light.a4}",
-                _dark: "{colors.blue.dark.a4}",
-            },
+            value: "{colors.blue.light.a4}",
         },
         a5: {
-            value: {
-                _light: "{colors.blue.light.a5}",
-                _dark: "{colors.blue.dark.a5}",
-            },
+            value: "{colors.blue.light.a5}",
         },
         a6: {
-            value: {
-                _light: "{colors.blue.light.a6}",
-                _dark: "{colors.blue.dark.a6}",
-            },
+            value: "{colors.blue.light.a6}",
         },
         a7: {
-            value: {
-                _light: "{colors.blue.light.a7}",
-                _dark: "{colors.blue.dark.a7}",
-            },
+            value: "{colors.blue.light.a7}",
         },
         a8: {
-            value: {
-                _light: "{colors.blue.light.a8}",
-                _dark: "{colors.blue.dark.a8}",
-            },
+            value: "{colors.blue.light.a8}",
         },
         a9: {
-            value: {
-                _light: "{colors.blue.light.a9}",
-                _dark: "{colors.blue.dark.a9}",
-            },
+            value: "{colors.blue.light.a9}",
         },
         a10: {
-            value: {
-                _light: "{colors.blue.light.a10}",
-                _dark: "{colors.blue.dark.a10}",
-            },
+            value: "{colors.blue.light.a10}",
         },
         a11: {
-            value: {
-                _light: "{colors.blue.light.a11}",
-                _dark: "{colors.blue.dark.a11}",
-            },
+            value: "{colors.blue.light.a11}",
         },
         a12: {
-            value: {
-                _light: "{colors.blue.light.a12}",
-                _dark: "{colors.blue.dark.a12}",
-            },
+            value: "{colors.blue.light.a12}",
         },
         // Background semantic tokens
         bg: {
@@ -170,10 +98,7 @@ export const blue = defineSemanticTokens.colors({
         // Foreground semantic tokens
         fg: {
             DEFAULT: {
-                value: {
-                    _light: "color-mix(in oklch, {colors.blue.12}, {colors.blue.11} 70%)",
-                    _dark: "{colors.white}",
-                },
+                value: "color-mix(in oklch, {colors.blue.12}, {colors.blue.11} 70%)",
             },
             muted: {
                 value: "{colors.gray.11}",

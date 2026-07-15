@@ -3,160 +3,85 @@ import { defineSemanticTokens } from "@pandacss/dev";
 export const mori = defineSemanticTokens.colors({
     mori: {
         1: {
-            value: {
-                _light: "{colors.mori.light.1}",
-                _dark: "{colors.mori.dark.1}",
-            },
+            value: "{colors.mori.light.1}",
         },
         2: {
-            value: {
-                _light: "{colors.mori.light.2}",
-                _dark: "{colors.mori.dark.2}",
-            },
+            value: "{colors.mori.light.2}",
         },
         3: {
-            value: {
-                _light: "{colors.mori.light.3}",
-                _dark: "{colors.mori.dark.3}",
-            },
+            value: "{colors.mori.light.3}",
         },
         4: {
-            value: {
-                _light: "{colors.mori.light.4}",
-                _dark: "{colors.mori.dark.4}",
-            },
+            value: "{colors.mori.light.4}",
         },
         5: {
-            value: {
-                _light: "{colors.mori.light.5}",
-                _dark: "{colors.mori.dark.5}",
-            },
+            value: "{colors.mori.light.5}",
         },
         6: {
-            value: {
-                _light: "{colors.mori.light.6}",
-                _dark: "{colors.mori.dark.6}",
-            },
+            value: "{colors.mori.light.6}",
         },
         7: {
-            value: {
-                _light: "{colors.mori.light.7}",
-                _dark: "{colors.mori.dark.7}",
-            },
+            value: "{colors.mori.light.7}",
         },
         8: {
-            value: {
-                _light: "{colors.mori.light.8}",
-                _dark: "{colors.mori.dark.8}",
-            },
+            value: "{colors.mori.light.8}",
         },
         9: {
-            value: {
-                _light: "{colors.mori.light.9}",
-                _dark: "{colors.mori.dark.9}",
-            },
+            value: "{colors.mori.light.9}",
         },
         10: {
-            value: {
-                _light: "{colors.mori.light.10}",
-                _dark: "{colors.mori.dark.10}",
-            },
+            value: "{colors.mori.light.10}",
         },
         11: {
-            value: {
-                _light: "{colors.mori.light.11}",
-                _dark: "{colors.mori.dark.11}",
-            },
+            value: "{colors.mori.light.11}",
         },
         12: {
-            value: {
-                _light: "{colors.mori.light.12}",
-                _dark: "{colors.mori.dark.12}",
-            },
+            value: "{colors.mori.light.12}",
         },
         a1: {
-            value: {
-                _light: "{colors.mori.light.a1}",
-                _dark: "{colors.mori.dark.a1}",
-            },
+            value: "{colors.mori.light.a1}",
         },
         a2: {
-            value: {
-                _light: "{colors.mori.light.a2}",
-                _dark: "{colors.mori.dark.a2}",
-            },
+            value: "{colors.mori.light.a2}",
         },
         a3: {
-            value: {
-                _light: "{colors.mori.light.a3}",
-                _dark: "{colors.mori.dark.a3}",
-            },
+            value: "{colors.mori.light.a3}",
         },
         a4: {
-            value: {
-                _light: "{colors.mori.light.a4}",
-                _dark: "{colors.mori.dark.a4}",
-            },
+            value: "{colors.mori.light.a4}",
         },
         a5: {
-            value: {
-                _light: "{colors.mori.light.a5}",
-                _dark: "{colors.mori.dark.a5}",
-            },
+            value: "{colors.mori.light.a5}",
         },
         a6: {
-            value: {
-                _light: "{colors.mori.light.a6}",
-                _dark: "{colors.mori.dark.a6}",
-            },
+            value: "{colors.mori.light.a6}",
         },
         a7: {
-            value: {
-                _light: "{colors.mori.light.a7}",
-                _dark: "{colors.mori.dark.a7}",
-            },
+            value: "{colors.mori.light.a7}",
         },
         a8: {
-            value: {
-                _light: "{colors.mori.light.a8}",
-                _dark: "{colors.mori.dark.a8}",
-            },
+            value: "{colors.mori.light.a8}",
         },
         a9: {
-            value: {
-                _light: "{colors.mori.light.a9}",
-                _dark: "{colors.mori.dark.a9}",
-            },
+            value: "{colors.mori.light.a9}",
         },
         a10: {
-            value: {
-                _light: "{colors.mori.light.a10}",
-                _dark: "{colors.mori.dark.a10}",
-            },
+            value: "{colors.mori.light.a10}",
         },
         a11: {
-            value: {
-                _light: "{colors.mori.light.a11}",
-                _dark: "{colors.mori.dark.a11}",
-            },
+            value: "{colors.mori.light.a11}",
         },
         a12: {
-            value: {
-                _light: "{colors.mori.light.a12}",
-                _dark: "{colors.mori.dark.a12}",
-            },
+            value: "{colors.mori.light.a12}",
         },
         bg: {
             DEFAULT: {
-                value: {
-                    _light: "{colors.mori.2}",
-                    _dark: "{colors.mori.2}",
-                },
+                value: "{colors.mori.2}",
             },
             subtle: {
                 value: "{colors.mori.1}",
             },
-            // button.secondary の塗り面として使う想定の、mori を効かせた背景色
+            // button.secondary などのセカンダリ面が使う、mori を効かせた背景色
             secondary: {
                 value: "{colors.mori.10}",
             },
@@ -174,10 +99,7 @@ export const mori = defineSemanticTokens.colors({
         },
         fg: {
             DEFAULT: {
-                value: {
-                    _light: "color-mix(in oklch, {colors.mori.12}, {colors.mori.11} 70%)",
-                    _dark: "{colors.white}",
-                },
+                value: "color-mix(in oklch, {colors.mori.12}, {colors.mori.11} 70%)",
             },
             subtle: {
                 value: "color-mix(in oklch, {colors.mori.11}, transparent 30%)",

@@ -50,7 +50,7 @@ export function ShadowTokenGrid() {
                     <div className={styles.cardPreview} style={{ boxShadow: token.cssVar }} />
                     <div className={styles.cardInfo}>
                         <span className={styles.cardName}>shadows.{token.name}</span>
-                        <span className={styles.cardValue}>{token.lightValue}</span>
+                        <span className={styles.cardValue}>{token.value}</span>
                     </div>
                 </div>
             ))}

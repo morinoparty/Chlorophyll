@@ -21,16 +21,10 @@ export const global = defineSemanticTokens.colors({
             value: "{colors.gray.4}",
         },
         inverted: {
-            value: {
-                _light: "{colors.gray.dark.1}",
-                _dark: "{colors.gray.light.1}",
-            },
+            value: "{colors.gray.dark.1}",
         },
         panel: {
-            value: {
-                _light: "{colors.white}",
-                _dark: "{colors.gray.2}",
-            },
+            value: "{colors.white}",
         },
     },
 });

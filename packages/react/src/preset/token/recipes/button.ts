@@ -78,11 +78,6 @@ export const button = defineRecipe({
             secondary: {
                 bg: "bg.panel",
                 color: "colorPalette.fg",
-                // dark では bg.panel が背景と近く影も沈むため、border で輪郭を出す
-                _dark: {
-                    borderWidth: "1px",
-                    borderColor: "gray.8",
-                },
                 boxShadow: "sm",
                 _after: {
                     content: '""',
@@ -91,26 +86,16 @@ export const button = defineRecipe({
                     borderRadius: "inherit",
                     pointerEvents: "none",
                     // 上辺にハイライト・下辺にやわらかい影を入れて控えめな立体感を出す。
-                    // light は白い面なので濃い影だと汚れて見えるため薄く、
-                    // dark は暗いパネルに合わせてハイライトを抑え影をやや強める
-                    boxShadow: {
-                        _light: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -2px 4px 0 rgba(0,0,0,0.08)]",
-                        _dark: "[inset 0 1px 0 0 rgba(255,255,255,0.08), inset 0 -2px 4px 0 rgba(0,0,0,0.25)]",
-                    },
+                    // 白い面なので濃い影だと汚れて見えるため薄くする
+                    boxShadow: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -2px 4px 0 rgba(0,0,0,0.08)]",
                     zIndex: 2,
                 },
                 // disabled 状態では hover を効かせない
                 "&:not(:disabled):not([data-disabled]):hover": {
-                    bg: {
-                        _light: "gray.1",
-                        _dark: "gray.3",
-                    },
+                    bg: "gray.1",
                     // hover で下辺の影を少し深め、立体感を強める
                     _after: {
-                        boxShadow: {
-                            _light: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -3px 5px 0 rgba(0,0,0,0.1)]",
-                            _dark: "[inset 0 1px 0 0 rgba(255,255,255,0.08), inset 0 -3px 5px 0 rgba(0,0,0,0.3)]",
-                        },
+                        boxShadow: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -3px 5px 0 rgba(0,0,0,0.1)]",
                     },
                 },
                 _focusVisible: {

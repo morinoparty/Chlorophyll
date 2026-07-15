@@ -3,148 +3,76 @@ import { defineSemanticTokens } from "@pandacss/dev";
 export const umi = defineSemanticTokens.colors({
     umi: {
         1: {
-            value: {
-                _light: "{colors.umi.light.1}",
-                _dark: "{colors.umi.dark.1}",
-            },
+            value: "{colors.umi.light.1}",
         },
         2: {
-            value: {
-                _light: "{colors.umi.light.2}",
-                _dark: "{colors.umi.dark.2}",
-            },
+            value: "{colors.umi.light.2}",
         },
         3: {
-            value: {
-                _light: "{colors.umi.light.3}",
-                _dark: "{colors.umi.dark.3}",
-            },
+            value: "{colors.umi.light.3}",
         },
         4: {
-            value: {
-                _light: "{colors.umi.light.4}",
-                _dark: "{colors.umi.dark.4}",
-            },
+            value: "{colors.umi.light.4}",
         },
         5: {
-            value: {
-                _light: "{colors.umi.light.5}",
-                _dark: "{colors.umi.dark.5}",
-            },
+            value: "{colors.umi.light.5}",
         },
         6: {
-            value: {
-                _light: "{colors.umi.light.6}",
-                _dark: "{colors.umi.dark.6}",
-            },
+            value: "{colors.umi.light.6}",
         },
         7: {
-            value: {
-                _light: "{colors.umi.light.7}",
-                _dark: "{colors.umi.dark.7}",
-            },
+            value: "{colors.umi.light.7}",
         },
         8: {
-            value: {
-                _light: "{colors.umi.light.8}",
-                _dark: "{colors.umi.dark.8}",
-            },
+            value: "{colors.umi.light.8}",
         },
         9: {
-            value: {
-                _light: "{colors.umi.light.9}",
-                _dark: "{colors.umi.dark.9}",
-            },
+            value: "{colors.umi.light.9}",
         },
         10: {
-            value: {
-                _light: "{colors.umi.light.10}",
-                _dark: "{colors.umi.dark.10}",
-            },
+            value: "{colors.umi.light.10}",
         },
         11: {
-            value: {
-                _light: "{colors.umi.light.11}",
-                _dark: "{colors.umi.dark.11}",
-            },
+            value: "{colors.umi.light.11}",
         },
         12: {
-            value: {
-                _light: "{colors.umi.light.12}",
-                _dark: "{colors.umi.dark.12}",
-            },
+            value: "{colors.umi.light.12}",
         },
         a1: {
-            value: {
-                _light: "{colors.umi.light.a1}",
-                _dark: "{colors.umi.dark.a1}",
-            },
+            value: "{colors.umi.light.a1}",
         },
         a2: {
-            value: {
-                _light: "{colors.umi.light.a2}",
-                _dark: "{colors.umi.dark.a2}",
-            },
+            value: "{colors.umi.light.a2}",
         },
         a3: {
-            value: {
-                _light: "{colors.umi.light.a3}",
-                _dark: "{colors.umi.dark.a3}",
-            },
+            value: "{colors.umi.light.a3}",
         },
         a4: {
-            value: {
-                _light: "{colors.umi.light.a4}",
-                _dark: "{colors.umi.dark.a4}",
-            },
+            value: "{colors.umi.light.a4}",
         },
         a5: {
-            value: {
-                _light: "{colors.umi.light.a5}",
-                _dark: "{colors.umi.dark.a5}",
-            },
+            value: "{colors.umi.light.a5}",
         },
         a6: {
-            value: {
-                _light: "{colors.umi.light.a6}",
-                _dark: "{colors.umi.dark.a6}",
-            },
+            value: "{colors.umi.light.a6}",
         },
         a7: {
-            value: {
-                _light: "{colors.umi.light.a7}",
-                _dark: "{colors.umi.dark.a7}",
-            },
+            value: "{colors.umi.light.a7}",
         },
         a8: {
-            value: {
-                _light: "{colors.umi.light.a8}",
-                _dark: "{colors.umi.dark.a8}",
-            },
+            value: "{colors.umi.light.a8}",
         },
         a9: {
-            value: {
-                _light: "{colors.umi.light.a9}",
-                _dark: "{colors.umi.dark.a9}",
-            },
+            value: "{colors.umi.light.a9}",
         },
         a10: {
-            value: {
-                _light: "{colors.umi.light.a10}",
-                _dark: "{colors.umi.dark.a10}",
-            },
+            value: "{colors.umi.light.a10}",
         },
         a11: {
-            value: {
-                _light: "{colors.umi.light.a11}",
-                _dark: "{colors.umi.dark.a11}",
-            },
+            value: "{colors.umi.light.a11}",
         },
         a12: {
-            value: {
-                _light: "{colors.umi.light.a12}",
-                _dark: "{colors.umi.dark.a12}",
-            },
+            value: "{colors.umi.light.a12}",
         },
         // Background semantic tokens
         bg: {
@@ -153,6 +81,10 @@ export const umi = defineSemanticTokens.colors({
             },
             subtle: {
                 value: "{colors.umi.1}",
+            },
+            // secondary スタイルの塗り面として使う、umi を効かせた背景色
+            secondary: {
+                value: "{colors.umi.10}",
             },
         },
         // Surface semantic tokens (component backgrounds)
@@ -170,16 +102,17 @@ export const umi = defineSemanticTokens.colors({
         // Foreground semantic tokens
         fg: {
             DEFAULT: {
-                value: {
-                    _light: "color-mix(in oklch, {colors.umi.12}, {colors.umi.11} 70%)",
-                    _dark: "{colors.white}",
-                },
+                value: "color-mix(in oklch, {colors.umi.12}, {colors.umi.11} 70%)",
             },
             muted: {
                 value: "{colors.gray.11}",
             },
             subtle: {
                 value: "color-mix(in oklch, {colors.umi.11}, transparent 25%)",
+            },
+            // bg.secondary（濃い umi）の上に載せる前景色。白抜きで読ませる
+            secondary: {
+                value: "{colors.white}",
             },
         },
         // Solid background

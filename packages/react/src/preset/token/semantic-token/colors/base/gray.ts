@@ -3,148 +3,76 @@ import { defineSemanticTokens } from "@pandacss/dev";
 export const gray = defineSemanticTokens.colors({
     gray: {
         1: {
-            value: {
-                _light: "{colors.gray.light.1}",
-                _dark: "{colors.gray.dark.1}",
-            },
+            value: "{colors.gray.light.1}",
         },
         2: {
-            value: {
-                _light: "{colors.gray.light.2}",
-                _dark: "{colors.gray.dark.2}",
-            },
+            value: "{colors.gray.light.2}",
         },
         3: {
-            value: {
-                _light: "{colors.gray.light.3}",
-                _dark: "{colors.gray.dark.3}",
-            },
+            value: "{colors.gray.light.3}",
         },
         4: {
-            value: {
-                _light: "{colors.gray.light.4}",
-                _dark: "{colors.gray.dark.4}",
-            },
+            value: "{colors.gray.light.4}",
         },
         5: {
-            value: {
-                _light: "{colors.gray.light.5}",
-                _dark: "{colors.gray.dark.5}",
-            },
+            value: "{colors.gray.light.5}",
         },
         6: {
-            value: {
-                _light: "{colors.gray.light.6}",
-                _dark: "{colors.gray.dark.6}",
-            },
+            value: "{colors.gray.light.6}",
         },
         7: {
-            value: {
-                _light: "{colors.gray.light.7}",
-                _dark: "{colors.gray.dark.7}",
-            },
+            value: "{colors.gray.light.7}",
         },
         8: {
-            value: {
-                _light: "{colors.gray.light.8}",
-                _dark: "{colors.gray.dark.8}",
-            },
+            value: "{colors.gray.light.8}",
         },
         9: {
-            value: {
-                _light: "{colors.gray.light.9}",
-                _dark: "{colors.gray.dark.9}",
-            },
+            value: "{colors.gray.light.9}",
         },
         10: {
-            value: {
-                _light: "{colors.gray.light.10}",
-                _dark: "{colors.gray.dark.10}",
-            },
+            value: "{colors.gray.light.10}",
         },
         11: {
-            value: {
-                _light: "{colors.gray.light.11}",
-                _dark: "{colors.gray.dark.11}",
-            },
+            value: "{colors.gray.light.11}",
         },
         12: {
-            value: {
-                _light: "{colors.gray.light.12}",
-                _dark: "{colors.gray.dark.12}",
-            },
+            value: "{colors.gray.light.12}",
         },
         a1: {
-            value: {
-                _light: "{colors.gray.light.a1}",
-                _dark: "{colors.gray.dark.a1}",
-            },
+            value: "{colors.gray.light.a1}",
         },
         a2: {
-            value: {
-                _light: "{colors.gray.light.a2}",
-                _dark: "{colors.gray.dark.a2}",
-            },
+            value: "{colors.gray.light.a2}",
         },
         a3: {
-            value: {
-                _light: "{colors.gray.light.a3}",
-                _dark: "{colors.gray.dark.a3}",
-            },
+            value: "{colors.gray.light.a3}",
         },
         a4: {
-            value: {
-                _light: "{colors.gray.light.a4}",
-                _dark: "{colors.gray.dark.a4}",
-            },
+            value: "{colors.gray.light.a4}",
         },
         a5: {
-            value: {
-                _light: "{colors.gray.light.a5}",
-                _dark: "{colors.gray.dark.a5}",
-            },
+            value: "{colors.gray.light.a5}",
         },
         a6: {
-            value: {
-                _light: "{colors.gray.light.a6}",
-                _dark: "{colors.gray.dark.a6}",
-            },
+            value: "{colors.gray.light.a6}",
         },
         a7: {
-            value: {
-                _light: "{colors.gray.light.a7}",
-                _dark: "{colors.gray.dark.a7}",
-            },
+            value: "{colors.gray.light.a7}",
         },
         a8: {
-            value: {
-                _light: "{colors.gray.light.a8}",
-                _dark: "{colors.gray.dark.a8}",
-            },
+            value: "{colors.gray.light.a8}",
         },
         a9: {
-            value: {
-                _light: "{colors.gray.light.a9}",
-                _dark: "{colors.gray.dark.a9}",
-            },
+            value: "{colors.gray.light.a9}",
         },
         a10: {
-            value: {
-                _light: "{colors.gray.light.a10}",
-                _dark: "{colors.gray.dark.a10}",
-            },
+            value: "{colors.gray.light.a10}",
         },
         a11: {
-            value: {
-                _light: "{colors.gray.light.a11}",
-                _dark: "{colors.gray.dark.a11}",
-            },
+            value: "{colors.gray.light.a11}",
         },
         a12: {
-            value: {
-                _light: "{colors.gray.light.a12}",
-                _dark: "{colors.gray.dark.a12}",
-            },
+            value: "{colors.gray.light.a12}",
         },
         // Background semantic tokens
         bg: {
@@ -170,10 +98,7 @@ export const gray = defineSemanticTokens.colors({
         // Foreground semantic tokens
         fg: {
             DEFAULT: {
-                value: {
-                    _light: "color-mix(in oklch, {colors.gray.12}, {colors.gray.11} 70%)",
-                    _dark: "{colors.white}",
-                },
+                value: "color-mix(in oklch, {colors.gray.12}, {colors.gray.11} 70%)",
             },
             muted: {
                 value: "{colors.gray.11}",
