@@ -1,4 +1,5 @@
 import { sva } from "styled-system/css";
+import { CopyableCode } from "./copyable-code";
 import { parseSemanticTokensByType } from "./semantic-token-parser";
 
 const tableStyles = sva({
@@ -65,7 +66,8 @@ export function BorderTokenTable() {
                     {tokens.map((token) => (
                         <tr key={token.name}>
                             <td className={styles.td}>
-                                <code>borders.{token.name}</code>
+                                {/* クリックでトークン名をコピーできる */}
+                                <CopyableCode text={`borders.${token.name}`} />
                             </td>
                             <td className={styles.tdMuted}>
                                 <code>{token.reference}</code>

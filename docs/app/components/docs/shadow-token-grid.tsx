@@ -1,4 +1,5 @@
 import { sva } from "styled-system/css";
+import { CopyableCode } from "./copyable-code";
 import { parseShadowTokens } from "./semantic-token-parser";
 
 const gridStyles = sva({
@@ -49,8 +50,10 @@ export function ShadowTokenGrid() {
                 <div key={token.name} className={styles.card}>
                     <div className={styles.cardPreview} style={{ boxShadow: token.cssVar }} />
                     <div className={styles.cardInfo}>
-                        <span className={styles.cardName}>shadows.{token.name}</span>
-                        <span className={styles.cardValue}>{token.value}</span>
+                        {/* クリックでトークン名をコピーできる */}
+                        <CopyableCode text={`shadows.${token.name}`} className={styles.cardName} />
+                        {/* 影の値は長い CSS 文字列で手作業の選択が面倒なため、値もコピーできるようにする */}
+                        <CopyableCode text={token.value} className={styles.cardValue} />
                     </div>
                 </div>
             ))}

@@ -1,6 +1,7 @@
 import { sva } from "styled-system/css";
 import textStylesSpec from "styled-system/specs/text-styles.json";
 import tokensSpec from "styled-system/specs/tokens.json";
+import { CopyableCode } from "./copyable-code";
 
 const tableStyles = sva({
     slots: ["tableWrapper", "table", "th", "td", "tdMuted"],
@@ -100,7 +101,8 @@ export function TextStylesTable() {
                     {textStyleTokens.map((token) => (
                         <tr key={token.name}>
                             <td className={styles.td}>
-                                <code>{token.name}</code>
+                                {/* クリックでテキストスタイル名をコピーできる（textStyle="..." に指定する値） */}
+                                <CopyableCode text={token.name} />
                             </td>
                             <td className={styles.tdMuted}>{token.fontSize}</td>
                             <td className={styles.tdMuted}>{token.lineHeight}</td>
@@ -141,7 +143,8 @@ export function FontSizesTable() {
                     {fontSizeTokens.map((token) => (
                         <tr key={token.name}>
                             <td className={styles.td}>
-                                <code>fontSizes.{token.name}</code>
+                                {/* クリックでトークン名をコピーできる */}
+                                <CopyableCode text={`fontSizes.${token.name}`} />
                             </td>
                             <td className={styles.tdMuted}>{token.value}</td>
                             <td className={styles.td}>

@@ -1,4 +1,5 @@
 import { css, sva } from "styled-system/css";
+import { CopyableCode } from "./copyable-code";
 import { parseSemanticTokensByType, type SemanticToken, type SemanticTokenType } from "./semantic-token-parser";
 
 const gridStyles = sva({
@@ -6,7 +7,9 @@ const gridStyles = sva({
     base: {
         grid: {
             display: "grid",
-            gridTemplateColumns: { base: "repeat(3, 1fr)", md: "repeat(4, 1fr)", lg: "repeat(6, 1fr)" },
+            // トークン名のコピーチップはアイコン列ぶんの幅を要するため、
+            // カラム数を固定せず最低幅を保証して名前が途中で折り返さないようにする
+            gridTemplateColumns: "[repeat(auto-fill, minmax(120px, 1fr))]",
             gap: "6",
         },
         card: {
@@ -65,7 +68,8 @@ export function SemanticTokenGrid({ type, previewStyle = "default" }: SemanticTo
                 <div key={token.name} className={styles.card}>
                     <div className={css(gridStyles.raw().cardPreview)} style={getPreviewStyle(token)} />
                     <div className={styles.cardInfo}>
-                        <span className={styles.cardName}>{token.name}</span>
+                        {/* カードは短い名前で見せ、コピーは実際に指定できるトークンパスにする */}
+                        <CopyableCode text={`${type}.${token.name}`} display={token.name} className={styles.cardName} />
                         <span className={styles.cardValue}>{token.reference}</span>
                     </div>
                 </div>

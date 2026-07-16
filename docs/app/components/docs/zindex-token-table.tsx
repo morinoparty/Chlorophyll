@@ -1,4 +1,5 @@
 import { css, sva } from "styled-system/css";
+import { CopyableCode } from "./copyable-code";
 import { parseTokensByType } from "./token-parser";
 
 const tableStyles = sva({
@@ -136,7 +137,8 @@ export function ZIndexTokenTable() {
                         {tokens.map((token) => (
                             <tr key={token.name}>
                                 <td className={styles.td}>
-                                    <code>zIndex.{token.name}</code>
+                                    {/* クリックでトークン名をコピーできる */}
+                                    <CopyableCode text={`zIndex.${token.name}`} />
                                 </td>
                                 <td className={styles.tdMuted}>
                                     <code>{String(token.value)}</code>
