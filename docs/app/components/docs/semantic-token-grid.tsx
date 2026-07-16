@@ -12,11 +12,14 @@ const gridStyles = sva({
             gridTemplateColumns: "[repeat(auto-fill, minmax(120px, 1fr))]",
             gap: "6",
         },
+        // プレビュー・トークン名・値をカード左端で揃える。
+        // 中央揃えだと幅の異なるコピーチップがカードごとにずれて落ち着かないため
         card: {
             display: "flex",
             flexDirection: "column",
             gap: "3",
-            alignItems: "center",
+            alignItems: "flex-start",
+            minWidth: "0",
         },
         cardPreview: {
             width: "20",
@@ -29,7 +32,8 @@ const gridStyles = sva({
             display: "flex",
             flexDirection: "column",
             gap: "1",
-            alignItems: "center",
+            alignItems: "flex-start",
+            minWidth: "0",
         },
         cardName: {
             fontSize: "sm",
