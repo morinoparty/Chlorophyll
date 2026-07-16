@@ -1,46 +1,8 @@
 import type { ReactNode } from "react";
-import { sva } from "styled-system/css";
+import { CopyableCode } from "./copyable-code";
+import { MotionBall, parseDurationSeconds, parseEaseValue } from "./motion-preview";
+import { tokenTableStyles } from "./shared-styles";
 import { parseTokensByType, type TokenType } from "./token-parser";
-
-const tableStyles = sva({
-    slots: ["tableWrapper", "table", "th", "td", "tdMuted"],
-    base: {
-        tableWrapper: {
-            width: "full",
-            overflowX: "auto",
-            WebkitOverflowScrolling: "touch",
-        },
-        table: { width: "full", minWidth: "[500px]", borderCollapse: "collapse" },
-        th: {
-            textAlign: "left",
-            padding: "3",
-            fontSize: { base: "xs", md: "sm" },
-            fontWeight: "semibold",
-            color: "colorPalette.fg.muted",
-            borderBottom: "[1px solid]",
-            borderColor: "border.muted",
-            whiteSpace: "nowrap",
-        },
-        td: {
-            padding: "3",
-            fontSize: { base: "xs", md: "sm" },
-            color: "colorPalette.fg",
-            borderBottom: "[1px solid]",
-            borderColor: "border.subtle",
-            verticalAlign: "middle",
-            whiteSpace: "nowrap",
-        },
-        tdMuted: {
-            padding: "3",
-            fontSize: { base: "xs", md: "sm" },
-            color: "colorPalette.fg.muted",
-            borderBottom: "[1px solid]",
-            borderColor: "border.subtle",
-            verticalAlign: "middle",
-            whiteSpace: "normal",
-        },
-    },
-});
 
 type PreviewType = "fontWeight" | "duration" | "easing" | "letterSpacing" | "lineHeight" | "opacity" | "borderWidth";
 
@@ -52,7 +14,7 @@ interface TokenTableProps {
 }
 
 export function TokenTable({ type, previewType, showDescription = false, descriptions = {} }: TokenTableProps) {
-    const styles = tableStyles();
+    const styles = tokenTableStyles();
     const tokens = parseTokensByType(type);
 
     const renderPreview = (value: string | number): ReactNode => {
@@ -61,9 +23,11 @@ export function TokenTable({ type, previewType, showDescription = false, descrip
             case "fontWeight":
                 return <span style={{ fontWeight: stringValue }}>The quick brown fox</span>;
             case "duration":
-                return <span>{stringValue}</span>;
+                // トークンの持続時間そのままでボールを動かし、速さの違いを見せる
+                return <MotionBall duration={parseDurationSeconds(stringValue)} ease={[0.4, 0, 0.2, 1]} />;
             case "easing":
-                return <span>{stringValue}</span>;
+                // カーブの違いに集中できるよう長さは 1.5 秒に揃える
+                return <MotionBall duration={1.5} ease={parseEaseValue(stringValue)} />;
             case "letterSpacing":
                 return <span style={{ letterSpacing: stringValue }}>The quick brown fox</span>;
             case "lineHeight":
@@ -116,11 +80,11 @@ export function TokenTable({ type, previewType, showDescription = false, descrip
                     {tokens.map((token) => (
                         <tr key={token.name}>
                             <td className={styles.td}>
-                                <code>
-                                    {type}.{token.name}
-                                </code>
+                                {/* クリックでトークン名をコピーできる */}
+                                <CopyableCode text={`${type}.${token.name}`} />
                             </td>
-                            <td className={styles.tdMuted}>
+                            {/* 値は折り返さず 1 行で見せる（横スクロールはラッパーが受ける） */}
+                            <td className={styles.tdMuted} style={{ whiteSpace: "nowrap" }}>
                                 <code>{String(token.value)}</code>
                             </td>
                             {previewType && <td className={styles.td}>{renderPreview(token.value)}</td>}

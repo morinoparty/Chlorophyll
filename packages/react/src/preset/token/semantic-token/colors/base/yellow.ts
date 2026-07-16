@@ -95,6 +95,12 @@ export const yellow = defineSemanticTokens.colors({
                 value: "{colors.yellow.5}",
             },
         },
+        // Border semantic tokens (Step 7: コンポーネントの枠線)
+        border: {
+            DEFAULT: {
+                value: "{colors.yellow.7}",
+            },
+        },
         // Foreground semantic tokens
         fg: {
             DEFAULT: {
@@ -121,6 +127,12 @@ export const yellow = defineSemanticTokens.colors({
         // 重ねてコントラストを確保する。
         contrast: {
             value: "{colors.yellow.light.12}",
+        },
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        focus: {
+            ring: {
+                value: "{colors.yellow.a4}",
+            },
         },
     },
 });

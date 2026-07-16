@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { css } from "styled-system/css";
 import { flex, hstack, stack } from "styled-system/patterns";
 
@@ -45,8 +46,9 @@ export function Footer() {
 
                 {/* Links */}
                 <div className={hstack({ gap: "6", fontSize: "sm" })}>
-                    <a
-                        href="/docs"
+                    <Link
+                        to="/docs/$"
+                        params={{ _splat: "getting-started/introduction" }}
                         className={css({
                             color: "colorPalette.fg.muted",
                             textDecoration: "none",
@@ -54,17 +56,18 @@ export function Footer() {
                         })}
                     >
                         Docs
-                    </a>
-                    <a
-                        href="/docs/theme"
+                    </Link>
+                    <Link
+                        to="/docs/$"
+                        params={{ _splat: "theme" }}
                         className={css({
                             color: "colorPalette.fg.muted",
                             textDecoration: "none",
                             _hover: { color: "colorPalette.fg" },
                         })}
                     >
-                        Components
-                    </a>
+                        Theme
+                    </Link>
                     <a
                         href="https://github.com/morinoparty/chlorophyll"
                         target="_blank"

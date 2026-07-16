@@ -95,6 +95,12 @@ export const blue = defineSemanticTokens.colors({
                 value: "{colors.blue.5}",
             },
         },
+        // Border semantic tokens (Step 7: コンポーネントの枠線)
+        border: {
+            DEFAULT: {
+                value: "{colors.blue.7}",
+            },
+        },
         // Foreground semantic tokens
         fg: {
             DEFAULT: {
@@ -119,6 +125,12 @@ export const blue = defineSemanticTokens.colors({
         // Text on solid background
         contrast: {
             value: "{colors.white}",
+        },
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        focus: {
+            ring: {
+                value: "{colors.blue.a4}",
+            },
         },
     },
 });

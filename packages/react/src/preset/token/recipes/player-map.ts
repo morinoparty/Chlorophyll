@@ -19,7 +19,7 @@ export const playerMap = defineSlotRecipe({
             bg: "colorPalette.bg.subtle",
             borderWidth: "2px",
             borderStyle: "solid",
-            borderColor: "white",
+            borderColor: "bg.panel",
             flexShrink: 0,
             minWidth: 0,
             overflow: "hidden",

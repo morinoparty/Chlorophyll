@@ -22,10 +22,8 @@ export const createPreset = (option: PresetOptions) => {
     // // セマンティックトークンを定義
     const semanticTokens: SemanticTokens = {
         ...defaultSemanticToken,
-        radii: {
-            ...radii,
-            ...radii(radius),
-        },
+        // radii はファクトリ関数なので、呼び出した結果(default/l1/l2/l3)をマージする
+        radii: radii(radius),
     };
 
     return definePreset({

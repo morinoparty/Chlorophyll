@@ -44,15 +44,15 @@ export const badge = defineRecipe({
             // 枠線のみ: 背景を持たせたくない場面向け
             outline: {
                 borderWidth: "1px",
-                // surface と同じ scale 7 に揃え、solid(scale 9)ほど枠線が主張しないようにする
-                borderColor: "colorPalette.7",
+                // border ロールトークン(scale 7)で、solid(scale 9)ほど枠線が主張しないようにする
+                borderColor: "colorPalette.border",
                 color: "colorPalette.fg",
             },
             // 淡い背景 + 枠線: subtle よりも輪郭を出しつつ outline より主張を抑えたい場面向け
             surface: {
                 bg: "colorPalette.surface",
                 borderWidth: "1px",
-                borderColor: "colorPalette.7",
+                borderColor: "colorPalette.border",
                 color: "colorPalette.fg",
             },
         },

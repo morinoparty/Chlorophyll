@@ -50,7 +50,7 @@ export const button = defineRecipe({
                     pointerEvents: "none",
                     // 上辺に光のハイライト・下辺に内側の影を入れ、
                     // 上から光が当たって隆起しているような立体感を出す
-                    boxShadow: "[inset 0 1.5px 0 0 rgba(255,255,255,0.34), inset 0 -2.5px 5px 0 rgba(0,0,0,0.27)]",
+                    boxShadow: "inset.raised",
                     zIndex: 2,
                 },
                 // disabled 状態では hover を効かせない
@@ -59,19 +59,20 @@ export const button = defineRecipe({
                     boxShadow: "xl",
                     // hover で隆起感を少し強め、押し上がる印象にする
                     _after: {
-                        boxShadow: "[inset 0 1.5px 0 0 rgba(255,255,255,0.38), inset 0 -3px 6px 0 rgba(0,0,0,0.3)]",
+                        boxShadow: "inset.raised.hover",
                     },
                 },
                 _focusVisible: {
                     outline: "none",
                     ringWidth: "2",
-                    ringColor: "colorPalette.a4",
+                    ringColor: "colorPalette.focus.ring",
                     ringOffset: "0",
                 },
                 _disabled: {
-                    bg: "gray.6",
+                    // 明るいままの背景に控えめな文字色を載せ、無効状態を読ませる
+                    bg: "bg.disabled",
                     borderColor: "border.muted",
-                    color: "gray.contrast",
+                    color: "fg.disabled",
                     boxShadow: "sm",
                 },
             },
@@ -87,7 +88,7 @@ export const button = defineRecipe({
                     pointerEvents: "none",
                     // 上辺にハイライト・下辺にやわらかい影を入れて控えめな立体感を出す。
                     // 白い面なので濃い影だと汚れて見えるため薄くする
-                    boxShadow: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -2px 4px 0 rgba(0,0,0,0.08)]",
+                    boxShadow: "inset.raised.subtle",
                     zIndex: 2,
                 },
                 // disabled 状態では hover を効かせない
@@ -95,13 +96,13 @@ export const button = defineRecipe({
                     bg: "gray.1",
                     // hover で下辺の影を少し深め、立体感を強める
                     _after: {
-                        boxShadow: "[inset 0 1px 0 0 rgba(255,255,255,0.9), inset 0 -3px 5px 0 rgba(0,0,0,0.1)]",
+                        boxShadow: "inset.raised.subtle.hover",
                     },
                 },
                 _focusVisible: {
                     outline: "none",
                     ringWidth: "2",
-                    ringColor: "colorPalette.a4",
+                    ringColor: "colorPalette.focus.ring",
                     ringOffset: "0",
                 },
                 _disabled: {
@@ -122,7 +123,7 @@ export const button = defineRecipe({
                 _focusVisible: {
                     outline: "none",
                     ringWidth: "2",
-                    ringColor: "colorPalette.a4",
+                    ringColor: "colorPalette.focus.ring",
                     ringOffset: "0",
                 },
                 _disabled: {

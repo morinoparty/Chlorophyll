@@ -1,46 +1,8 @@
 import type { ReactNode } from "react";
-import { css, sva } from "styled-system/css";
+import { css } from "styled-system/css";
+import { CopyableCode } from "./copyable-code";
 import { parseSemanticTokensByType, type SemanticTokenType } from "./semantic-token-parser";
-
-const tableStyles = sva({
-    slots: ["tableWrapper", "table", "th", "td", "tdMuted"],
-    base: {
-        tableWrapper: {
-            width: "full",
-            overflowX: "auto",
-            WebkitOverflowScrolling: "touch",
-        },
-        table: { width: "full", minWidth: "[500px]", borderCollapse: "collapse" },
-        th: {
-            textAlign: "left",
-            padding: "3",
-            fontSize: { base: "xs", md: "sm" },
-            fontWeight: "semibold",
-            color: "colorPalette.fg.muted",
-            borderBottom: "[1px solid]",
-            borderColor: "border.muted",
-            whiteSpace: "nowrap",
-        },
-        td: {
-            padding: "3",
-            fontSize: { base: "xs", md: "sm" },
-            color: "colorPalette.fg",
-            borderBottom: "[1px solid]",
-            borderColor: "border.subtle",
-            verticalAlign: "middle",
-            whiteSpace: "nowrap",
-        },
-        tdMuted: {
-            padding: "3",
-            fontSize: { base: "xs", md: "sm" },
-            color: "colorPalette.fg.muted",
-            borderBottom: "[1px solid]",
-            borderColor: "border.subtle",
-            verticalAlign: "middle",
-            whiteSpace: "normal",
-        },
-    },
-});
+import { tokenTableStyles } from "./shared-styles";
 
 // Preview bar style for spacing demonstrations
 const previewBarStyle = css({
@@ -66,7 +28,7 @@ export function SemanticTokenTable({
     showDescription = false,
     descriptions = {},
 }: SemanticTokenTableProps) {
-    const styles = tableStyles();
+    const styles = tokenTableStyles();
     const tokens = parseSemanticTokensByType(type, filterPrefix);
 
     const renderPreview = (cssVar: string): ReactNode => {
@@ -122,9 +84,8 @@ export function SemanticTokenTable({
                     {tokens.map((token) => (
                         <tr key={token.name}>
                             <td className={styles.td}>
-                                <code>
-                                    {type}.{token.name}
-                                </code>
+                                {/* クリックでトークン名をコピーできる */}
+                                <CopyableCode text={`${type}.${token.name}`} />
                             </td>
                             <td className={styles.tdMuted}>
                                 <code>{token.reference}</code>

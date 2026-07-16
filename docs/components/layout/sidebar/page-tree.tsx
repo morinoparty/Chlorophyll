@@ -57,9 +57,10 @@ export function createPageTreeRenderer({
 
         return useMemo(() => {
             function renderSidebarList(items: PageTree.Node[]) {
-                return items.map((item) => {
+                return items.map((item, index) => {
+                    // item.name は ReactNode のため文字列化できない。$id がなければ位置で識別する
                     if (item.type === "separator") {
-                        const sepKey = `sep-${item.name ?? item.$id ?? ""}`;
+                        const sepKey = `sep-${item.$id ?? index}`;
                         if (Separator) return <Separator key={sepKey} item={item} />;
                         return (
                             <SidebarSeparator key={sepKey}>

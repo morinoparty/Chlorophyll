@@ -4,8 +4,8 @@ export const textStyles = defineTextStyles({
     body: {
         description: "The body text style - used in paragraphs",
         value: {
-            fontFamily:
-                "'Satoshi', 'GenJyuuGothicLP', BlinkMacSystemFont, 'Noto Sans JP', -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
+            // フォントスタック本体は reference-tokens/fonts.ts の fonts.sans で一元管理する
+            fontFamily: "sans",
             color: "colorPalette.fg",
             lineHeight: "1.8",
             fontWeight: "500",

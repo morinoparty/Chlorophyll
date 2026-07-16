@@ -11,27 +11,53 @@ import { source } from "../../lib/source";
 
 export const Route = createFileRoute("/docs/$")({
     component: Page,
+    // ドキュメントはビルド時に確定する静的コンテンツなので、
+    // ナビゲーションのたびに loader を再実行しないよう再検証を無効化する。
+    staleTime: Number.POSITIVE_INFINITY,
+    shouldReload: false,
     loader: async ({ params }) => {
         const slugs = params._splat?.split("/") ?? [];
-        const data = await serverLoader({ data: slugs });
-        await clientLoader.preload(data.path);
-        return data;
+        // ページ固有の path と、全ページ共通のページツリーを並行で取得する
+        const [{ path }, pageTree] = await Promise.all([serverPagePath({ data: slugs }), loadPageTree()]);
+        await clientLoader.preload(path);
+        // deserializePageTree がツリーをミューテートするため、利用側にはコピーを渡す
+        return { path, pageTree: structuredClone(pageTree) };
     },
 });
 
-const serverLoader = createServerFn({
+// serializePageTree はページツリー全体を再構築・再シリアライズする高コスト処理だが、
+// 結果はビルド時に不変なので、サーバー起動後は一度だけ計算してモジュールレベルでキャッシュする。
+let serializedPageTreeCache: ReturnType<typeof source.serializePageTree> | undefined;
+function getSerializedPageTree() {
+    if (!serializedPageTreeCache) {
+        serializedPageTreeCache = source.serializePageTree(source.getPageTree());
+    }
+    return serializedPageTreeCache;
+}
+
+// ページ固有の情報（MDX の path）だけを返す軽量なサーバー関数。
+// ページツリーを毎回運ばないことで、ナビゲーションごとの転送量と待ち時間を抑える
+const serverPagePath = createServerFn({
     method: "GET",
 })
     .inputValidator((slugs: string[]) => slugs)
     .handler(async ({ data: slugs }) => {
         const page = source.getPage(slugs);
         if (!page) throw notFound();
-
-        return {
-            path: page.path,
-            pageTree: await source.serializePageTree(source.getPageTree()),
-        };
+        return { path: page.path };
     });
+
+// ページツリー全体を返すサーバー関数。ツリーはビルド時に不変なので、
+// クライアント側では最初の 1 回だけ取得して以降はキャッシュを使い回す
+const serverPageTree = createServerFn({
+    method: "GET",
+}).handler(async () => structuredClone(await getSerializedPageTree()));
+
+let pageTreePromiseCache: ReturnType<typeof serverPageTree> | undefined;
+function loadPageTree() {
+    pageTreePromiseCache ??= serverPageTree();
+    return pageTreePromiseCache;
+}
 
 const clientLoader = browserCollections.docs.createClientLoader({
     component({ toc, frontmatter, default: MDX }) {

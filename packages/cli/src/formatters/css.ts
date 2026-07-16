@@ -139,6 +139,8 @@ export function formatCSS(specs: SpecData, options: CSSOptions = {}): string {
             "solid",
             "solid-emphasized",
             "contrast",
+            "border",
+            "focus-ring",
         ];
 
         for (const name of semanticNames) {

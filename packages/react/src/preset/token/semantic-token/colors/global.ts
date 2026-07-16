@@ -26,5 +26,26 @@ export const global = defineSemanticTokens.colors({
         panel: {
             value: "{colors.white}",
         },
+        // disabled なコントロールの背景。明るいまま沈んで見せる
+        disabled: {
+            value: "{colors.gray.4}",
+        },
+    },
+    // Foreground tokens
+    // gray パレットの fg 系トークンと同じ規約で、グローバルな文字色を提供する
+    fg: {
+        DEFAULT: {
+            value: "{colors.gray.12}",
+        },
+        muted: {
+            value: "{colors.gray.11}",
+        },
+        subtle: {
+            value: "color-mix(in oklch, {colors.gray.11}, transparent 25%)",
+        },
+        // disabled なコントロールの文字色。bg.disabled の上で控えめに読ませる
+        disabled: {
+            value: "{colors.gray.8}",
+        },
     },
 });
