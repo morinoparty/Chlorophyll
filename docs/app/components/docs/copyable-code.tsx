@@ -16,7 +16,8 @@ const copyableCodeStyles = sva({
             border: "[none]",
             backgroundColor: "[transparent]",
             textAlign: "left",
-            cursor: "copy",
+            // cursor: copy はドラッグ&ドロップの複製を示すカーソルで誤解を招くため、通常のクリック可能表示にする
+            cursor: "pointer",
             // アイコン列ぶんの幅は常に確保し、表示切替でレイアウトが動かないようにする
             "&:hover [data-copy-icon], &:focus-visible [data-copy-icon]": {
                 opacity: "[1]",
