@@ -197,10 +197,12 @@ function buildRoleGroups(): Map<Role, DisplayToken[]> {
 // モジュール読み込み時に一度だけ spec を解析する
 const roleGroups = buildRoleGroups();
 
-// 計測済みの解決値。hex は実際に描画された色、ratio は fg / bg の WCAG コントラスト比
+// 計測済みの解決値。hex は実際に描画された色、
+// ratio は fg / bg の WCAG 2.1 コントラスト比、lc は APCA のコントラスト値
 interface TokenMetrics {
     hex: string;
     ratio?: number;
+    lc?: number;
 }
 
 const toHex = (colorValue: string): string => {
@@ -216,6 +218,15 @@ const contrastLevel = (ratio: number): { label: string; tone: "pass" | "warn" | 
     if (ratio >= 7) return { label: "AAA", tone: "pass" };
     if (ratio >= 4.5) return { label: "AA", tone: "pass" };
     if (ratio >= 3) return { label: "AA Large", tone: "warn" };
+    return { label: "Fail", tone: "fail" };
+};
+
+// APCA の目安ラベル。|Lc| 75 以上で本文、60 以上で大きな文字、45 以上で太字の大きな文字
+const apcaLevel = (lc: number): { label: string; tone: "pass" | "warn" | "fail" } => {
+    const abs = Math.abs(lc);
+    if (abs >= 75) return { label: "Body", tone: "pass" };
+    if (abs >= 60) return { label: "Large", tone: "warn" };
+    if (abs >= 45) return { label: "Large Bold", tone: "warn" };
     return { label: "Fail", tone: "fail" };
 };
 
@@ -483,6 +494,7 @@ const gridStyles = sva({
         dialogRowValue: {
             display: "inline-flex",
             alignItems: "center",
+            flexWrap: "wrap",
             gap: "2",
             fontSize: "sm",
             fontFamily: "mono",
@@ -541,6 +553,8 @@ export function SemanticColorGrid() {
                     const composited = alpha < 1 ? Color.mix(bg, fg, alpha, { space: "srgb" }) : fg;
                     composited.alpha = 1;
                     entry.ratio = composited.contrast(bg, "WCAG21");
+                    // APCA は非対称なアルゴリズムなので、背景 → 文字色の順で渡す
+                    entry.lc = bg.contrast(composited, "APCA");
                 } catch {
                     // 解析できない色はコントラスト表示を省略する
                 }
@@ -554,6 +568,13 @@ export function SemanticColorGrid() {
 
     const selectedMetric = selected ? metrics[selected.name] : undefined;
     const selectedLevel = selectedMetric?.ratio !== undefined ? contrastLevel(selectedMetric.ratio) : undefined;
+    const selectedApca = selectedMetric?.lc !== undefined ? apcaLevel(selectedMetric.lc) : undefined;
+    // パレット相対トークンはサイドバーのテーマトグルに追従した参照先だけを見せる
+    const selectedReference = selected
+        ? selected.referenceByTheme
+            ? selected.referenceByTheme[theme]
+            : selected.reference
+        : undefined;
 
     return (
         <div ref={rootRef} className={styles.root}>
@@ -578,7 +599,6 @@ export function SemanticColorGrid() {
                         <div className={styles.grid}>
                             {tokens.map((token) => {
                                 const metric = metrics[token.name];
-                                const level = metric?.ratio !== undefined ? contrastLevel(metric.ratio) : undefined;
 
                                 return (
                                     <div key={token.name} className={styles.card}>
@@ -613,20 +633,7 @@ export function SemanticColorGrid() {
                                         )}
                                         <div className={styles.cardInfo}>
                                             <span className={styles.cardName}>{token.name}</span>
-                                            <span className={styles.cardValue}>
-                                                {metric?.hex ?? "—"}
-                                                {metric?.ratio !== undefined && level && (
-                                                    <span
-                                                        className={cx(
-                                                            styles.contrastBadge,
-                                                            CONTRAST_TONE_CLASS[level.tone],
-                                                        )}
-                                                        title="ペアの背景に対する WCAG 2.1 コントラスト比"
-                                                    >
-                                                        {metric.ratio.toFixed(2)} : 1 · {level.label}
-                                                    </span>
-                                                )}
-                                            </span>
+                                            <span className={styles.cardValue}>{metric?.hex ?? "—"}</span>
                                             {TOKEN_DESCRIPTIONS[token.name] && (
                                                 <span className={styles.cardDescription}>
                                                     {TOKEN_DESCRIPTIONS[token.name]}
@@ -685,34 +692,24 @@ export function SemanticColorGrid() {
                                                 <CopyableCode text={selected.cssVar} />
                                             </span>
                                         </div>
-                                        {selected.referenceByTheme
-                                            ? // パレット相対トークンは mori / umi 両方の参照先を並べて見せる
-                                              THEMES.map(
-                                                  (t) =>
-                                                      selected.referenceByTheme?.[t] && (
-                                                          <div key={t} className={styles.dialogRow}>
-                                                              <span className={styles.dialogRowLabel}>
-                                                                  Reference ({t})
-                                                              </span>
-                                                              <span className={styles.dialogRowValue}>
-                                                                  {selected.referenceByTheme[t]}
-                                                              </span>
-                                                          </div>
-                                                      ),
-                                              )
-                                            : selected.reference && (
-                                                  <div className={styles.dialogRow}>
-                                                      <span className={styles.dialogRowLabel}>Reference</span>
-                                                      <span className={styles.dialogRowValue}>
-                                                          {selected.reference}
-                                                      </span>
-                                                  </div>
-                                              )}
+                                        {selectedReference && (
+                                            <div className={styles.dialogRow}>
+                                                <span className={styles.dialogRowLabel}>
+                                                    Reference{selected.referenceByTheme ? ` (${theme})` : ""}
+                                                </span>
+                                                <span className={styles.dialogRowValue}>{selectedReference}</span>
+                                            </div>
+                                        )}
                                         <div className={styles.dialogRow}>
                                             <span className={styles.dialogRowLabel}>Resolved value ({theme})</span>
                                             <span className={styles.dialogRowValue}>
                                                 {selectedMetric?.hex ? <CopyableCode text={selectedMetric.hex} /> : "—"}
-                                                {selectedMetric?.ratio !== undefined && selectedLevel && (
+                                            </span>
+                                        </div>
+                                        {selectedMetric?.ratio !== undefined && selectedLevel && (
+                                            <div className={styles.dialogRow}>
+                                                <span className={styles.dialogRowLabel}>Contrast</span>
+                                                <span className={styles.dialogRowValue}>
                                                     <span
                                                         className={cx(
                                                             styles.contrastBadge,
@@ -720,11 +717,24 @@ export function SemanticColorGrid() {
                                                         )}
                                                         title="ペアの背景に対する WCAG 2.1 コントラスト比"
                                                     >
-                                                        {selectedMetric.ratio.toFixed(2)} : 1 · {selectedLevel.label}
+                                                        WCAG {selectedMetric.ratio.toFixed(2)} : 1 ·{" "}
+                                                        {selectedLevel.label}
                                                     </span>
-                                                )}
-                                            </span>
-                                        </div>
+                                                    {selectedMetric.lc !== undefined && selectedApca && (
+                                                        <span
+                                                            className={cx(
+                                                                styles.contrastBadge,
+                                                                CONTRAST_TONE_CLASS[selectedApca.tone],
+                                                            )}
+                                                            title="ペアの背景に対する APCA コントラスト値（|Lc| 75 以上が本文の目安）"
+                                                        >
+                                                            APCA Lc {selectedMetric.lc.toFixed(1)} ·{" "}
+                                                            {selectedApca.label}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
                                         {TOKEN_DESCRIPTIONS[selected.name] && (
                                             <Dialog.Description className={styles.dialogDescription}>
                                                 {TOKEN_DESCRIPTIONS[selected.name]}
