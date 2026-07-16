@@ -1,4 +1,7 @@
+import { Dialog } from "@ark-ui/react/dialog";
+import { Portal } from "@ark-ui/react/portal";
 import Color from "colorjs.io";
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { css, cx, sva } from "styled-system/css";
 import { CopyableCode } from "./copyable-code";
@@ -239,11 +242,22 @@ const gridStyles = sva({
         "cardPreviewText",
         "cardInfo",
         "cardName",
-        "cardVar",
-        "cardReference",
         "cardValue",
         "cardDescription",
         "contrastBadge",
+        "dialogBackdrop",
+        "dialogPositioner",
+        "dialogContent",
+        "dialogClose",
+        "dialogPreview",
+        "dialogPreviewFill",
+        "dialogPreviewText",
+        "dialogTitle",
+        "dialogRows",
+        "dialogRow",
+        "dialogRowLabel",
+        "dialogRowValue",
+        "dialogDescription",
     ],
     base: {
         root: {
@@ -297,16 +311,27 @@ const gridStyles = sva({
             gap: "3",
             minWidth: "0",
         },
+        // クリックで詳細ダイアログを開くスウォッチ（button 要素）
         cardPreview: {
             width: "full",
             height: "20",
             borderRadius: "md",
+            border: "sm",
+            borderColor: "border",
             overflow: "hidden",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            // 明るい色でもチップの輪郭が分かるよう内側に薄い線を引く
-            boxShadow: "[inset 0 0 0 1px rgba(0,0,0,0.1)]",
+            padding: "0",
+            cursor: "pointer",
+            transition: "[border-color 0.15s ease-out, box-shadow 0.15s ease-out]",
+            _hover: {
+                borderColor: "border.emphasized",
+            },
+            _focusVisible: {
+                outline: "[none]",
+                boxShadow: "[0 0 0 2px var(--mpc-colors-color-palette-focus-ring)]",
+            },
         },
         cardPreviewFill: {
             width: "full",
@@ -325,24 +350,16 @@ const gridStyles = sva({
         },
         cardName: {
             fontSize: "sm",
+            fontFamily: "mono",
             fontWeight: "medium",
             color: "gray.fg",
             maxWidth: "full",
-        },
-        cardVar: {
-            fontSize: "xs",
-            color: "gray.fg.subtle",
-            maxWidth: "full",
-        },
-        cardReference: {
-            fontSize: "xs",
-            fontFamily: "mono",
-            color: "gray.fg.subtle",
             overflowWrap: "anywhere",
         },
         cardValue: {
             display: "inline-flex",
             alignItems: "center",
+            flexWrap: "wrap",
             gap: "2",
             fontSize: "xs",
             fontFamily: "mono",
@@ -362,6 +379,120 @@ const gridStyles = sva({
             borderRadius: "full",
             fontSize: "xs",
             fontVariantNumeric: "tabular-nums",
+            // 比率とラベルを 1 行に保ち、バッジが縦に潰れないようにする
+            whiteSpace: "nowrap",
+        },
+        dialogBackdrop: {
+            position: "fixed",
+            inset: "0",
+            zIndex: "overlay",
+            backgroundColor: "overlay",
+            opacity: "0",
+            transition: "[opacity 0.2s ease-out]",
+            _open: { opacity: "[1]" },
+            _closed: { opacity: "0" },
+        },
+        dialogPositioner: {
+            position: "fixed",
+            inset: "0",
+            zIndex: "overlay",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "4",
+        },
+        dialogContent: {
+            position: "relative",
+            width: "full",
+            maxWidth: "[26rem]",
+            display: "flex",
+            flexDirection: "column",
+            gap: "4",
+            backgroundColor: "bg.panel",
+            border: "sm",
+            borderColor: "border",
+            borderRadius: "lg",
+            boxShadow: "[0 16px 48px rgba(0, 0, 0, 0.24)]",
+            padding: "5",
+            opacity: "0",
+            transform: "[translateY(8px)]",
+            transition: "[opacity 0.2s ease-out, transform 0.2s ease-out]",
+            _open: { opacity: "[1]", transform: "[translateY(0)]" },
+            _closed: { opacity: "0", transform: "[translateY(8px)]" },
+        },
+        dialogClose: {
+            position: "absolute",
+            top: "3",
+            right: "3",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "8",
+            height: "8",
+            borderRadius: "md",
+            color: "gray.fg.muted",
+            backgroundColor: "[transparent]",
+            border: "[none]",
+            cursor: "pointer",
+            transition: "colors",
+            _hover: { backgroundColor: "gray.a3", color: "gray.fg" },
+        },
+        dialogPreview: {
+            width: "full",
+            height: "28",
+            borderRadius: "md",
+            border: "sm",
+            borderColor: "border",
+            overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        dialogPreviewFill: {
+            width: "full",
+            height: "full",
+        },
+        dialogPreviewText: {
+            fontSize: "3xl",
+            fontWeight: "semibold",
+        },
+        dialogTitle: {
+            fontSize: "lg",
+            fontFamily: "mono",
+            fontWeight: "semibold",
+            color: "gray.fg",
+            overflowWrap: "anywhere",
+        },
+        dialogRows: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "3",
+        },
+        dialogRow: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "1",
+            alignItems: "flex-start",
+        },
+        dialogRowLabel: {
+            fontSize: "xs",
+            color: "gray.fg.subtle",
+            textTransform: "uppercase",
+            letterSpacing: "[0.05em]",
+        },
+        dialogRowValue: {
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "2",
+            fontSize: "sm",
+            fontFamily: "mono",
+            fontVariantNumeric: "tabular-nums",
+            color: "gray.fg",
+            overflowWrap: "anywhere",
+        },
+        dialogDescription: {
+            fontSize: "sm",
+            color: "gray.fg.muted",
         },
     },
 });
@@ -378,6 +509,8 @@ export function SemanticColorGrid() {
     const rootRef = useRef<HTMLDivElement>(null);
     const [theme, setTheme] = useState<ThemeName>("mori");
     const [metrics, setMetrics] = useState<Record<string, TokenMetrics>>({});
+    // クリックされたトークン。null 以外のとき詳細ダイアログを表示する
+    const [selected, setSelected] = useState<DisplayToken | null>(null);
 
     // ヘッダーのテーマトグルによる data-color-palette の変更に追従する
     useEffect(() => {
@@ -419,6 +552,9 @@ export function SemanticColorGrid() {
         setMetrics(next);
     }, [theme]);
 
+    const selectedMetric = selected ? metrics[selected.name] : undefined;
+    const selectedLevel = selectedMetric?.ratio !== undefined ? contrastLevel(selectedMetric.ratio) : undefined;
+
     return (
         <div ref={rootRef} className={styles.root}>
             {ROLE_ORDER.map((role) => {
@@ -441,9 +577,6 @@ export function SemanticColorGrid() {
                         </div>
                         <div className={styles.grid}>
                             {tokens.map((token) => {
-                                const reference = token.referenceByTheme
-                                    ? token.referenceByTheme[theme]
-                                    : token.reference;
                                 const metric = metrics[token.name];
                                 const level = metric?.ratio !== undefined ? contrastLevel(metric.ratio) : undefined;
 
@@ -451,33 +584,35 @@ export function SemanticColorGrid() {
                                     <div key={token.name} className={styles.card}>
                                         {token.pairedBg ? (
                                             // 前景色トークン: ペアの背景の上に文字を載せてプレビューする
-                                            <div
+                                            <button
+                                                type="button"
                                                 className={styles.cardPreview}
+                                                onClick={() => setSelected(token)}
+                                                aria-label={`${token.name} の詳細を表示`}
                                                 data-token-id={token.name}
                                                 data-measure="fg"
                                                 // color も計測要素自身に載せ、継承色を計測しないようにする
                                                 style={{ backgroundColor: token.pairedBg, color: token.cssVar }}
                                             >
                                                 <span className={styles.cardPreviewText}>Aa</span>
-                                            </div>
+                                            </button>
                                         ) : (
                                             // 背景系トークン: 市松模様の上の色チップとして見せる（透過色対応）
-                                            <div className={cx(styles.cardPreview, checkerboard)}>
+                                            <button
+                                                type="button"
+                                                className={cx(styles.cardPreview, checkerboard)}
+                                                onClick={() => setSelected(token)}
+                                                aria-label={`${token.name} の詳細を表示`}
+                                            >
                                                 <div
                                                     className={styles.cardPreviewFill}
                                                     data-token-id={token.name}
                                                     style={{ backgroundColor: token.cssVar }}
                                                 />
-                                            </div>
+                                            </button>
                                         )}
                                         <div className={styles.cardInfo}>
-                                            <span className={styles.cardName}>
-                                                <CopyableCode text={token.name} />
-                                            </span>
-                                            <span className={styles.cardVar}>
-                                                <CopyableCode text={token.cssVar} />
-                                            </span>
-                                            {reference && <span className={styles.cardReference}>→ {reference}</span>}
+                                            <span className={styles.cardName}>{token.name}</span>
                                             <span className={styles.cardValue}>
                                                 {metric?.hex ?? "—"}
                                                 {metric?.ratio !== undefined && level && (
@@ -505,6 +640,103 @@ export function SemanticColorGrid() {
                     </section>
                 );
             })}
+            {/* スウォッチクリックで開く詳細ダイアログ。トークン名や CSS 変数はここからコピーする */}
+            <Dialog.Root
+                open={selected !== null}
+                onOpenChange={(e) => {
+                    if (!e.open) setSelected(null);
+                }}
+            >
+                <Portal>
+                    <Dialog.Backdrop className={styles.dialogBackdrop} />
+                    <Dialog.Positioner className={styles.dialogPositioner}>
+                        <Dialog.Content className={styles.dialogContent}>
+                            {selected && (
+                                <>
+                                    <Dialog.CloseTrigger className={styles.dialogClose} aria-label="閉じる">
+                                        <X size={18} />
+                                    </Dialog.CloseTrigger>
+                                    <Dialog.Title className={styles.dialogTitle}>{selected.name}</Dialog.Title>
+                                    {selected.pairedBg ? (
+                                        <div
+                                            className={styles.dialogPreview}
+                                            style={{ backgroundColor: selected.pairedBg, color: selected.cssVar }}
+                                        >
+                                            <span className={styles.dialogPreviewText}>Aa</span>
+                                        </div>
+                                    ) : (
+                                        <div className={cx(styles.dialogPreview, checkerboard)}>
+                                            <div
+                                                className={styles.dialogPreviewFill}
+                                                style={{ backgroundColor: selected.cssVar }}
+                                            />
+                                        </div>
+                                    )}
+                                    <div className={styles.dialogRows}>
+                                        <div className={styles.dialogRow}>
+                                            <span className={styles.dialogRowLabel}>Token</span>
+                                            <span className={styles.dialogRowValue}>
+                                                <CopyableCode text={selected.name} />
+                                            </span>
+                                        </div>
+                                        <div className={styles.dialogRow}>
+                                            <span className={styles.dialogRowLabel}>CSS Variable</span>
+                                            <span className={styles.dialogRowValue}>
+                                                <CopyableCode text={selected.cssVar} />
+                                            </span>
+                                        </div>
+                                        {selected.referenceByTheme
+                                            ? // パレット相対トークンは mori / umi 両方の参照先を並べて見せる
+                                              THEMES.map(
+                                                  (t) =>
+                                                      selected.referenceByTheme?.[t] && (
+                                                          <div key={t} className={styles.dialogRow}>
+                                                              <span className={styles.dialogRowLabel}>
+                                                                  Reference ({t})
+                                                              </span>
+                                                              <span className={styles.dialogRowValue}>
+                                                                  {selected.referenceByTheme[t]}
+                                                              </span>
+                                                          </div>
+                                                      ),
+                                              )
+                                            : selected.reference && (
+                                                  <div className={styles.dialogRow}>
+                                                      <span className={styles.dialogRowLabel}>Reference</span>
+                                                      <span className={styles.dialogRowValue}>
+                                                          {selected.reference}
+                                                      </span>
+                                                  </div>
+                                              )}
+                                        <div className={styles.dialogRow}>
+                                            <span className={styles.dialogRowLabel}>Resolved value ({theme})</span>
+                                            <span className={styles.dialogRowValue}>
+                                                {selectedMetric?.hex ? <CopyableCode text={selectedMetric.hex} /> : "—"}
+                                                {selectedMetric?.ratio !== undefined && selectedLevel && (
+                                                    <span
+                                                        className={cx(
+                                                            styles.contrastBadge,
+                                                            CONTRAST_TONE_CLASS[selectedLevel.tone],
+                                                        )}
+                                                        title="ペアの背景に対する WCAG 2.1 コントラスト比"
+                                                    >
+                                                        {selectedMetric.ratio.toFixed(2)} : 1 · {selectedLevel.label}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </div>
+                                        {TOKEN_DESCRIPTIONS[selected.name] && (
+                                            <Dialog.Description className={styles.dialogDescription}>
+                                                {TOKEN_DESCRIPTIONS[selected.name]}
+                                            </Dialog.Description>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Portal>
+            </Dialog.Root>
         </div>
     );
 }
