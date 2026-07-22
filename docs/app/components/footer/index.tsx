@@ -10,25 +10,17 @@ const footerLink = css({
     _hover: { color: "colorPalette.fg" },
 });
 
-// park-ui / shadcn のトップページに倣った 1 行だけの最小フッター。
-// 左にコピーライト、右に主要リンクを並べる
+// park-ui のトップに倣った、境界線を引かない 1 行だけの最小フッター。
+// 余白だけでコンテンツと区切り、ヘッダーと同じ横幅の使い方に揃える
 export function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer
-            className={css({
-                borderTop: "[1px solid]",
-                borderColor: "border.subtle",
-                marginTop: "auto",
-            })}
-        >
+        <footer className={css({ marginTop: "auto" })}>
             <div
                 className={flex({
-                    maxWidth: "6xl",
-                    marginX: "auto",
                     paddingX: { base: "5", md: "8" },
-                    paddingY: "6",
+                    paddingY: "8",
                     flexDirection: { base: "column", sm: "row" },
                     justifyContent: "space-between",
                     alignItems: { base: "start", sm: "center" },

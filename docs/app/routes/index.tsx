@@ -26,25 +26,27 @@ const homeStyles = sva({
         "demoStack",
     ],
     base: {
+        // park-ui のデスクトップレイアウトに倣い、xl 以上では
+        // 左にテキスト・右にデモカードのコラージュを並べて横幅いっぱいを使う
         root: {
-            display: "flex",
-            flexDirection: "column",
-            gap: { base: "12", md: "16" },
-            maxWidth: "6xl",
+            display: "grid",
+            gridTemplateColumns: { base: "1fr", xl: "[minmax(0, 30rem) 1fr]" },
+            alignItems: "center",
+            gap: { base: "12", xl: "16" },
+            maxWidth: "[120rem]",
             marginX: "auto",
-            paddingX: { base: "5", md: "8" },
+            paddingX: { base: "5", md: "8", xl: "12" },
             paddingY: { base: "10", md: "16" },
         },
 
         // --- Hero -------------------------------------------------------
-        // shadcn のトップページに倣い、中央揃えの見出しと CTA だけで構成する
         hero: {
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
+            alignItems: { base: "center", xl: "start" },
+            textAlign: { base: "center", xl: "left" },
             gap: "5",
-            paddingY: { base: "6", md: "10" },
+            paddingY: { base: "6", xl: "10" },
             animation: "[chl-enter 500ms ease-out both]",
         },
         eyebrow: {
@@ -77,7 +79,7 @@ const homeStyles = sva({
             display: "flex",
             gap: "3",
             flexWrap: "wrap",
-            justifyContent: "center",
+            justifyContent: { base: "center", xl: "start" },
             marginTop: "2",
         },
 
@@ -85,10 +87,11 @@ const homeStyles = sva({
         // 実コンポーネントを組み込んだデモカードを masonry 状に敷き詰める。
         // カードの様式は demoCard の 1 種類だけに揃え、hover では動かさない
         showcase: {
-            columnCount: { base: 1, sm: 2, lg: 3 },
+            columnCount: { base: 1, sm: 2, "2xl": 3 },
             columnGap: "5",
             animation: "[chl-enter 500ms ease-out both]",
         },
+        // 枠線は引かず、白い面と柔らかい影だけでカードを浮かせる
         demoCard: {
             display: "flex",
             flexDirection: "column",
@@ -96,11 +99,9 @@ const homeStyles = sva({
             breakInside: "avoid",
             marginBottom: "5",
             padding: "5",
-            borderRadius: "2xl",
+            borderRadius: "3xl",
             bg: "colorPalette.bg",
-            border: "[1px solid]",
-            borderColor: "border",
-            boxShadow: "xs",
+            boxShadow: "md",
         },
         demoHead: {
             display: "flex",

@@ -1,27 +1,23 @@
 import { Link } from "@tanstack/react-router";
 import { Github } from "lucide-react";
-import { css, sva } from "styled-system/css";
+import { sva } from "styled-system/css";
 import { ColorPaletteToggle } from "../color-palette-toggle";
 import { MobileNav } from "../mobile-nav";
 
 const headerStyles = sva({
-    slots: ["root", "container", "logo", "logoIcon", "logoText", "rightSection", "nav", "navLink", "icons", "iconLink"],
+    slots: ["root", "container", "logo", "logoIcon", "logoText", "rightSection", "nav", "navLink", "iconButton"],
     base: {
         root: {
             position: "sticky",
             top: "0",
             zIndex: "overlay",
-            bg: "bg/80",
-            backdropFilter: "[blur(8px)]",
-            // スクロール時にコンテンツと混ざらないよう、下辺に淡い境界線を敷く
-            borderBottom: "[1px solid]",
-            borderColor: "border.subtle",
+            bg: "bg/70",
+            backdropFilter: "[blur(12px)]",
         },
+        // park-ui のトップに倣い、コンテナ幅で縛らず画面端までを使う
         container: {
             display: "flex",
-            maxWidth: "7xl",
-            marginX: "auto",
-            paddingX: { base: "4" },
+            paddingX: { base: "5", md: "8" },
             height: "16",
             alignItems: "center",
             justifyContent: "space-between",
@@ -29,53 +25,64 @@ const headerStyles = sva({
         logo: {
             display: "flex",
             alignItems: "center",
-            gap: "4",
+            gap: "3",
             textDecoration: "none",
             color: "colorPalette.fg",
         },
         logoIcon: {
-            width: "10",
-            height: "[37px]",
+            width: "8",
+            height: "8",
         },
         logoText: {
             fontWeight: "bold",
-            fontSize: "xl",
+            fontSize: "lg",
         },
         rightSection: {
             display: "flex",
             alignItems: "center",
-            gap: { base: "4", md: "8" },
+            gap: "2",
         },
         nav: {
             display: { base: "none", md: "flex" },
             alignItems: "center",
-            gap: "6",
+            gap: "1",
+            marginRight: "2",
         },
+        // 枠線を使わず、hover で淡い面を敷くゴーストボタン型のリンク
         navLink: {
+            display: "inline-flex",
+            alignItems: "center",
+            paddingX: "3",
+            paddingY: "2",
+            borderRadius: "lg",
             fontSize: "sm",
             fontWeight: "medium",
             color: "colorPalette.fg.muted",
             textDecoration: "none",
             transition: "colors",
-            _hover: { color: "colorPalette.fg" },
+            _hover: {
+                color: "colorPalette.fg",
+                bg: "colorPalette.surface",
+            },
         },
-        icons: {
-            display: "flex",
-            alignItems: "center",
-            gap: "4",
-        },
-        iconLink: {
-            display: "flex",
+        // アイコン類も同じゴーストボタン型に揃える
+        iconButton: {
+            display: { base: "none", md: "flex" },
             alignItems: "center",
             justifyContent: "center",
-            width: { base: "5", lg: "6" },
-            height: { base: "5", lg: "6" },
+            width: "9",
+            height: "9",
+            borderRadius: "lg",
             color: "colorPalette.fg.muted",
+            cursor: "pointer",
             transition: "colors",
-            _hover: { color: "colorPalette.fg" },
+            _hover: {
+                color: "colorPalette.fg",
+                bg: "colorPalette.surface",
+            },
             "& svg": {
-                width: { base: "5", lg: "6" },
-                height: { base: "5", lg: "6" },
+                width: "5",
+                height: "5",
             },
         },
     },
@@ -109,26 +116,16 @@ export function Header() {
                         </Link>
                     </nav>
 
-                    {/* Icons - hidden on mobile */}
-                    <div className={styles.icons}>
-                        <a
-                            href="https://github.com/morinoparty/chlorophyll"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.iconLink}
-                            aria-label="GitHub"
-                        >
-                            <Github
-                                className={css({
-                                    display: {
-                                        base: "none",
-                                        lg: "block",
-                                    },
-                                })}
-                            />
-                        </a>
-                        <ColorPaletteToggle className={styles.iconLink} />
-                    </div>
+                    <a
+                        href="https://github.com/morinoparty/chlorophyll"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.iconButton}
+                        aria-label="GitHub"
+                    >
+                        <Github />
+                    </a>
+                    <ColorPaletteToggle className={styles.iconButton} />
 
                     {/* Mobile Navigation - visible only on mobile */}
                     <MobileNav />

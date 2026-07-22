@@ -33,16 +33,10 @@ export function ColorPaletteToggle({ className }: ColorPaletteToggleProps) {
             type="button"
             onClick={toggleTheme}
             className={cx(
+                // 見た目は呼び出し側の className に委ね、ここでは素のボタンにするだけに留める
                 css({
-                    bg: "red.1",
-                    border: "var(--mpc-borders-border-lg)",
+                    bg: "transparent",
                     cursor: "pointer",
-                    color: "colorPalette.fg.muted",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "colors",
-                    _hover: { color: "colorPalette.fg" },
                 }),
                 className,
             )}
