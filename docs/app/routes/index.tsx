@@ -1,6 +1,6 @@
 import { Accordion, Badge, Button, GuideCard, List, NewsCard, PlayerPhraseCard } from "@morinoparty/chlorophyll-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { sva } from "styled-system/css";
+import { cx, sva } from "styled-system/css";
 
 export const Route = createFileRoute("/")({
     head: () => ({
@@ -19,6 +19,13 @@ const homeStyles = sva({
         "actions",
         "showcase",
         "demoCard",
+        "demoCardFlush",
+        "demoCardTinted",
+        "demoCardInverted",
+        "flushThumb",
+        "flushBody",
+        "invertedTitle",
+        "invertedLead",
         "demoHead",
         "demoTitle",
         "demoLead",
@@ -91,7 +98,9 @@ const homeStyles = sva({
             columnGap: "5",
             animation: "[chl-enter 500ms ease-out both]",
         },
-        // 枠線は引かず、白い面と柔らかい影だけでカードを浮かせる
+        // 枠線は引かず、白い面と柔らかい影だけでカードを浮かせる。
+        // 単調にならないよう、白のほかに flush(画像フルブリード)/ tinted(淡色)/
+        // inverted(濃色)の面バリエーションを重ねて使う
         demoCard: {
             display: "flex",
             flexDirection: "column",
@@ -102,6 +111,37 @@ const homeStyles = sva({
             borderRadius: "3xl",
             bg: "colorPalette.bg",
             boxShadow: "md",
+        },
+        // 画像をカードの縁までフルブリードさせるメディアカード
+        demoCardFlush: {
+            padding: "0",
+            overflow: "hidden",
+        },
+        flushThumb: {
+            borderRadius: "[0px]",
+        },
+        flushBody: {
+            display: "grid",
+            gap: "4",
+            paddingX: "5",
+            paddingBottom: "5",
+        },
+        // 淡いブランド色の面を張ったカード
+        demoCardTinted: {
+            bg: "colorPalette.surface",
+        },
+        // 濃いブランド色で反転させたカード。白いボタンを際立たせる
+        demoCardInverted: {
+            bg: "colorPalette.bg.secondary",
+        },
+        invertedTitle: {
+            fontSize: "md",
+            fontWeight: "bold",
+            color: "colorPalette.fg.secondary",
+        },
+        invertedLead: {
+            fontSize: "sm",
+            color: "colorPalette.fg.secondary/80",
         },
         demoHead: {
             display: "flex",
@@ -169,28 +209,34 @@ function Home() {
 
             {/* Showcase: 実際の利用シーンを模したデモカード群 */}
             <section className={styles.showcase} data-chl-enter style={enterStyle(1)}>
-                {/* NewsCard: お知らせ記事のデモ */}
-                <div className={styles.demoCard}>
+                {/* NewsCard: お知らせ記事のデモ。画像をカードの縁までフルブリードさせる */}
+                <div className={cx(styles.demoCard, styles.demoCardFlush)}>
                     <NewsCard.Root>
-                        <NewsCard.Thumbnail src="/castle-width.png" alt="モリノパーティの城" />
-                        <NewsCard.Content>
-                            <NewsCard.Category>お知らせ</NewsCard.Category>
-                            <NewsCard.Title>夏の建築コンテストを開催します</NewsCard.Title>
-                        </NewsCard.Content>
-                        <NewsCard.Footer>
-                            <NewsCard.Date dateTime="2026-07-15">2026年7月15日</NewsCard.Date>
-                            <NewsCard.Author
-                                players={[
-                                    { playerId: "069a79f4-44e9-4726-a5be-fca90e38aaf5", playerName: "Notch" },
-                                    { playerId: "853c80ef-3c37-49fd-aa49-938b674adae6", playerName: "jeb_" },
-                                ]}
-                            />
-                        </NewsCard.Footer>
+                        <NewsCard.Thumbnail
+                            src="/castle-width.png"
+                            alt="モリノパーティの城"
+                            className={styles.flushThumb}
+                        />
+                        <div className={styles.flushBody}>
+                            <NewsCard.Content>
+                                <NewsCard.Category>お知らせ</NewsCard.Category>
+                                <NewsCard.Title>夏の建築コンテストを開催します</NewsCard.Title>
+                            </NewsCard.Content>
+                            <NewsCard.Footer>
+                                <NewsCard.Date dateTime="2026-07-15">2026年7月15日</NewsCard.Date>
+                                <NewsCard.Author
+                                    players={[
+                                        { playerId: "069a79f4-44e9-4726-a5be-fca90e38aaf5", playerName: "Notch" },
+                                        { playerId: "853c80ef-3c37-49fd-aa49-938b674adae6", playerName: "jeb_" },
+                                    ]}
+                                />
+                            </NewsCard.Footer>
+                        </div>
                     </NewsCard.Root>
                 </div>
 
-                {/* PlayerPhraseCard: メンバー紹介のデモ */}
-                <div className={styles.demoCard}>
+                {/* PlayerPhraseCard: メンバー紹介のデモ。淡いブランド色の面で変化を付ける */}
+                <div className={cx(styles.demoCard, styles.demoCardTinted)}>
                     <div className={styles.demoHead}>
                         <span className={styles.demoTitle}>メンバー</span>
                     </div>
@@ -301,21 +347,15 @@ function Home() {
                     </div>
                 </div>
 
-                {/* Button: intent バリエーションのデモ */}
-                <div className={styles.demoCard}>
+                {/* Button: 濃色の反転カード。白い secondary ボタンを際立たせてリズムを作る */}
+                <div className={cx(styles.demoCard, styles.demoCardInverted)}>
                     <div className={styles.demoHead}>
-                        <span className={styles.demoTitle}>イベントを作成</span>
-                        <span className={styles.demoLead}>建築コンテストやツアーを企画しよう。</span>
+                        <span className={styles.invertedTitle}>イベントを作成</span>
+                        <span className={styles.invertedLead}>建築コンテストやツアーを企画しよう。</span>
                     </div>
                     <div className={styles.demoRow}>
-                        <Button intent="primary" size="sm">
-                            作成する
-                        </Button>
                         <Button intent="secondary" size="sm">
-                            下書き
-                        </Button>
-                        <Button intent="plain" size="sm">
-                            キャンセル
+                            作成する
                         </Button>
                     </div>
                 </div>
