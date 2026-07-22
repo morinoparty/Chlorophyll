@@ -101,21 +101,20 @@ const homeStyles = sva({
         },
 
         // --- Hero collage ----------------------------------------------
+        // パネルで囲わず、ページ背景の上にカード・バッジ・ボタンをそのまま浮かべる。
+        // 面を重ねすぎるとカードだらけに見えるため、白い面は NewsCard の 1 枚だけにする
         heroCollage: {
             display: "flex",
             flexDirection: "column",
             gap: "4",
-            // 淡い面のパネルに実コンポーネントを並べたショーケース
-            padding: { base: "5", md: "6" },
-            borderRadius: "4xl",
-            bg: "colorPalette.bg.subtle",
-            boxShadow: "lg",
             animation: "[chl-enter 500ms ease-out both]",
         },
         collageNews: {
             padding: "4",
             borderRadius: "3xl",
             bg: "colorPalette.bg",
+            border: "[1px solid]",
+            borderColor: "border",
             boxShadow: "sm",
         },
         collageBadges: {
@@ -178,15 +177,8 @@ const homeStyles = sva({
             bg: "colorPalette.bg",
             border: "[1px solid]",
             borderColor: "border",
-            // jakub.kr 流の重ねシャドウ。hover で少し浮き上がらせる
+            // タイル自体はクリックできないデモ用の面なので、hover では動かさない
             boxShadow: "sm",
-            transitionProperty: "[box-shadow, transform]",
-            transitionDuration: "normal",
-            transitionTimingFunction: "easeInOut",
-            _hover: {
-                boxShadow: "lg",
-                transform: "translateY(-2px)",
-            },
         },
         tileHead: {
             display: "flex",

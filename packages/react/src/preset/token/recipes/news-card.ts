@@ -16,26 +16,12 @@ export const newsCard = defineSlotRecipe({
             color: "colorPalette.fg",
             textDecoration: "none",
             cursor: "pointer",
-            zIndex: "[1]",
-            // hover 時にカード全体の背後へふわっと広がるハイライト。
-            // カードより一回り(12px)大きい角丸の面を after 疑似要素で敷く
-            _after: {
-                content: '""',
-                position: "absolute",
-                top: "-3",
-                left: "-3",
-                width: "[calc(100% + token(spacing.6))]",
-                height: "[calc(100% + token(spacing.6))]",
-                bg: "colorPalette.a3",
-                borderRadius: "[token(radii.3xl) token(radii.3xl) token(radii.xl) token(radii.xl)]",
-                zIndex: "[-1]",
-                opacity: "0",
-                transitionProperty: "opacity",
-                transitionDuration: "normal",
-                transitionTimingFunction: "easeInOut",
-            },
+            // hover フィードバックはカードの枠内に収める。
+            // 背後に面を敷く方式だとカード外へはみ出し、余白の狭い場所で崩れて見えるため、
+            // サムネイル画像をわずかにズームする方式にする。
+            // クラス名は prefix 設定で変わるため、要素セレクタでサムネイル画像を指す
             _hover: {
-                _after: { opacity: "1" },
+                "& :where(figure) img": { transform: "scale(1.04)" },
             },
         },
         thumbnail: {
@@ -54,6 +40,9 @@ export const newsCard = defineSlotRecipe({
             width: "full",
             height: "full",
             objectFit: "cover",
+            transitionProperty: "transform",
+            transitionDuration: "normal",
+            transitionTimingFunction: "easeInOut",
         },
         content: {
             display: "grid",
