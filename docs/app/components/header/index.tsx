@@ -13,6 +13,9 @@ const headerStyles = sva({
             zIndex: "overlay",
             bg: "bg/80",
             backdropFilter: "[blur(8px)]",
+            // スクロール時にコンテンツと混ざらないよう、下辺に淡い境界線を敷く
+            borderBottom: "[1px solid]",
+            borderColor: "border.subtle",
         },
         container: {
             display: "flex",
@@ -41,15 +44,15 @@ const headerStyles = sva({
         rightSection: {
             display: "flex",
             alignItems: "center",
-            gap: { base: "4", md: "16" },
+            gap: { base: "4", md: "8" },
         },
         nav: {
             display: { base: "none", md: "flex" },
             alignItems: "center",
-            gap: "8",
+            gap: "6",
         },
         navLink: {
-            fontSize: "md",
+            fontSize: "sm",
             fontWeight: "medium",
             color: "colorPalette.fg.muted",
             textDecoration: "none",

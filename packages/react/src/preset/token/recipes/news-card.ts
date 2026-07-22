@@ -9,20 +9,12 @@ export const newsCard = defineSlotRecipe({
     slots: ["root", "thumbnail", "image", "content", "category", "title", "footer", "date", "authors", "author"],
     base: {
         root: {
-            position: "relative",
             display: "grid",
             gap: "4",
             height: "fit-content",
             color: "colorPalette.fg",
             textDecoration: "none",
             cursor: "pointer",
-            // hover フィードバックはカードの枠内に収める。
-            // 背後に面を敷く方式だとカード外へはみ出し、余白の狭い場所で崩れて見えるため、
-            // サムネイル画像をわずかにズームする方式にする。
-            // クラス名は prefix 設定で変わるため、要素セレクタでサムネイル画像を指す
-            _hover: {
-                "& :where(figure) img": { transform: "scale(1.04)" },
-            },
         },
         thumbnail: {
             display: "flex",
@@ -40,9 +32,6 @@ export const newsCard = defineSlotRecipe({
             width: "full",
             height: "full",
             objectFit: "cover",
-            transitionProperty: "transform",
-            transitionDuration: "normal",
-            transitionTimingFunction: "easeInOut",
         },
         content: {
             display: "grid",

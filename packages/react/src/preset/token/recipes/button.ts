@@ -142,6 +142,6 @@ export const button = defineRecipe({
     },
     defaultVariants: {
         intent: "primary",
-        size: "md",
+        size: "lg",
     },
 });

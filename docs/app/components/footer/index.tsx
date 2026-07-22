@@ -1,7 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { css } from "styled-system/css";
-import { flex, hstack, stack } from "styled-system/patterns";
+import { flex, hstack } from "styled-system/patterns";
 
+// フッターのテキストリンク共通スタイル
+const footerLink = css({
+    color: "colorPalette.fg.muted",
+    textDecoration: "none",
+    transition: "colors",
+    _hover: { color: "colorPalette.fg" },
+});
+
+// park-ui / shadcn のトップページに倣った 1 行だけの最小フッター。
+// 左にコピーライト、右に主要リンクを並べる
 export function Footer() {
     const currentYear = new Date().getFullYear();
 
@@ -9,94 +19,42 @@ export function Footer() {
         <footer
             className={css({
                 borderTop: "[1px solid]",
-                borderColor: "border",
-                bg: "bg",
+                borderColor: "border.subtle",
                 marginTop: "auto",
             })}
         >
             <div
                 className={flex({
-                    maxWidth: "7xl",
+                    maxWidth: "6xl",
                     marginX: "auto",
-                    paddingX: { base: "4", md: "6" },
-                    paddingY: "8",
-                    flexDirection: { base: "column", md: "row" },
+                    paddingX: { base: "5", md: "8" },
+                    paddingY: "6",
+                    flexDirection: { base: "column", sm: "row" },
                     justifyContent: "space-between",
-                    alignItems: { base: "start", md: "center" },
-                    gap: "6",
+                    alignItems: { base: "start", sm: "center" },
+                    gap: "4",
+                    fontSize: "sm",
                 })}
             >
-                {/* Left Section */}
-                <div className={stack({ gap: "2" })}>
-                    <div className={hstack({ gap: "2" })}>
-                        <img src="/chlorophyll.svg" alt="Chlorophyll" className={css({ width: "5", height: "5" })} />
-                        <span
-                            className={css({
-                                fontWeight: "semibold",
-                                color: "colorPalette.fg",
-                            })}
-                        >
-                            Chlorophyll
-                        </span>
-                    </div>
-                    <p className={css({ fontSize: "sm", color: "colorPalette.fg.muted" })}>
-                        A design system for Morinoparty projects.
-                    </p>
-                </div>
-
-                {/* Links */}
-                <div className={hstack({ gap: "6", fontSize: "sm" })}>
-                    <Link
-                        to="/docs/$"
-                        params={{ _splat: "getting-started/introduction" }}
-                        className={css({
-                            color: "colorPalette.fg.muted",
-                            textDecoration: "none",
-                            _hover: { color: "colorPalette.fg" },
-                        })}
-                    >
+                <p className={css({ color: "colorPalette.fg.muted" })}>
+                    &copy; {currentYear} Morinoparty. All rights reserved.
+                </p>
+                <nav className={hstack({ gap: "6" })}>
+                    <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }} className={footerLink}>
                         Docs
                     </Link>
-                    <Link
-                        to="/docs/$"
-                        params={{ _splat: "theme" }}
-                        className={css({
-                            color: "colorPalette.fg.muted",
-                            textDecoration: "none",
-                            _hover: { color: "colorPalette.fg" },
-                        })}
-                    >
+                    <Link to="/docs/$" params={{ _splat: "theme" }} className={footerLink}>
                         Theme
                     </Link>
                     <a
                         href="https://github.com/morinoparty/chlorophyll"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={css({
-                            color: "colorPalette.fg.muted",
-                            textDecoration: "none",
-                            _hover: { color: "colorPalette.fg" },
-                        })}
+                        className={footerLink}
                     >
                         GitHub
                     </a>
-                </div>
-            </div>
-
-            {/* Copyright */}
-            <div
-                className={css({
-                    maxWidth: "7xl",
-                    marginX: "auto",
-                    paddingX: { base: "4", md: "6" },
-                    paddingY: "4",
-                    borderTop: "[1px solid]",
-                    borderColor: "border",
-                })}
-            >
-                <p className={css({ fontSize: "sm", color: "colorPalette.fg.muted" })}>
-                    &copy; {currentYear} Morinoparty. All rights reserved.
-                </p>
+                </nav>
             </div>
         </footer>
     );

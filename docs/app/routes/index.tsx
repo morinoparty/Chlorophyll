@@ -1,4 +1,4 @@
-import { Accordion, Badge, Button, GuideCard, List, NewsCard } from "@morinoparty/chlorophyll-react";
+import { Accordion, Badge, Button, GuideCard, List, NewsCard, PlayerPhraseCard } from "@morinoparty/chlorophyll-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { sva } from "styled-system/css";
 
@@ -13,55 +13,38 @@ const homeStyles = sva({
     slots: [
         "root",
         "hero",
-        "heroLeft",
         "eyebrow",
         "title",
         "tagline",
         "actions",
-        "heroCollage",
-        "collageNews",
-        "collageBadges",
-        "collageButtons",
-        "sections",
         "showcase",
-        "showcaseHead",
-        "showcaseTitle",
-        "showcaseLead",
-        "showcaseGrid",
-        "tile",
-        "tileHead",
-        "tileTitle",
-        "tileBody",
-        "tileRow",
-        "tileLink",
+        "demoCard",
+        "demoHead",
+        "demoTitle",
+        "demoLead",
+        "demoRow",
+        "demoStack",
     ],
     base: {
         root: {
             display: "flex",
             flexDirection: "column",
-            // 各セクションの間隔。上下にたっぷり余白を取り、要素同士を呼吸させる
-            gap: { base: "16", md: "24" },
+            gap: { base: "12", md: "16" },
             maxWidth: "6xl",
             marginX: "auto",
             paddingX: { base: "5", md: "8" },
-            paddingY: { base: "12", md: "20" },
+            paddingY: { base: "10", md: "16" },
         },
 
         // --- Hero -------------------------------------------------------
+        // shadcn のトップページに倣い、中央揃えの見出しと CTA だけで構成する
         hero: {
-            display: "grid",
-            // モバイルは 1 カラム、md 以上でテキストとコラージュを左右に並べる
-            gridTemplateColumns: { base: "1fr", md: "[1.1fr 1fr]" },
-            gap: { base: "10", md: "16" },
-            alignItems: "center",
-        },
-        heroLeft: {
             display: "flex",
             flexDirection: "column",
-            alignItems: { base: "center", md: "start" },
-            textAlign: { base: "center", md: "left" },
+            alignItems: "center",
+            textAlign: "center",
             gap: "5",
-            // 入場アニメーション本体。遅延だけは要素ごとに inline で付与する
+            paddingY: { base: "6", md: "10" },
             animation: "[chl-enter 500ms ease-out both]",
         },
         eyebrow: {
@@ -77,142 +60,79 @@ const homeStyles = sva({
             bg: "colorPalette.surface",
         },
         title: {
-            // 長い見出しでも折り返しが自然になるよう balance を使う
             textWrap: "balance",
-            fontSize: { base: "4xl", md: "5xl" },
+            fontSize: { base: "4xl", md: "6xl" },
             fontWeight: "bold",
             lineHeight: "tight",
             color: "colorPalette.fg",
         },
         tagline: {
-            // 本文は行末をなだらかにする pretty で読みやすくする
             textWrap: "[pretty]",
             fontSize: { base: "md", md: "lg" },
             lineHeight: "relaxed",
             color: "colorPalette.fg.muted",
-            maxWidth: "md",
+            maxWidth: "xl",
         },
         actions: {
             display: "flex",
             gap: "3",
             flexWrap: "wrap",
-            justifyContent: { base: "center", md: "start" },
+            justifyContent: "center",
             marginTop: "2",
         },
 
-        // --- Hero collage ----------------------------------------------
-        // パネルで囲わず、ページ背景の上にカード・バッジ・ボタンをそのまま浮かべる。
-        // 面を重ねすぎるとカードだらけに見えるため、白い面は NewsCard の 1 枚だけにする
-        heroCollage: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "4",
-            animation: "[chl-enter 500ms ease-out both]",
-        },
-        collageNews: {
-            padding: "4",
-            borderRadius: "3xl",
-            bg: "colorPalette.bg",
-            border: "[1px solid]",
-            borderColor: "border",
-            boxShadow: "sm",
-        },
-        collageBadges: {
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "2",
-        },
-        collageButtons: {
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "3",
-        },
-
-        // --- GuideCard sections ----------------------------------------
-        sections: {
-            display: "grid",
-            gridTemplateColumns: { base: "1fr", md: "[repeat(2, 1fr)]" },
-            gap: "5",
-            animation: "[chl-enter 500ms ease-out both]",
-        },
-
         // --- Component showcase ----------------------------------------
+        // 実コンポーネントを組み込んだデモカードを masonry 状に敷き詰める。
+        // カードの様式は demoCard の 1 種類だけに揃え、hover では動かさない
         showcase: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "8",
+            columnCount: { base: 1, sm: 2, lg: 3 },
+            columnGap: "5",
             animation: "[chl-enter 500ms ease-out both]",
         },
-        showcaseHead: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "2",
-            alignItems: { base: "center", md: "start" },
-            textAlign: { base: "center", md: "left" },
-        },
-        showcaseTitle: {
-            textWrap: "balance",
-            fontSize: { base: "3xl", md: "4xl" },
-            fontWeight: "bold",
-            color: "colorPalette.fg",
-        },
-        showcaseLead: {
-            textWrap: "[pretty]",
-            fontSize: "md",
-            color: "colorPalette.fg.muted",
-            maxWidth: "xl",
-        },
-        showcaseGrid: {
-            display: "grid",
-            gridTemplateColumns: { base: "1fr", sm: "[repeat(2, 1fr)]" },
-            gap: "5",
-        },
-        // 個々のタイル。外側 radius = 内側 radius(xl) + padding(3) の同心円になるよう 3xl を選ぶ
-        tile: {
+        demoCard: {
             display: "flex",
             flexDirection: "column",
             gap: "4",
-            padding: "6",
-            borderRadius: "3xl",
+            breakInside: "avoid",
+            marginBottom: "5",
+            padding: "5",
+            borderRadius: "2xl",
             bg: "colorPalette.bg",
             border: "[1px solid]",
             borderColor: "border",
-            // タイル自体はクリックできないデモ用の面なので、hover では動かさない
-            boxShadow: "sm",
+            boxShadow: "xs",
         },
-        tileHead: {
+        demoHead: {
             display: "flex",
             flexDirection: "column",
             gap: "1",
         },
-        tileTitle: {
-            fontSize: "lg",
+        demoTitle: {
+            fontSize: "md",
             fontWeight: "bold",
             color: "colorPalette.fg",
         },
-        tileBody: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "3",
-            flex: "1",
+        demoLead: {
+            fontSize: "sm",
+            color: "colorPalette.fg.muted",
         },
-        tileRow: {
+        demoRow: {
             display: "flex",
             flexWrap: "wrap",
             gap: "2",
             alignItems: "center",
         },
-        tileLink: {
-            alignSelf: "start",
-            fontSize: "sm",
-            fontWeight: "medium",
-            color: "colorPalette.fg.muted",
-            textDecoration: "none",
-            transition: "colors",
-            _hover: { color: "colorPalette.fg" },
+        demoStack: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "3",
         },
     },
 });
+
+// PlayerPhraseCard のフレーズ生成を SSR とクライアントで一致させるための固定基準時刻。
+// 未指定だと現在時刻が使われ、hydration mismatch の原因になる
+const PHRASE_REFERENCE_TIME = new Date("2026-07-15T00:00:00+09:00").getTime();
 
 // 各セクションの入場アニメーションを 80ms 刻みでずらすためのヘルパー。
 // アニメーション本体は sva 側で定義し、ここでは遅延だけを要素ごとに与える。
@@ -229,46 +149,83 @@ function Home() {
     return (
         <div className={styles.root}>
             {/* Hero */}
-            <section className={styles.hero}>
-                <div className={styles.heroLeft} data-chl-enter style={enterStyle(0)}>
-                    <span className={styles.eyebrow}>Morinoparty Design System</span>
-                    <h1 className={styles.title}>Chlorophyll</h1>
-                    <p className={styles.tagline}>
-                        Panda CSS と Ark UI で組んだ、モリノパーティのためのコンポーネントライブラリ。トークンから
-                        コンポーネントまで、一貫したデザインをすばやく組み立てられる。
-                    </p>
-                    <div className={styles.actions}>
-                        <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }}>
-                            <Button intent="primary">ドキュメントへ</Button>
-                        </Link>
-                        <Link to="/docs/$" params={{ _splat: "theme" }}>
-                            <Button intent="secondary">トークン一覧</Button>
-                        </Link>
+            <section className={styles.hero} data-chl-enter style={enterStyle(0)}>
+                <span className={styles.eyebrow}>Morinoparty Design System</span>
+                <h1 className={styles.title}>Chlorophyll</h1>
+                <p className={styles.tagline}>
+                    Panda CSS と Ark UI で組んだ、モリノパーティのためのコンポーネントライブラリ。トークンから
+                    コンポーネントまで、一貫したデザインをすばやく組み立てられる。
+                </p>
+                <div className={styles.actions}>
+                    <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }}>
+                        <Button intent="primary">ドキュメントへ</Button>
+                    </Link>
+                    <Link to="/docs/$" params={{ _splat: "theme" }}>
+                        <Button intent="secondary">トークン一覧</Button>
+                    </Link>
+                </div>
+            </section>
+
+            {/* Showcase: 実際の利用シーンを模したデモカード群 */}
+            <section className={styles.showcase} data-chl-enter style={enterStyle(1)}>
+                {/* NewsCard: お知らせ記事のデモ */}
+                <div className={styles.demoCard}>
+                    <NewsCard.Root>
+                        <NewsCard.Thumbnail src="/castle-width.png" alt="モリノパーティの城" />
+                        <NewsCard.Content>
+                            <NewsCard.Category>お知らせ</NewsCard.Category>
+                            <NewsCard.Title>夏の建築コンテストを開催します</NewsCard.Title>
+                        </NewsCard.Content>
+                        <NewsCard.Footer>
+                            <NewsCard.Date dateTime="2026-07-15">2026年7月15日</NewsCard.Date>
+                            <NewsCard.Author
+                                players={[
+                                    { playerId: "069a79f4-44e9-4726-a5be-fca90e38aaf5", playerName: "Notch" },
+                                    { playerId: "853c80ef-3c37-49fd-aa49-938b674adae6", playerName: "jeb_" },
+                                ]}
+                            />
+                        </NewsCard.Footer>
+                    </NewsCard.Root>
+                </div>
+
+                {/* PlayerPhraseCard: メンバー紹介のデモ */}
+                <div className={styles.demoCard}>
+                    <div className={styles.demoHead}>
+                        <span className={styles.demoTitle}>メンバー</span>
+                    </div>
+                    <div className={styles.demoStack}>
+                        <PlayerPhraseCard
+                            playerId="389b1a68-f647-4dd0-a421-61b6c22fdebe"
+                            playerName="Chocolatt"
+                            referenceTime={PHRASE_REFERENCE_TIME}
+                        >
+                            <PlayerPhraseCard.Avatar />
+                            <PlayerPhraseCard.Body>
+                                <PlayerPhraseCard.Phrase />
+                                <PlayerPhraseCard.Name />
+                            </PlayerPhraseCard.Body>
+                        </PlayerPhraseCard>
+                        <PlayerPhraseCard
+                            playerId="75ba1a8c-4e02-4b4b-abe3-92ef4af6147c"
+                            playerName="Yahirrro"
+                            referenceTime={PHRASE_REFERENCE_TIME}
+                        >
+                            <PlayerPhraseCard.Avatar />
+                            <PlayerPhraseCard.Body>
+                                <PlayerPhraseCard.Phrase />
+                                <PlayerPhraseCard.Name />
+                            </PlayerPhraseCard.Body>
+                        </PlayerPhraseCard>
                     </div>
                 </div>
 
-                {/* コラージュ: colorPalette トークンで塗り、ヘッダーのパレット切り替えで再テーマされる */}
-                <div className={styles.heroCollage} data-chl-enter style={enterStyle(1)}>
-                    <div className={styles.collageNews}>
-                        <NewsCard.Root>
-                            <NewsCard.Thumbnail src="/castle-width.png" alt="モリノパーティの城" />
-                            <NewsCard.Content>
-                                <NewsCard.Category>お知らせ</NewsCard.Category>
-                                <NewsCard.Title>夏の建築コンテストを開催します</NewsCard.Title>
-                            </NewsCard.Content>
-                            <NewsCard.Footer>
-                                <NewsCard.Date dateTime="2026-07-15">2026年7月15日</NewsCard.Date>
-                                <NewsCard.Author
-                                    players={[
-                                        { playerId: "069a79f4-44e9-4726-a5be-fca90e38aaf5", playerName: "Notch" },
-                                        { playerId: "853c80ef-3c37-49fd-aa49-938b674adae6", playerName: "jeb_" },
-                                    ]}
-                                />
-                            </NewsCard.Footer>
-                        </NewsCard.Root>
+                {/* Badge + List + Button: サーバー参加フローのデモ */}
+                <div className={styles.demoCard}>
+                    <div className={styles.demoHead}>
+                        <span className={styles.demoTitle}>サーバーに参加する</span>
+                        <span className={styles.demoLead}>今日から建築をはじめよう。</span>
                     </div>
-
-                    <div className={styles.collageBadges}>
+                    <div className={styles.demoRow}>
                         <Badge status="success" dot>
                             オンライン
                         </Badge>
@@ -278,158 +235,87 @@ function Home() {
                         <Badge status="warning" variant="surface">
                             メンテ予定
                         </Badge>
-                        <Badge status="error" variant="outline">
-                            満員
-                        </Badge>
                     </div>
-
-                    <div className={styles.collageButtons}>
+                    <List variant="ghost" size="sm">
+                        <List.Item>サーバーに参加する</List.Item>
+                        <List.Item>ルールを確認する</List.Item>
+                        <List.Item>建築を始める</List.Item>
+                    </List>
+                    <div className={styles.demoRow}>
                         <Button intent="primary" size="sm">
                             参加する
-                        </Button>
-                        <Button intent="secondary" size="sm">
-                            詳細
                         </Button>
                         <Button intent="plain" size="sm">
                             あとで
                         </Button>
                     </div>
                 </div>
-            </section>
 
-            {/* Sections: GuideCard で主要な入り口へ誘導する */}
-            <section className={styles.sections} data-chl-enter style={enterStyle(2)}>
-                <GuideCard.Root asChild>
-                    <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }}>
-                        <GuideCard.Image src="/castle-width.png" alt="はじめに" />
-                        <GuideCard.Content>
-                            <GuideCard.Title>はじめに</GuideCard.Title>
-                            <GuideCard.Description>
-                                インストールからセットアップまで、Chlorophyll を使い始めるための手引き。
-                            </GuideCard.Description>
-                        </GuideCard.Content>
-                    </Link>
-                </GuideCard.Root>
-
-                <GuideCard.Root asChild>
-                    <Link to="/docs/$" params={{ _splat: "theme" }}>
-                        <GuideCard.Image src="/castle-tall.png" alt="トークン" />
-                        <GuideCard.Content>
-                            <GuideCard.Title>トークン</GuideCard.Title>
-                            <GuideCard.Description>
-                                色・余白・タイポグラフィなど、デザインの土台となるトークン一覧。
-                            </GuideCard.Description>
-                        </GuideCard.Content>
-                    </Link>
-                </GuideCard.Root>
-            </section>
-
-            {/* Component showcase */}
-            <section className={styles.showcase} data-chl-enter style={enterStyle(3)}>
-                <div className={styles.showcaseHead}>
-                    <h2 className={styles.showcaseTitle}>コンポーネント</h2>
-                    <p className={styles.showcaseLead}>
-                        バッジやボタン、リスト、アコーディオンなど、そのまま使える実コンポーネントを揃えている。
-                    </p>
+                {/* Accordion: よくある質問のデモ */}
+                <div className={styles.demoCard}>
+                    <div className={styles.demoHead}>
+                        <span className={styles.demoTitle}>よくある質問</span>
+                    </div>
+                    <Accordion.Root variant="ghost" collapsible defaultValue={["join"]}>
+                        <Accordion.Item value="join">
+                            <Accordion.ItemTrigger>参加方法は？</Accordion.ItemTrigger>
+                            <Accordion.ItemContent>
+                                サーバーアドレスを追加して、そのまま接続すれば参加できる。
+                            </Accordion.ItemContent>
+                        </Accordion.Item>
+                        <Accordion.Item value="rule">
+                            <Accordion.ItemTrigger>ルールはある？</Accordion.ItemTrigger>
+                            <Accordion.ItemContent>
+                                他のプレイヤーの建築を壊さないなど、いくつかの約束がある。
+                            </Accordion.ItemContent>
+                        </Accordion.Item>
+                    </Accordion.Root>
                 </div>
 
-                <div className={styles.showcaseGrid}>
-                    {/* Badge */}
-                    <div className={styles.tile}>
-                        <div className={styles.tileHead}>
-                            <span className={styles.tileTitle}>Badge</span>
-                        </div>
-                        <div className={styles.tileBody}>
-                            <div className={styles.tileRow}>
-                                <Badge status="success">成功</Badge>
-                                <Badge status="info" variant="subtle">
-                                    情報
-                                </Badge>
-                                <Badge status="warning" variant="surface">
-                                    警告
-                                </Badge>
-                                <Badge status="error" variant="outline">
-                                    エラー
-                                </Badge>
-                            </div>
-                        </div>
-                        <Link
-                            to="/docs/$"
-                            params={{ _splat: "theme/system-tokens/colors" }}
-                            className={styles.tileLink}
-                        >
-                            カラートークンを見る →
-                        </Link>
+                {/* GuideCard: ドキュメントへの入り口を兼ねたデモ */}
+                <div className={styles.demoCard}>
+                    <div className={styles.demoStack}>
+                        <GuideCard.Root asChild>
+                            <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }}>
+                                <GuideCard.Image src="/castle-width.png" alt="はじめに" />
+                                <GuideCard.Content>
+                                    <GuideCard.Title>はじめに</GuideCard.Title>
+                                    <GuideCard.Description>
+                                        インストールからセットアップまでの手引き。
+                                    </GuideCard.Description>
+                                </GuideCard.Content>
+                            </Link>
+                        </GuideCard.Root>
+                        <GuideCard.Root asChild>
+                            <Link to="/docs/$" params={{ _splat: "theme" }}>
+                                <GuideCard.Image src="/castle-tall.png" alt="トークン" />
+                                <GuideCard.Content>
+                                    <GuideCard.Title>トークン</GuideCard.Title>
+                                    <GuideCard.Description>
+                                        色・余白・タイポグラフィなどの土台となるトークン一覧。
+                                    </GuideCard.Description>
+                                </GuideCard.Content>
+                            </Link>
+                        </GuideCard.Root>
                     </div>
+                </div>
 
-                    {/* Button */}
-                    <div className={styles.tile}>
-                        <div className={styles.tileHead}>
-                            <span className={styles.tileTitle}>Button</span>
-                        </div>
-                        <div className={styles.tileBody}>
-                            <div className={styles.tileRow}>
-                                <Button intent="primary" size="sm">
-                                    Primary
-                                </Button>
-                                <Button intent="secondary" size="sm">
-                                    Secondary
-                                </Button>
-                                <Button intent="plain" size="sm">
-                                    Plain
-                                </Button>
-                            </div>
-                        </div>
-                        <Link
-                            to="/docs/$"
-                            params={{ _splat: "getting-started/quick-start" }}
-                            className={styles.tileLink}
-                        >
-                            クイックスタート →
-                        </Link>
+                {/* Button: intent バリエーションのデモ */}
+                <div className={styles.demoCard}>
+                    <div className={styles.demoHead}>
+                        <span className={styles.demoTitle}>イベントを作成</span>
+                        <span className={styles.demoLead}>建築コンテストやツアーを企画しよう。</span>
                     </div>
-
-                    {/* List */}
-                    <div className={styles.tile}>
-                        <div className={styles.tileHead}>
-                            <span className={styles.tileTitle}>List</span>
-                        </div>
-                        <div className={styles.tileBody}>
-                            <List variant="ghost" size="sm">
-                                <List.Item>サーバーに参加する</List.Item>
-                                <List.Item>ルールを確認する</List.Item>
-                                <List.Item>建築を始める</List.Item>
-                            </List>
-                        </div>
-                        <Link to="/docs/$" params={{ _splat: "theme" }} className={styles.tileLink}>
-                            トークンを見る →
-                        </Link>
-                    </div>
-
-                    {/* Accordion */}
-                    <div className={styles.tile}>
-                        <div className={styles.tileHead}>
-                            <span className={styles.tileTitle}>Accordion</span>
-                        </div>
-                        <div className={styles.tileBody}>
-                            <Accordion.Root variant="ghost" collapsible defaultValue={["join"]}>
-                                <Accordion.Item value="join">
-                                    <Accordion.ItemTrigger>参加方法は？</Accordion.ItemTrigger>
-                                    <Accordion.ItemContent>
-                                        サーバーアドレスを追加して、そのまま接続すれば参加できる。
-                                    </Accordion.ItemContent>
-                                </Accordion.Item>
-                                <Accordion.Item value="rule">
-                                    <Accordion.ItemTrigger>ルールはある？</Accordion.ItemTrigger>
-                                    <Accordion.ItemContent>
-                                        他のプレイヤーの建築を壊さないなど、いくつかの約束がある。
-                                    </Accordion.ItemContent>
-                                </Accordion.Item>
-                            </Accordion.Root>
-                        </div>
-                        <Link to="/docs/$" params={{ _splat: "concept/architecture" }} className={styles.tileLink}>
-                            設計を見る →
-                        </Link>
+                    <div className={styles.demoRow}>
+                        <Button intent="primary" size="sm">
+                            作成する
+                        </Button>
+                        <Button intent="secondary" size="sm">
+                            下書き
+                        </Button>
+                        <Button intent="plain" size="sm">
+                            キャンセル
+                        </Button>
                     </div>
                 </div>
             </section>
