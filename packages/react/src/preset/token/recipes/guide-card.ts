@@ -22,6 +22,13 @@ export const guideCard = defineSlotRecipe({
             transitionProperty: "background, box-shadow",
             transitionDuration: "normal",
             transitionTimingFunction: "easeInOut",
+            // リンクとして使われるカードなので、hover / active で面の色を 1 段ずつ濃くして反応を返す
+            _hover: {
+                bg: "colorPalette.surface.hover",
+            },
+            _active: {
+                bg: "colorPalette.surface.active",
+            },
         },
         image: {
             width: "full",

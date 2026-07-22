@@ -132,10 +132,12 @@ export const button = defineRecipe({
                 },
             },
         },
+        // park-ui (md: 40px) / shadcn (default: 36px) に近いスケール。
+        // 高さ・横 padding・文字サイズを 1 段ずつ連動させ、どこで並べても揃って見えるようにする
         size: {
-            sm: { height: "{sizes.10}", px: "{spacing.4}", fontSize: "xs" },
-            md: { height: "{sizes.11}", px: "{spacing.5}", fontSize: "sm" },
-            lg: { height: "{sizes.12}", px: "{spacing.6}", py: "{spacing.2}", fontSize: "md" },
+            sm: { height: "{sizes.9}", px: "{spacing.3.5}", fontSize: "xs" },
+            md: { height: "{sizes.10}", px: "{spacing.4}", fontSize: "sm" },
+            lg: { height: "{sizes.11}", px: "{spacing.5}", fontSize: "md" },
         },
     },
     defaultVariants: {
