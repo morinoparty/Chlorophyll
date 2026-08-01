@@ -16,7 +16,7 @@ const STATUS_CLASS_NAME: Record<BadgeStatus, string> = {
 };
 
 interface BadgeProps extends HTMLArkProps<"span"> {
-    /** 見た目のスタイル。塗り(solid)・淡色(subtle)・枠線(outline)・淡色+枠線(surface) */
+    /** 見た目のスタイル。塗り(solid)・淡色(subtle)・枠線(outline)・淡色+枠線(surface)。既定は outline */
     variant?: "solid" | "subtle" | "outline" | "surface";
     /** タグの大きさ */
     size?: "sm" | "md";
