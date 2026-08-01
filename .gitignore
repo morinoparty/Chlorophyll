@@ -31,6 +31,13 @@ dist-ssr
 
 generated
 
+# build-fonts.py がダウンロードする元フォント(約 108MB)のキャッシュ
+docs/.font-cache/
+
+# build-local-font.py が生成する、ローカル作業専用の合成フォント。
+# Satoshi の EULA が再配布を認めていないため、リポジトリには入れない
+.local-fonts/
+
 # Playwright
 /test-results/
 /playwright-report/

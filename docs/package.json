@@ -8,6 +8,8 @@
         "dev": "panda cssgen && panda spec && node scripts/generate-llms-tokens.mjs && vite dev --host",
         "build": "panda cssgen && panda spec && node scripts/generate-llms-tokens.mjs && vite build",
         "start": "vite preview",
+        "fonts": "uv run --with 'fonttools[woff]' -- python scripts/build-fonts.py",
+        "fonts:local": "uv run --with fonttools -- python scripts/build-local-font.py",
         "deploy": "pnpm build && wrangler deploy",
         "cf-typegen": "wrangler types"
     },

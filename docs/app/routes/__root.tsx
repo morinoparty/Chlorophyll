@@ -17,17 +17,10 @@ export const Route = createRootRoute({
             process.env.NODE_ENV !== "development" ? { rel: "stylesheet", href: pandacss } : undefined,
             { rel: "icon", type: "image/svg+xml", href: "/chlorophyll.svg" },
             { rel: "stylesheet", href: appCss },
+            // 欧文の Satoshi。ライセンス上セルフホストできないため Fontshare API 経由で読み込む
             { rel: "stylesheet", href: "https://api.fontshare.com/v2/css?f[]=satoshi@1&display=swap" },
-            {
-                rel: "stylesheet",
-                type: "text/css",
-                href: "https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Medium/GenJyuuGothicL-P-Medium.css",
-            },
-            {
-                rel: "stylesheet",
-                type: "text/css",
-                href: "https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Bold/GenJyuuGothicL-P-Bold.css",
-            },
+            // 和文の源柔ゴシックL P。docs/scripts/build-fonts.py が public/fonts/ 配下に生成する
+            { rel: "stylesheet", href: "/fonts/fonts.css" },
         ],
     }),
     component: RootComponent,
