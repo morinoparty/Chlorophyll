@@ -30,8 +30,12 @@ export const menu = defineSlotRecipe({
             },
         },
         positioner: {
-            // 実際の位置決めは zag のインラインスタイルが担う。重なり順だけここで持つ
-            zIndex: "popover",
+            // 実際の位置決めは zag のインラインスタイルが担う。重なり順だけここで持つ。
+            // ただし zag は `z-index: var(--z-index)` を **インラインで** 当てるため、
+            // クラス側の zIndex は必ず負ける。変数そのものを与えて重なり順を通す
+            // zag は positioner に `--z-index: auto; z-index: var(--z-index)` を
+            // **インラインで** 当てるため、クラス側の指定は !important でないと勝てない
+            zIndex: "popover!",
         },
         content: {
             // ポップオーバー風カード: 白背景・角丸・浮き上がる影

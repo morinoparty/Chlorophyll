@@ -8,8 +8,12 @@ export const tooltip = defineSlotRecipe({
     slots: ["positioner", "content", "arrow"],
     base: {
         positioner: {
-            // 実際の位置決めは zag のインラインスタイルが担う。重なり順だけここで持つ
-            zIndex: "tooltip",
+            // 実際の位置決めは zag のインラインスタイルが担う。重なり順だけここで持つ。
+            // zag はインラインで `z-index: var(--z-index)` を当てるので、
+            // クラス側の zIndex ではなく変数を定義する必要がある
+            // zag は positioner に `--z-index: auto; z-index: var(--z-index)` を
+            // **インラインで** 当てるため、クラス側の指定は !important でないと勝てない
+            zIndex: "tooltip!",
         },
         content: {
             // 吹き出し本体: 背景を反転させ、どのページ地の上でも読める濃色パネルにする
