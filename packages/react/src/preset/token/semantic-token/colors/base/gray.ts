@@ -76,10 +76,11 @@ export const gray = defineSemanticTokens.colors({
         },
         // Background semantic tokens
         bg: {
-            // ページの地色。白いパネル(bg.panel)が浮いて見えるよう step2 より一段沈める。
-            // step3 は surface が使うため、衝突しないよう step2 と step3 の中間に置く
+            // 有彩色パレットの bg は step3 に gray.3 を混ぜ、彩度差で surface と分離させたまま沈めている。
+            // gray にはその彩度の余地が無く(step2 と step3 の ΔE2000 が元々 1.87 しかない)、
+            // 沈めると surface と見分けが付かなくなるため、このパレットだけ step2 のまま据え置く
             DEFAULT: {
-                value: "color-mix(in oklch, {colors.gray.2}, {colors.gray.3} 50%)",
+                value: "{colors.gray.2}",
             },
             subtle: {
                 value: "{colors.gray.1}",
