@@ -31,6 +31,15 @@ export const createPreset = (option: PresetOptions) => {
         presets: ["@pandacss/preset-base"],
         globalFontface: globalFontFace,
         globalCss: {
+            // フォントスタックは html に直接当てて文書全体へ行き渡らせる。
+            // textStyles.body 経由だと、それを適用した要素の子孫にしか効かない。
+            // Menu / Drawer / ModalDialog / Toast / Tooltip は Portal で document.body 直下に
+            // マウントされるため、アプリ側がラッパー要素に textStyle を当てている場合は
+            // その外に出てしまい、フォントだけブラウザ既定にフォールバックする。
+            // preset を導入した時点で保証されるよう、ライブラリ側で持つ
+            html: {
+                fontFamily: "sans",
+            },
             "::selection": {
                 backgroundColor: "colorPalette.5",
             },
