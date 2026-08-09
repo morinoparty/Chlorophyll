@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Ellipsis, LogOut, Settings, User } from "lucide-react";
+import type { ComponentProps } from "react";
 import { Menu } from "../../../packages/react/src/components/menu";
 import { Portal } from "../../../packages/react/src/components/portal";
 
@@ -15,10 +16,14 @@ const meta: Meta<typeof Menu> = {
 export default meta;
 type Story = StoryObj<typeof Menu>;
 
-// トリガーは asChild で任意の要素に差し替えられる。ここでは丸いアイコンボタンにする
-const TriggerButton = () => (
+// トリガーは asChild で任意の要素に差し替えられる。ここでは丸いアイコンボタンにする。
+// asChild は cloneElement で props(onClick / aria-* / ref / className)を子へ渡すため、
+// 差し替え先のコンポーネントは受け取った props を必ず DOM 要素へ透過させる必要がある。
+// 透過し忘れるとクリックハンドラが届かず、メニューが開かなくなる
+const TriggerButton = (props: ComponentProps<"button">) => (
     <button
         type="button"
+        {...props}
         style={{
             display: "inline-flex",
             alignItems: "center",
