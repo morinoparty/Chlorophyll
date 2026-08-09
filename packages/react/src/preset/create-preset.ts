@@ -41,12 +41,52 @@ export const createPreset = (option: PresetOptions) => {
                 semanticTokens,
                 breakpoints,
                 textStyles,
-                // 開閉系コンポーネント(Accordion など)の表示アニメーション
+                // 開閉系コンポーネント(Accordion など)の表示アニメーション。
+                // レシピ側からは animationName: "<キー名>" で参照する
                 keyframes: {
                     // 開いたときに上から滑り込みながらフェードインする
                     slideDownIn: {
                         from: { opacity: "0", transform: "translateY(-4px)" },
                         to: { opacity: "1", transform: "translateY(0)" },
+                    },
+                    // Spinner / Toast の loading インジケーターが回り続ける
+                    spin: {
+                        to: { transform: "rotate(360deg)" },
+                    },
+                    // Skeleton がゆっくり明滅してロード中を示す
+                    pulse: {
+                        "0%, 100%": { opacity: "1" },
+                        "50%": { opacity: "0.5" },
+                    },
+                    // Drawer: 背後の暗幕がフェードインする
+                    drawerFadeIn: {
+                        from: { opacity: "0" },
+                        to: { opacity: "1" },
+                    },
+                    // Drawer: パネルが画面左端から滑り込む(placement="start")
+                    drawerSlideInFromStart: {
+                        from: { transform: "translateX(-100%)" },
+                        to: { transform: "translateX(0)" },
+                    },
+                    // Drawer: パネルが画面右端から滑り込む(placement="end")
+                    drawerSlideInFromEnd: {
+                        from: { transform: "translateX(100%)" },
+                        to: { transform: "translateX(0)" },
+                    },
+                    // ModalDialog: 暗幕とダイアログの入場フェード
+                    modalDialogFadeIn: {
+                        from: { opacity: "0" },
+                        to: { opacity: "1" },
+                    },
+                    // ModalDialog: 退場フェード。この完了(animationend)がクローズ処理の合図になるため必須
+                    modalDialogFadeOut: {
+                        from: { opacity: "1" },
+                        to: { opacity: "0" },
+                    },
+                    // ModalDialog: ダイアログがわずかに拡大しながら現れる
+                    modalDialogScaleIn: {
+                        from: { transform: "scale(0.96)" },
+                        to: { transform: "scale(1)" },
                     },
                 },
                 recipes: {
