@@ -20,11 +20,16 @@ const withTheme: Decorator = (Story, context) => {
 
         // プレビュー全体の背景をテーマの colorPalette.bg トークンで塗る。
         // colorPalette のクラスを body に付与して --mpc-colors-color-palette-* を解決させる。
-        const paletteClass = css({ colorPalette: palette }).split(" ").filter(Boolean);
-        document.body.classList.add(...paletteClass);
+        //
+        // textStyle も body に載せる。Menu / Drawer / ModalDialog / Toast / Tooltip は
+        // Portal 経由で document.body 直下にマウントされ、Story を包む decorator の div の
+        // 外に出てしまう。div にだけ textStyle を付けているとこれらにフォントが継承されない。
+        // docs 側が __root.tsx で <body> に textStyle を当てているのと条件を揃える
+        const bodyClass = css({ colorPalette: palette, textStyle: "body" }).split(" ").filter(Boolean);
+        document.body.classList.add(...bodyClass);
         document.body.style.backgroundColor = "var(--mpc-colors-color-palette-bg)";
         return () => {
-            document.body.classList.remove(...paletteClass);
+            document.body.classList.remove(...bodyClass);
         };
     }, [palette]);
 
