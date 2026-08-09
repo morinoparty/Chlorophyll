@@ -76,8 +76,10 @@ export const yellow = defineSemanticTokens.colors({
         },
         // Background semantic tokens
         bg: {
+            // ページの地色。白いパネル(bg.panel)が浮いて見えるよう step2 より一段沈める。
+            // step3 は surface が使うため、衝突しないよう step2 と step3 の中間に置く
             DEFAULT: {
-                value: "{colors.yellow.2}",
+                value: "color-mix(in oklch, {colors.yellow.2}, {colors.yellow.3} 50%)",
             },
             subtle: {
                 value: "{colors.yellow.1}",

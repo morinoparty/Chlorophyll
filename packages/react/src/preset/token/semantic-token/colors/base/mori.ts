@@ -75,8 +75,10 @@ export const mori = defineSemanticTokens.colors({
             value: "{colors.mori.light.a12}",
         },
         bg: {
+            // ページの地色。白いパネル(bg.panel)が浮いて見えるよう step2 より一段沈める。
+            // step3 は surface が使うため、衝突しないよう step2 と step3 の中間に置く
             DEFAULT: {
-                value: "{colors.mori.2}",
+                value: "color-mix(in oklch, {colors.mori.2}, {colors.mori.3} 50%)",
             },
             subtle: {
                 value: "{colors.mori.1}",
