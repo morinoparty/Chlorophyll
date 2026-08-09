@@ -34,6 +34,13 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
+// 何も指定しない既定の見た目（variant="outline"）
+export const Default: Story = {
+    args: {
+        children: "Primary",
+    },
+};
+
 export const Solid: Story = {
     args: {
         variant: "solid",
@@ -160,7 +167,7 @@ export const Showcase: Story = {
             </div>
 
             <div className={showcaseStyles.section}>
-                <span className={showcaseStyles.label}>Outline</span>
+                <span className={showcaseStyles.label}>Outline (既定)</span>
                 <div className={showcaseStyles.row}>
                     <Badge variant="outline" size="sm">
                         Small
