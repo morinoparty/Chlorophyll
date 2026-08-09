@@ -75,10 +75,12 @@ export const mori = defineSemanticTokens.colors({
             value: "{colors.mori.light.a12}",
         },
         bg: {
-            // ページの地色。白いパネル(bg.panel)が浮いて見えるよう step2 より一段沈める。
-            // step3 は surface が使うため、衝突しないよう step2 と step3 の中間に置く
+            // ページの地色。白いパネル(bg.panel)が浮いて見えるよう step3 の明度まで沈めつつ、
+            // gray.3 を半分混ぜて彩度を落とす。step3 と明度は同じでも彩度差が残るため、
+            // 同じ step3 を使う surface とは分離したまま沈められる。
+            // 補間空間は oklab 固定: oklch だと色相が gray の 277.7 に向かって回り青く濁る
             DEFAULT: {
-                value: "color-mix(in oklch, {colors.mori.2}, {colors.mori.3} 50%)",
+                value: "color-mix(in oklab, {colors.mori.3}, {colors.gray.3} 50%)",
             },
             subtle: {
                 value: "{colors.mori.1}",
