@@ -1,19 +1,11 @@
 name: Publish React Package
 
+# GitHub Release を draft から publish したときにだけ公開する。
+# 手動実行 (workflow_dispatch) やタグ push では公開しない — リリースノートと
+# 公開済みバージョンがずれる事故 (draft のまま 0.3.0 が publish された) の再発防止。
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version to publish (e.g. 0.0.2). Leave empty to use the version in package.json"
-        required: false
-        type: string
-  # GitHub Release が publish されたタイミング (release-drafter 経由を想定)
   release:
     types: [published]
-  # 手動で v* タグを push した場合のフォールバック
-  push:
-    tags:
-      - "v*"
 
 permissions:
   contents: read
@@ -41,30 +33,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 手動トリガーで version を指定された場合は package.json を書き換える
-      - name: Override version (workflow_dispatch)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' }}
-        working-directory: packages/react
-        run: |
-          npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
-
-      # タグ push からバージョンを抽出 (例: v0.0.2 → 0.0.2)
-      - name: Sync version from tag
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        working-directory: packages/react
-        run: |
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
-          npm version "$TAG_VERSION" --no-git-tag-version --allow-same-version
-
-      # release イベント経由 (release-drafter) の場合はリリース tag_name から抽出
-      - name: Sync version from release
-        if: ${{ github.event_name == 'release' }}
+      # リリースのタグ (v0.4.0) を package.json の version に反映してから publish する。
+      # リポジトリ側の version は据え置きなので、ここで必ず置き換える
+      - name: Set version from the release tag
         working-directory: packages/react
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG_VERSION="${RELEASE_TAG#v}"
-          npm version "$TAG_VERSION" --no-git-tag-version --allow-same-version
+          VERSION="${RELEASE_TAG#v}"
+          if [ -z "$VERSION" ]; then
+            echo "::error::release tag is empty"
+            exit 1
+          fi
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          echo "publishing @morinoparty/chlorophyll-react@$VERSION"
 
       - name: Publish to GitHub Packages
         working-directory: packages/react
