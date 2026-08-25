@@ -18,6 +18,20 @@ export {
     type DrawerTitleProps,
     type DrawerTriggerProps,
 } from "./drawer";
+export {
+    Editable,
+    type EditableAreaProps,
+    type EditableCancelTriggerProps,
+    type EditableContextProps,
+    type EditableControlProps,
+    type EditableEditTriggerProps,
+    type EditableInputProps,
+    type EditableLabelProps,
+    type EditablePreviewProps,
+    type EditableRootProps,
+    type EditableSize,
+    type EditableSubmitTriggerProps,
+} from "./editable";
 export { GuideCard } from "./guide-card";
 export { List, ListItem, type ListItemProps, type ListProps, type ListSize } from "./list";
 export {
