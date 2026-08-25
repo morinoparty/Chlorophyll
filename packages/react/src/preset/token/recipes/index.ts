@@ -13,6 +13,7 @@ import { pagination } from "./pagination";
 import { playerAvatar } from "./player-avatar";
 import { playerMap } from "./player-map";
 import { playerPhraseCard } from "./player-phrase-card";
+import { select } from "./select";
 import { skeleton } from "./skeleton";
 import { skinViewer } from "./skin-viewer";
 import { spinner } from "./spinner";
@@ -43,6 +44,7 @@ export const slotRecipes = {
     editable,
     modalDialog,
     pagination,
+    select,
     toast,
     tooltip,
 };
