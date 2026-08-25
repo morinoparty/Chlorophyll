@@ -11,7 +11,8 @@ const styles = breadcrumb();
 // ark ファクトリで描画する。ark 経由にしておくと全パーツで asChild が使え、
 // ルーターの Link などを差し込める
 //
-// 組み立て方(Separator は <li> なので List 直下、Ellipsis は <span> なので Item の中に置く):
+// 組み立て方(Item の中には Link か Page を 1 つ置く。Separator と Ellipsis はどちらも
+// 読み上げ対象外の <li> なので、Item で包まず List 直下に並べる):
 //
 // <Breadcrumb.Root>
 //   <Breadcrumb.List>
@@ -19,9 +20,7 @@ const styles = breadcrumb();
 //       <Breadcrumb.Link href="/">ホーム</Breadcrumb.Link>
 //     </Breadcrumb.Item>
 //     <Breadcrumb.Separator />
-//     <Breadcrumb.Item>
-//       <Breadcrumb.Ellipsis />
-//     </Breadcrumb.Item>
+//     <Breadcrumb.Ellipsis />
 //     <Breadcrumb.Separator />
 //     <Breadcrumb.Item>
 //       <Breadcrumb.Page>現在のページ</Breadcrumb.Page>
@@ -47,7 +46,7 @@ const BreadcrumbList = ({ className, ...props }: BreadcrumbListProps) => {
 
 type BreadcrumbItemProps = HTMLArkProps<"li">;
 
-// 段ひとつ分の <li>。中に Link か Page(または Ellipsis)を 1 つ置く
+// 段ひとつ分の <li>。中に Link か Page を 1 つ置く
 const BreadcrumbItem = ({ className, ...props }: BreadcrumbItemProps) => {
     return <ark.li {...props} className={cx(styles.item, className)} />;
 };
@@ -93,17 +92,19 @@ const BreadcrumbSeparator = ({ className, children, ...props }: BreadcrumbSepara
     );
 };
 
-type BreadcrumbEllipsisProps = HTMLArkProps<"span">;
+type BreadcrumbEllipsisProps = HTMLArkProps<"li">;
 
-// 長い階層を畳んだことを示す省略記号。Item の中に置いて使う。
+// 長い階層を畳んだことを示す省略記号。Separator と同じく List 直下に置く <li>。
 // 畳まれた段はそもそも DOM に無く、省略記号を読み上げても辿れる先が無いので
-// アイコンのみの aria-hidden な装飾にとどめる(aria-hidden の中に読み上げ用の
-// 隠しテキストを置いても読まれないため、あえて入れない)
+// Separator と同じ扱い(role="presentation" + aria-hidden)にして、読み上げからも
+// リストの項目数からも除外する。Item で包むと中身が空の項目として数えられてしまうため、
+// あえて <li> 自身を隠す。畳んだことを読み上げで伝えたい場合は、利用側で
+// 通常の Item にテキストを置く
 const BreadcrumbEllipsis = ({ className, children, ...props }: BreadcrumbEllipsisProps) => {
     return (
-        <ark.span role="presentation" aria-hidden="true" {...props} className={cx(styles.ellipsis, className)}>
+        <ark.li role="presentation" aria-hidden="true" {...props} className={cx(styles.ellipsis, className)}>
             {children ?? <EllipsisIcon />}
-        </ark.span>
+        </ark.li>
     );
 };
 

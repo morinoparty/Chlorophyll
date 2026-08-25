@@ -62,7 +62,7 @@ export const CustomSeparator: Story = {
 };
 
 // 深い階層を「先頭 / 省略記号 / 末尾 2 段」に畳んだ例。
-// Ellipsis は <span> なので、他の段と同じく Item の中に置いて ol > li の構造を保つ
+// Ellipsis は Separator と同じ読み上げ対象外の <li> なので、Item で包まず List 直下に置く
 export const WithEllipsis: Story = {
     render: () => (
         <Breadcrumb.Root>
@@ -71,9 +71,7 @@ export const WithEllipsis: Story = {
                     <Breadcrumb.Link href="#home">ホーム</Breadcrumb.Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Separator />
-                <Breadcrumb.Item>
-                    <Breadcrumb.Ellipsis />
-                </Breadcrumb.Item>
+                <Breadcrumb.Ellipsis />
                 <Breadcrumb.Separator />
                 <Breadcrumb.Item>
                     <Breadcrumb.Link href="#stations">駅一覧</Breadcrumb.Link>

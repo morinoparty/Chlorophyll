@@ -4,7 +4,7 @@ export const breadcrumb = defineSlotRecipe({
     className: "breadcrumb",
     jsx: ["Breadcrumb"],
     description: "The breadcrumb component",
-    // nav > ol > li の階層に対応したスロット。separator は li、ellipsis は li の中身
+    // nav > ol > li の階層に対応したスロット。separator と ellipsis は読み上げ対象外の li
     slots: ["root", "list", "item", "link", "page", "separator", "ellipsis"],
     base: {
         root: {
@@ -76,7 +76,7 @@ export const breadcrumb = defineSlotRecipe({
             },
         },
         ellipsis: {
-            // 省略記号。押せないので cursor もフォーカスも持たせない
+            // 省略記号(畳んだ段の代わりに置く li)。押せないので cursor もフォーカスも持たせない
             display: "inline-flex",
             alignItems: "center",
             flexShrink: "0",
