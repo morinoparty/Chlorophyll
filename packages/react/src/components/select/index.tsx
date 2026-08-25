@@ -27,11 +27,27 @@ type SelectRootProps<T extends CollectionItem = CollectionItem> = ArkSelect.Root
 >;
 
 // Select 全体の状態(開閉・選択値)を管理する Root。
-// collection は createListCollection で作った ListCollection を渡す
-const SelectRoot = <T extends CollectionItem>({ className, size = "md", ...props }: SelectRootProps<T>) => {
+// collection は createListCollection で作った ListCollection を渡す。
+//
+// Positioner / Content は自動では Portal されない。Menu / Drawer / Tooltip と同じく、
+// 利用側で `<Portal><Select.Positioner>…</Select.Positioner></Portal>` と明示的にくるむ
+// (overflow: auto なテーブルの中でも Portal に入れればクリップされない)
+const SelectRoot = <T extends CollectionItem>({
+    className,
+    size = "md",
+    positioning,
+    ...props
+}: SelectRootProps<T>) => {
     return (
         <SelectSizeContext.Provider value={size}>
-            <ArkSelect.Root {...props} className={cx(styles.root, className)} />
+            <ArkSelect.Root
+                {...props}
+                // zag の既定では Content が max-content 幅になり、width: 100% の Trigger より狭く見えてしまう。
+                // フォーム欄らしく既定で Trigger と同じ幅に揃え、利用側が渡した positioning
+                // (例: `positioning={{ sameWidth: false }}`) で上書きできるよう後ろに展開する
+                positioning={{ sameWidth: true, ...positioning }}
+                className={cx(styles.root, className)}
+            />
         </SelectSizeContext.Provider>
     );
 };
@@ -95,7 +111,8 @@ const SelectClearTrigger = ({ className, children, ...props }: SelectClearTrigge
 
 type SelectPositionerProps = ComponentProps<typeof ArkSelect.Positioner>;
 
-// Content の位置決めを行う要素。Portal でくるんで使うことを想定
+// Content の位置決めを行う要素。Menu / Drawer / Tooltip と同じく自動では Portal しないので、
+// 利用側で <Portal> にくるんで使う(スタッキングコンテキストやクリッピングの影響を避けるため)
 const SelectPositioner = ({ className, ...props }: SelectPositionerProps) => {
     return <ArkSelect.Positioner {...props} className={cx(styles.positioner, className)} />;
 };
