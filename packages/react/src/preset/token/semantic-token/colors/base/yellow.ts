@@ -132,10 +132,16 @@ export const yellow = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.yellow.light.12}",
         },
-        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する。
+        // コントラストはこのプロジェクトの基準である APCA(Lc)で評価し、非テキスト要素の目安 Lc 45 以上を
+        // 白(bg.panel)と colorPalette.bg の両方で満たす最も明るいステップを採用する
+        // (計測値: 白 Lc 73.4 / bg Lc 65.6)。
+        // yellow は 9/10 が明るい塗り色(白に対して Lc 12.9 / 16.9)でリングにならないため、
+        // 基準を満たす最初のステップである 11 を使う。
+        // 半透明の a ステップは合成先によって値が変わるので、不透明ステップで固定する
         focus: {
             ring: {
-                value: "{colors.yellow.a4}",
+                value: "{colors.yellow.11}",
             },
         },
     },

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { userEvent } from "storybook/test";
 import { Pagination } from "../../../packages/react/src/components/pagination";
 
 const meta: Meta<typeof Pagination> = {
@@ -135,4 +136,13 @@ export const FewPages: Story = {
             </Pagination.Context>
         </Pagination.Root>
     ),
+};
+
+// キーボードフォーカス時のリングを VRT で押さえるためのストーリー。
+// play で Tab キーを送り、先頭の「前のページ」リンクに :focus-visible を発火させる
+export const Focused: Story = {
+    render: () => <LinkPagination currentPage={5} />,
+    play: async () => {
+        await userEvent.tab();
+    },
 };

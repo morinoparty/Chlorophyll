@@ -138,10 +138,14 @@ export const umi = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.white}",
         },
-        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する。
+        // コントラストはこのプロジェクトの基準である APCA(Lc)で評価し、非テキスト要素の目安 Lc 45 以上を
+        // 白(bg.panel)と colorPalette.bg の両方で満たす最も明るいステップを採用する
+        // (計測値: 白 Lc 73.1 / bg Lc 65.0。step 8 は bg に対して Lc 38.0 で届かない)。
+        // 半透明の a ステップは合成先によって値が変わるので、不透明ステップで固定する
         focus: {
             ring: {
-                value: "{colors.umi.a4}",
+                value: "{colors.umi.9}",
             },
         },
     },
