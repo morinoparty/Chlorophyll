@@ -1,6 +1,6 @@
 "use client";
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
-import { createContext, type ReactNode, useContext } from "react";
+import { createContext, type ReactNode, type RefObject, useContext, useEffect, useRef, useState } from "react";
 import { cx } from "styled-system/css";
 import { table } from "styled-system/recipes";
 
@@ -25,23 +25,68 @@ interface TableRootProps extends HTMLArkProps<"table"> {
     size?: TableSize;
     /** 本文の偶数行に薄い地色を敷いて行を追いやすくする */
     striped?: boolean;
+    /**
+     * 表が横にはみ出してスクロールできるようになったとき、スクロール領域(role="region")に付ける名前。
+     * スクリーンリーダーが「何の領域に着地したか」を読み上げるために使う。既定は「横にスクロールできる表」
+     */
+    scrollAreaLabel?: string;
 }
+
+// スクロールコンテナが横にはみ出しているか(scrollWidth > clientWidth)を監視する。
+// コンテナ自身の幅と、中身である <table> の幅のどちらが変わってもはみ出し具合が変わるため、
+// ResizeObserver で両方を観測する。SSR や初回描画では false とし、マウント後の計測で更新する
+const useIsOverflowingX = (ref: RefObject<HTMLElement | null>) => {
+    const [isOverflowing, setIsOverflowing] = useState(false);
+
+    useEffect(() => {
+        const element = ref.current;
+        if (!element) return;
+
+        const measure = () => setIsOverflowing(element.scrollWidth > element.clientWidth);
+        measure();
+
+        // ResizeObserver が無い環境(古いブラウザ・テスト環境)では初回計測だけで済ませる
+        if (typeof ResizeObserver === "undefined") return;
+
+        const observer = new ResizeObserver(measure);
+        observer.observe(element);
+        // 中身の <table> は列やデータの増減で幅が変わるので、こちらも観測対象にする
+        const content = element.firstElementChild;
+        if (content) observer.observe(content);
+
+        return () => observer.disconnect();
+    }, [ref]);
+
+    return isOverflowing;
+};
 
 // 横スクロールコンテナ(div)と <table> をまとめて描画する Root。
 // className と残りの props はスクロールコンテナではなく <table> に渡す。
 // 利用側から見た「Table」は表そのものであり、asChild や aria 属性・className は
 // <table> に当たるのが自然なため。コンテナは幅と枠線だけを担う内部要素として扱う
-const TableRoot = ({ className, children, size = "md", striped = false, ...props }: TableRootProps) => {
+const TableRoot = ({
+    className,
+    children,
+    size = "md",
+    striped = false,
+    scrollAreaLabel = "横にスクロールできる表",
+    ...props
+}: TableRootProps) => {
     const styles = table({ size, striped });
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
+    const isOverflowing = useIsOverflowingX(scrollAreaRef);
+
+    // 横にはみ出した表をキーボードでもスクロールできるよう、実際にはみ出しているときだけ
+    // コンテナをフォーカス可能にする(axe の scrollable-region-focusable / WCAG 2.1.1)。
+    // 常に tabIndex を付けると、収まっている表まで無名のタブストップになってしまうため条件付きにする。
+    // フォーカスできる要素には何の領域かを伝える名前が必要なので、role="region" と aria-label を必ずセットで付ける
+    // (role の無い div に aria-label だけ付けると axe の aria-prohibited-attr に引っかかる)。
+    // フォーカス時のリングは recipe の root 側で描く
+    const scrollAreaProps = isOverflowing ? { tabIndex: 0, role: "region", "aria-label": scrollAreaLabel } : {};
 
     return (
         <TableContext.Provider value={{ size, striped }}>
-            {/*
-             * 横にはみ出した表をキーボードでもスクロールできるよう、コンテナをフォーカス可能にする
-             * (axe の scrollable-region-focusable / WCAG 2.1.1)。フォーカス時のリングは recipe の root 側で描く
-             */}
-            {/* biome-ignore lint/a11y/noNoninteractiveTabindex: スクロール領域はキーボードで到達できる必要がある */}
-            <div className={styles.root} tabIndex={0}>
+            <div ref={scrollAreaRef} className={styles.root} {...scrollAreaProps}>
                 <ark.table {...props} className={cx(styles.table, className)}>
                     {children}
                 </ark.table>
