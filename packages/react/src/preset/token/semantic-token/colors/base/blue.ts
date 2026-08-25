@@ -130,10 +130,13 @@ export const blue = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.white}",
         },
-        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する。
+        // WCAG 2.4.11 / 1.4.11 の 3:1 を白(bg.panel)と colorPalette.bg の両方で満たす
+        // 最も明るいステップを採用する(計測値: 白 3.65:1 / bg 3.22:1)。
+        // 半透明の a ステップは合成先によって比率が変わるので、不透明ステップで固定する
         focus: {
             ring: {
-                value: "{colors.blue.a4}",
+                value: "{colors.blue.10}",
             },
         },
     },

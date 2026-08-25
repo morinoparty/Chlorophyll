@@ -35,11 +35,13 @@ const control = {
         bg: "colorPalette.surface",
         color: "colorPalette.fg",
     },
+    // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
+    // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
     _focusVisible: {
-        outline: "none",
-        ringWidth: "2",
-        ringColor: "colorPalette.focus.ring",
-        ringOffset: "0",
+        outlineStyle: "solid",
+        outlineWidth: "2px",
+        outlineColor: "colorPalette.focus.ring",
+        outlineOffset: "2px",
     },
     // 現在ページ。zag が data-selected と aria-current="page" を付ける
     _selected: {

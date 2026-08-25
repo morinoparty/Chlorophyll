@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { userEvent } from "storybook/test";
 import { css } from "styled-system/css";
 import { Button } from "../../../packages/react";
 
@@ -179,4 +180,20 @@ export const Showcase: Story = {
             </div>
         </div>
     ),
+};
+
+// キーボードフォーカス時のリングを VRT で押さえるためのストーリー。
+// マウスクリックでは :focus-visible にならないので、play で Tab キーを送って
+// 先頭の primary にフォーカスを移す(以降の intent は Tab を追加で送ると確認できる)
+export const Focused: Story = {
+    render: () => (
+        <div className={showcaseStyles.row}>
+            <Button intent="primary">Primary</Button>
+            <Button intent="secondary">Secondary</Button>
+            <Button intent="plain">Plain</Button>
+        </div>
+    ),
+    play: async () => {
+        await userEvent.tab();
+    },
 };

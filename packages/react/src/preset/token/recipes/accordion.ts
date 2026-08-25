@@ -44,11 +44,15 @@ export const accordion = defineSlotRecipe({
             fontSize: "md",
             fontWeight: "medium",
             cursor: "pointer",
+            // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
+            // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
             _focusVisible: {
-                outline: "none",
-                ringWidth: "2",
-                ringColor: "colorPalette.focus.ring",
-                ringOffset: "0",
+                outlineStyle: "solid",
+                outlineWidth: "2px",
+                outlineColor: "colorPalette.focus.ring",
+                // root が overflow:hidden で角丸を切り取るため、外側に出すリングは端が消える。
+                // 行の内側に描く(負のオフセット)ことで全周が見えるようにする
+                outlineOffset: "-2px",
             },
             _disabled: {
                 cursor: "not-allowed",

@@ -132,10 +132,15 @@ export const yellow = defineSemanticTokens.colors({
         contrast: {
             value: "{colors.yellow.light.12}",
         },
-        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する
+        // フォーカスリング。colorPalette.focus.ring として各レシピから参照する。
+        // WCAG 2.4.11 / 1.4.11 の 3:1 を白(bg.panel)と colorPalette.bg の両方で満たす
+        // 最も明るいステップを採用する(計測値: 白 4.85:1 / bg 4.33:1)。
+        // 半透明の a ステップは合成先によって比率が変わるので、不透明ステップで固定する
+        // yellow は 9/10 が明るい塗り色(白に対して約 1.3:1)なので、他パレットと同じ 10 では
+        // リングがほぼ見えない。3:1 を満たす最初のステップである 11 を使う
         focus: {
             ring: {
-                value: "{colors.yellow.a4}",
+                value: "{colors.yellow.11}",
             },
         },
     },
