@@ -33,9 +33,9 @@ export const table = defineSlotRecipe({
             // 横に長い表はページではなくこのコンテナの中でスクロールさせる
             overflowX: "auto",
             width: "full",
-            // 極薄の枠線と角丸で輪郭だけ出し、本文は地色を塗らずページの背景色をそのまま見せる。
-            // 面としての色付けは header / footer(bg.subtle)だけに留める。
+            // 白いパネルに極薄の枠線と角丸を付けてカード状に見せる。
             // 枠線は控えめにするというライブラリの方針に合わせて border.subtle を使う
+            bg: "bg.panel",
             borderWidth: "1px",
             borderStyle: "solid",
             borderColor: "border.subtle",
