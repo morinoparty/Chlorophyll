@@ -1,5 +1,6 @@
 import { accordion } from "./accordion";
 import { badge } from "./badge";
+import { breadcrumb } from "./breadcrumb";
 import { button } from "./button";
 import { drawer } from "./drawer";
 import { editable } from "./editable";
@@ -47,6 +48,7 @@ export const slotRecipes = {
     modalDialog,
     pagination,
     select,
+    breadcrumb,
     toast,
     tooltip,
 };

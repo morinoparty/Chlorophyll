@@ -6,6 +6,16 @@ export {
     type AccordionRootProps,
 } from "./accordion";
 export { Badge, type BadgeProps } from "./badge";
+export {
+    Breadcrumb,
+    type BreadcrumbEllipsisProps,
+    type BreadcrumbItemProps,
+    type BreadcrumbLinkProps,
+    type BreadcrumbListProps,
+    type BreadcrumbPageProps,
+    type BreadcrumbRootProps,
+    type BreadcrumbSeparatorProps,
+} from "./breadcrumb";
 export { Button, type ButtonProps } from "./button";
 export {
     Drawer,
