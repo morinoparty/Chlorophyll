@@ -22,8 +22,10 @@ const meta: Meta<typeof Table> = {
 export default meta;
 type Story = StoryObj<typeof Table>;
 
-// Table は width:full で親が幅を決める設計。PC の横幅を活かせるよう広めに表示する
-const PANEL_WIDTH = 720;
+// Table は width:full で親が幅を決める設計。PC の横幅を活かせるよう広めに表示しつつ、
+// 狭い画面ではページがはみ出さないよう画面幅(余白ぶんを引く)に抑える。
+// centered レイアウトの親は内容幅に縮むため、% ではなく vw で画面幅を参照する
+const panelStyle = css({ width: "min(720px, calc(100vw - 2rem))" });
 
 // もりのパーティの鉄道(AdvanceRailway)の路線一覧を想定したサンプルデータ
 type RailwayStatus = "運行中" | "建設中" | "休止中";
@@ -74,7 +76,7 @@ const RailwayHeader = () => (
 // 既定の見た目(size="md")。ステータス列には Badge を組み合わせる
 export const Default: Story = {
     render: (args) => (
-        <div style={{ width: PANEL_WIDTH }}>
+        <div className={panelStyle}>
             <Table.Root {...args}>
                 <RailwayHeader />
                 <Table.Body>
@@ -88,7 +90,7 @@ export const Default: Story = {
 // 情報密度を上げたい管理画面向けのコンパクトサイズ
 export const Small: Story = {
     render: () => (
-        <div style={{ width: PANEL_WIDTH }}>
+        <div className={panelStyle}>
             <Table.Root size="sm">
                 <RailwayHeader />
                 <Table.Body>
@@ -102,7 +104,7 @@ export const Small: Story = {
 // 偶数行に薄い地色を敷いて行を追いやすくする
 export const Striped: Story = {
     render: () => (
-        <div style={{ width: PANEL_WIDTH }}>
+        <div className={panelStyle}>
             <Table.Root striped>
                 <RailwayHeader />
                 <Table.Body>
@@ -116,7 +118,7 @@ export const Striped: Story = {
 // 利用側で選択状態を管理し、選択中の行に data-state="selected" を付けた例
 export const SelectedRow: Story = {
     render: () => (
-        <div style={{ width: PANEL_WIDTH }}>
+        <div className={panelStyle}>
             <Table.Root>
                 <RailwayHeader />
                 <Table.Body>
@@ -141,7 +143,7 @@ export const SelectedRow: Story = {
 // データが 1 件も無いときのプレースホルダー。colSpan には列数を渡す
 export const Empty: Story = {
     render: () => (
-        <div style={{ width: PANEL_WIDTH }}>
+        <div className={panelStyle}>
             <Table.Root>
                 <RailwayHeader />
                 <Table.Body>
@@ -156,7 +158,7 @@ export const Empty: Story = {
 // caption は HTML の制約で <table> の先頭に置くが、見た目は表の下に表示される
 export const WithCaptionAndFooter: Story = {
     render: () => (
-        <div style={{ width: PANEL_WIDTH }}>
+        <div className={panelStyle}>
             <Table.Root>
                 <Table.Caption>2026 年 8 月時点の路線一覧。駅数は開業済みの駅のみを数えている</Table.Caption>
                 <RailwayHeader />
@@ -195,10 +197,13 @@ const stations = [
     { name: "ネザー連絡駅", line: "ネザー連絡線", x: 16, y: 40, z: -32, opened: "2025-04-08", builder: "ずんだもん" },
 ];
 
+// 横スクロールの様子を見せるために親幅を 480px に絞る(狭い画面では画面幅まで縮む)
+const scrollPanelStyle = css({ width: "min(480px, calc(100vw - 2rem))" });
+
 // 列が多く親幅(480px)に収まらない表。ページではなく表の中で横スクロールする
 export const Scroll: Story = {
     render: () => (
-        <div style={{ width: 480 }}>
+        <div className={scrollPanelStyle}>
             <Table.Root>
                 <Table.Header>
                     <Table.Row>

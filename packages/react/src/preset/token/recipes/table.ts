@@ -82,6 +82,11 @@ export const table = defineSlotRecipe({
             borderTopStyle: "solid",
             borderTopColor: "border.subtle",
             fontWeight: "medium",
+            // 最終行の下線はパネルの枠線と二重になるため消す(body と同じ理由)。
+            // caption を併用する場合は footer の地色との境界が区切りになるので線は不要
+            "& > tr:last-child": {
+                borderBottomWidth: "0",
+            },
         },
         row: {
             borderBottomWidth: "1px",
