@@ -19,6 +19,7 @@ import { separator } from "./separator";
 import { skeleton } from "./skeleton";
 import { skinViewer } from "./skin-viewer";
 import { spinner } from "./spinner";
+import { table } from "./table";
 import { toast } from "./toast";
 import { tooltip } from "./tooltip";
 
@@ -49,6 +50,7 @@ export const slotRecipes = {
     pagination,
     select,
     breadcrumb,
+    table,
     toast,
     tooltip,
 };

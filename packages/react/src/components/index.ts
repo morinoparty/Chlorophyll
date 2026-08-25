@@ -125,6 +125,19 @@ export { Skeleton, type SkeletonProps, type SkeletonVariant } from "./skeleton";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";
 export { Spinner, type SpinnerProps, type SpinnerSize } from "./spinner";
 export {
+    Table,
+    type TableBodyProps,
+    type TableCaptionProps,
+    type TableCellProps,
+    type TableEmptyProps,
+    type TableFooterProps,
+    type TableHeaderProps,
+    type TableHeadProps,
+    type TableRootProps,
+    type TableRowProps,
+    type TableSize,
+} from "./table";
+export {
     type CreateToasterProps,
     type CreateToasterReturn,
     createToaster,
