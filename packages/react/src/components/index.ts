@@ -110,6 +110,7 @@ export {
     type SelectTriggerProps,
     type SelectValueTextProps,
 } from "./select";
+export { Separator, type SeparatorOrientation, type SeparatorProps } from "./separator";
 export { Skeleton, type SkeletonProps, type SkeletonVariant } from "./skeleton";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";
 export { Spinner, type SpinnerProps, type SpinnerSize } from "./spinner";
