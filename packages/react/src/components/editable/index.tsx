@@ -38,6 +38,9 @@ type EditableRootProps = ComponentProps<typeof ArkEditable.Root> & {
  * - 保存は非同期になるのが普通なので、リクエスト中は `disabled={saving}` を渡して
  *   編集に入れなくする(二重送信を防ぐ)。読み取り専用にしたいだけなら `readOnly` を使う
  * - `invalid` を渡すと input の枠がエラー色になる
+ * - 幅を指定しない場合、編集モードの input は中身の文字幅に合わせる(field-sizing: content。
+ *   Chrome / Edge)。未対応ブラウザでは input が固有幅になるため、表の列幅など横幅の安定が
+ *   必要な場面では `Editable.Area`(または Root)に幅を指定する
  */
 const EditableRoot = ({ className, mono = false, size = "md", ...props }: EditableRootProps) => {
     return (
@@ -82,7 +85,8 @@ type EditablePreviewProps = ComponentProps<typeof ArkEditable.Preview>;
 // - aria-readonly: role を持たない <span> には ARIA 上許可されておらず、axe の
 //   aria-allowed-attr(critical)に引っかかるため外す
 // - data-readonly: zag は readOnly ではなく disabled を映してしまうため、input 側の readOnly
-//   (Root の readOnly を反映)から正しく付け直し、レシピの _readOnly 条件の手掛かりにする
+//   (Root の readOnly を反映)から正しく付け直す。レシピはこの属性を `&[data-readonly]` セレクタで
+//   直接参照する(Panda の _readOnly は `:read-only` を含み <span> に常にマッチするため使えない)
 const EditablePreview = ({ className, ...props }: EditablePreviewProps) => {
     const { mono, size } = useContext(EditableStyleContext);
     const previewClass = editable({ mono, size }).preview;

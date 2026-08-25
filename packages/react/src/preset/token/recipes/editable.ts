@@ -125,8 +125,11 @@ export const editable = defineSlotRecipe({
                 color: "fg.muted",
             },
             // 読み取り専用: 編集には入れないので text カーソルや hover の枠を出さない。
-            // data-readonly はコンポーネント側(EditablePreview)で Root の readOnly から付け直している
-            _readOnly: {
+            // Panda の _readOnly 条件は `:read-only` 擬似クラスを含み、編集不可の <span> は常にこれに
+            // マッチしてしまう(preview が常時 default カーソルになる)。そのため _readOnly ではなく、
+            // コンポーネント側(EditablePreview)が Root の readOnly から付け直す data-readonly 属性を
+            // 直接見る。上の hover 抑止セレクタも同じ属性を使っている
+            "&[data-readonly]": {
                 cursor: "default",
             },
             // 無効: 保存中など。文字色を落として押せないことを示す
@@ -143,7 +146,14 @@ export const editable = defineSlotRecipe({
             ...sharedMetrics,
             // 編集モード: 実線の枠と白背景で「入力中」であることをはっきり示す
             display: "inline-block",
+            // 利用側が Area / Root に幅を与えた場合はその幅いっぱいに広がる
             width: "100%",
+            // Area が中身に合わせて縮む(幅指定なし)場合、<input> は UA 既定の約 20 文字幅になり、
+            // 表示モードとの切り替えで横幅が跳ねる(表のセルで列幅がずれる)。
+            // field-sizing: content で入力欄を中身の文字幅に合わせ、preview と同じ書体・余白・枠線なので
+            // 横幅もほぼ一致させる(Chrome / Edge)。未対応ブラウザ(Firefox / Safari)は従来どおり
+            // 固有幅になるため、列幅の安定が必要な場面では利用側が Area / Root に幅を指定する
+            fieldSizing: "content",
             // 値が短くてもある程度の入力幅を確保する(24 = 96px)
             minWidth: "24",
             borderStyle: "solid",
