@@ -49,7 +49,8 @@ const styles = {
     label: css({ fontSize: "sm", fontWeight: "medium", color: "fg.muted", whiteSpace: "nowrap" }),
     // 横線・縦線の例を縦に並べる
     stack: css({ display: "flex", flexDirection: "column", gap: "8", alignItems: "flex-start" }),
-    caption: css({ fontSize: "xs", color: "fg.subtle" }),
+    // 小さな文字は fg.subtle だとコントラスト不足になるため fg.muted を使う
+    caption: css({ fontSize: "xs", color: "fg.muted" }),
 };
 
 // 段落同士を横線で区切る、最も基本的な使い方
