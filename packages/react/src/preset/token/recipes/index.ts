@@ -2,6 +2,7 @@ import { accordion } from "./accordion";
 import { badge } from "./badge";
 import { button } from "./button";
 import { drawer } from "./drawer";
+import { editable } from "./editable";
 import { guideCard } from "./guide-card";
 import { list } from "./list";
 import { menu } from "./menu";
@@ -40,6 +41,7 @@ export const slotRecipes = {
     newsCard,
     menu,
     drawer,
+    editable,
     modalDialog,
     pagination,
     select,
