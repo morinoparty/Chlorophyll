@@ -175,9 +175,9 @@ function buildMarkdown(tokens) {
     lines.push("");
     lines.push(
         // 代表ブランド（mori）の参照をそのまま載せているため、brand ごとに参照先が異なるロールは注記しておく。
-        // focus.ring は 3:1 のコントラストを確保するために step 10 を使うが、yellow だけは 9/10 が明るすぎるため 11 を使う。
+        // focus.ring は APCA(Lc 45 以上)を満たす step 9 を使うが、yellow だけは 9/10 が明るすぎるため 11 を使う。
         "補足: `contrast` は brand ごとに参照が異なる場合がある（実装値は styled-system の生成結果を確認すること）。" +
-            "`focus.ring` も brand ごとに異なり、yellow のみ `yellow.11`（他の brand は step 10）を参照する。",
+            "`focus.ring` も brand ごとに異なり、yellow のみ `yellow.11`（他の brand は step 9）を参照する。",
     );
     lines.push("");
 

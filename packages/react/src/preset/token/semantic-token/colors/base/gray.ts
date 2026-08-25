@@ -130,12 +130,13 @@ export const gray = defineSemanticTokens.colors({
             value: "{colors.white}",
         },
         // フォーカスリング。colorPalette.focus.ring として各レシピから参照する。
-        // WCAG 2.4.11 / 1.4.11 の 3:1 を白(bg.panel)と colorPalette.bg の両方で満たす
-        // 最も明るいステップを採用する(計測値: 白 3.80:1 / bg 3.34:1)。
-        // 半透明の a ステップは合成先によって比率が変わるので、不透明ステップで固定する
+        // コントラストはこのプロジェクトの基準である APCA(Lc)で評価し、非テキスト要素の目安 Lc 45 以上を
+        // 白(bg.panel)と colorPalette.bg の両方で満たす最も明るいステップを採用する
+        // (計測値: 白 Lc 60.4 / bg Lc 51.6。step 8 は白 Lc 36.5 / bg Lc 27.7 で届かない)。
+        // 半透明の a ステップは合成先によって値が変わるので、不透明ステップで固定する
         focus: {
             ring: {
-                value: "{colors.gray.10}",
+                value: "{colors.gray.9}",
             },
         },
     },

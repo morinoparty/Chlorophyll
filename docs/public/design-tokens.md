@@ -30,7 +30,7 @@
 | `fg.disabled` | `var(--mpc-colors-fg-disabled)` | `gray.8` | disabled コントロールの文字色 |
 | `overlay` | `var(--mpc-colors-overlay)` | `rgba(0, 0, 0, 0.4)` | モーダル等の背景オーバーレイ |
 | `overlay.subtle` | `var(--mpc-colors-overlay-subtle)` | `rgba(0, 0, 0, 0.2)` | 軽い背景暗転 |
-| `focus.ring.error` | `var(--mpc-colors-focus-ring-error)` | `red.10` | エラー時のフォーカスリング |
+| `focus.ring.error` | `var(--mpc-colors-focus-ring-error)` | `red.9` | エラー時のフォーカスリング |
 
 ## Color palette roles
 
@@ -50,9 +50,9 @@
 | `{brand}.solid` | `var(--mpc-colors-{brand}-solid)` | `{brand}.9` | アクセントの塗り色（ボタン等） |
 | `{brand}.solid.emphasized` | `var(--mpc-colors-{brand}-solid-emphasized)` | `{brand}.10` | solid の強調色（hover 等） |
 | `{brand}.contrast` | `var(--mpc-colors-{brand}-contrast)` | `white` | solid 上のコントラスト色 |
-| `{brand}.focus.ring` | `var(--mpc-colors-{brand}-focus-ring)` | `{brand}.10` | brand に追従するフォーカスリング |
+| `{brand}.focus.ring` | `var(--mpc-colors-{brand}-focus-ring)` | `{brand}.9` | brand に追従するフォーカスリング |
 
-補足: `contrast` は brand ごとに参照が異なる場合がある（実装値は styled-system の生成結果を確認すること）。`focus.ring` も brand ごとに異なり、yellow のみ `yellow.11`（他の brand は step 10）を参照する。
+補足: `contrast` は brand ごとに参照が異なる場合がある（実装値は styled-system の生成結果を確認すること）。`focus.ring` も brand ごとに異なり、yellow のみ `yellow.11`（他の brand は step 9）を参照する。
 
 ## Secondary tokens (mori / umi only)
 

@@ -11,11 +11,11 @@ export const focus = defineSemanticTokens.colors({
             // パレット追従のフォーカスリングは各パレット側の focus.ring
             // （colorPalette.focus.ring）で定義している。ここではパレットに
             // 依存しない状態別のリングのみを持つ
-            // エラー時のフォーカスリング。red.8 は白に対して 2.56:1 しかなく
-            // WCAG 2.4.11 / 1.4.11 の 3:1 を満たさないため、パレット側の focus.ring と
-            // 同じ考え方で 10 を使う(計測値: 白 4.36:1 / red.bg 3.82:1)
+            // エラー時のフォーカスリング。パレット側の focus.ring と同じく APCA(Lc)で評価し、
+            // 非テキスト要素の目安 Lc 45 以上を白と red.bg の両方で満たす red.9 を使う
+            // (計測値: 白 Lc 65.0 / bg Lc 56.3。red.8 は bg に対して Lc 41.4 で届かない)
             error: {
-                value: "{colors.red.10}",
+                value: "{colors.red.9}",
             },
         },
     },
