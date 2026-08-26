@@ -29,6 +29,11 @@ type SelectRootProps<T extends CollectionItem = CollectionItem> = ArkSelect.Root
 // Select 全体の状態(開閉・選択値)を管理する Root。
 // collection は createListCollection で作った ListCollection を渡す。
 //
+// multiple を付けると複数選択になる。閉じるタイミングは zag が closeOnSelect を
+// !multiple として導出するため、複数選択では項目を選んでも一覧が開いたままになり、
+// 続けて選び足せる(明示的に closeOnSelect を渡せばこの既定は上書きできる)。
+// 複数選択のときは ValueText が選択中のラベルをカンマでつないで表示する
+//
 // Positioner / Content は自動では Portal されない。Menu / Drawer / Tooltip と同じく、
 // 利用側で `<Portal><Select.Positioner>…</Select.Positioner></Portal>` と明示的にくるむ
 // (overflow: auto なテーブルの中でも Portal に入れればクリップされない)
