@@ -36,7 +36,7 @@ export const select = defineSlotRecipe({
             mb: "1.5",
             fontSize: "sm",
             fontWeight: "medium",
-            color: "fg",
+            color: "colorPalette.fg",
             _disabled: {
                 color: "fg.disabled",
             },
@@ -71,7 +71,7 @@ export const select = defineSlotRecipe({
             // ライブラリ方針: 枠線は控えめに。hover で一段濃くして押せることを伝える
             borderColor: "border.subtle",
             borderRadius: "lg",
-            color: "fg",
+            color: "colorPalette.fg",
             textAlign: "start",
             cursor: "pointer",
             transitionDuration: "fast",
@@ -82,10 +82,10 @@ export const select = defineSlotRecipe({
                 borderColor: "border.interactive",
             },
             // 未選択で placeholder を表示しているときは文字を弱める。
-            // fg.subtle(75% 透過)は白地で WCAG AA のコントラストを満たせず axe が失敗するため、
-            // 不透明な fg.muted で読める濃さを保つ
+            // fg.subtle(75% 透過)は白地でコントラストが足りないため、不透明な fg.muted で読める濃さを保つ
+            // (計測値: 白 Lc 79.8。プレースホルダーの目安 Lc 30 は大きく上回る)
             "&[data-placeholder-shown]": {
-                color: "fg.muted",
+                color: "colorPalette.fg.muted",
             },
             // outline: none だと利用側で outline-style が none のまま残り、
             // フォーカスリングが描かれないため outline 一式を明示する
@@ -117,7 +117,7 @@ export const select = defineSlotRecipe({
             display: "inline-flex",
             alignItems: "center",
             flexShrink: "0",
-            color: "fg.muted",
+            color: "colorPalette.fg.muted",
             transitionDuration: "fast",
             transitionProperty: "transform",
             transitionTimingFunction: "easeInOut",
@@ -149,7 +149,7 @@ export const select = defineSlotRecipe({
             bg: "transparent",
             border: "none",
             borderRadius: "md",
-            color: "fg.muted",
+            color: "colorPalette.fg.muted",
             cursor: "pointer",
             transitionDuration: "fast",
             transitionProperty: "background, color",
@@ -160,7 +160,7 @@ export const select = defineSlotRecipe({
             },
             _hover: {
                 bg: "colorPalette.surface",
-                color: "fg",
+                color: "colorPalette.fg",
             },
             _focusVisible: {
                 outlineStyle: "solid",
@@ -221,7 +221,10 @@ export const select = defineSlotRecipe({
             fontWeight: "semibold",
             letterSpacing: "wide",
             textTransform: "uppercase",
-            color: "fg.muted",
+            // グループの見出しは項目より一段引いて読ませる。
+            // 半透明(transparent 25%)のため合成先で値が変わる点は許容した上で採用している
+            // (計測値: 白 Lc 59.2。補助テキストの目安 Lc 60 をわずかに下回る)
+            color: "colorPalette.fg.subtle",
         },
         item: {
             display: "flex",
@@ -229,7 +232,7 @@ export const select = defineSlotRecipe({
             gap: "component.gap.sm",
             borderRadius: "md",
             px: "component.padding.md",
-            color: "fg",
+            color: "colorPalette.fg",
             cursor: "pointer",
             userSelect: "none",
             outline: "none",
