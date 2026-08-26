@@ -36,7 +36,7 @@ export const select = defineSlotRecipe({
             mb: "1.5",
             fontSize: "sm",
             fontWeight: "medium",
-            color: "fg",
+            color: "colorPalette.fg",
             _disabled: {
                 color: "fg.disabled",
             },
@@ -44,6 +44,18 @@ export const select = defineSlotRecipe({
         control: {
             // Trigger と ClearTrigger を重ねる基準。ClearTrigger を absolute で置く前提
             position: "relative",
+            // ClearTrigger は absolute で Trigger に重なっており、Trigger の flex レイアウトからは
+            // 見えていない。そのままだと ValueText が×の下まで伸びて文字が重なるため、
+            // ×(20px)とその左の隙間(4px)ぶんだけ ValueText を内側に寄せて省略記号を手前で効かせる。
+            // padding ではなく margin にしているのは、padding は overflow の内側に入って
+            // text-overflow: ellipsis の位置が狂うため。
+            // sm: 右余白 12 + Indicator 12 + gap 8 = 32px の右端に対し×の左端は 52px、
+            // md: 右余白 14 + Indicator 14 + gap 8 = 36px に対し×の左端は 56px。どちらも 24px 空ければ足りる。
+            // hidden の有無で出し分けると選ぶたびに幅が跳ねるので、ClearTrigger を置いた構成では常に空ける。
+            // スロットのクラス名ではなく Ark が保証する data-part を参照する(クラス名は Panda の生成に依存するため)
+            "&:has([data-part='clear-trigger']) [data-part='value-text']": {
+                marginEnd: "6",
+            },
         },
         trigger: {
             // 入力欄と同じ「フォームコントロール」の見た目。
@@ -59,7 +71,7 @@ export const select = defineSlotRecipe({
             // ライブラリ方針: 枠線は控えめに。hover で一段濃くして押せることを伝える
             borderColor: "border.subtle",
             borderRadius: "lg",
-            color: "fg",
+            color: "colorPalette.fg",
             textAlign: "start",
             cursor: "pointer",
             transitionDuration: "fast",
@@ -70,10 +82,10 @@ export const select = defineSlotRecipe({
                 borderColor: "border.interactive",
             },
             // 未選択で placeholder を表示しているときは文字を弱める。
-            // fg.subtle(75% 透過)は白地で WCAG AA のコントラストを満たせず axe が失敗するため、
-            // 不透明な fg.muted で読める濃さを保つ
+            // fg.subtle(75% 透過)は白地でコントラストが足りないため、不透明な fg.muted で読める濃さを保つ
+            // (計測値: 白 Lc 79.8。プレースホルダーの目安 Lc 30 は大きく上回る)
             "&[data-placeholder-shown]": {
-                color: "fg.muted",
+                color: "colorPalette.fg.muted",
             },
             // outline: none だと利用側で outline-style が none のまま残り、
             // フォーカスリングが描かれないため outline 一式を明示する
@@ -105,7 +117,7 @@ export const select = defineSlotRecipe({
             display: "inline-flex",
             alignItems: "center",
             flexShrink: "0",
-            color: "fg.muted",
+            color: "colorPalette.fg.muted",
             transitionDuration: "fast",
             transitionProperty: "transform",
             transitionTimingFunction: "easeInOut",
@@ -137,7 +149,7 @@ export const select = defineSlotRecipe({
             bg: "transparent",
             border: "none",
             borderRadius: "md",
-            color: "fg.muted",
+            color: "colorPalette.fg.muted",
             cursor: "pointer",
             transitionDuration: "fast",
             transitionProperty: "background, color",
@@ -148,7 +160,7 @@ export const select = defineSlotRecipe({
             },
             _hover: {
                 bg: "colorPalette.surface",
-                color: "fg",
+                color: "colorPalette.fg",
             },
             _focusVisible: {
                 outlineStyle: "solid",
@@ -192,6 +204,13 @@ export const select = defineSlotRecipe({
         itemGroup: {
             display: "flex",
             flexDirection: "column",
+            // 2 つ目以降のグループは、見出しが前のグループの最後の項目と地続きに見えてしまう。
+            // 見出しが持つ上余白(component.padding.sm)だけでは項目の行間と区別が付かないため、
+            // グループの塊が分かれて見えるところまで間隔を足す。
+            // 枠線は控えめにするというライブラリの方針に合わせ、区切り線ではなく余白で分ける
+            "& + &": {
+                marginTop: "component.padding.sm",
+            },
         },
         itemGroupLabel: {
             // ItemGroup の見出し。Menu と同じ小さな大文字のラベル
@@ -202,7 +221,10 @@ export const select = defineSlotRecipe({
             fontWeight: "semibold",
             letterSpacing: "wide",
             textTransform: "uppercase",
-            color: "fg.muted",
+            // グループの見出しは項目より一段引いて読ませる。
+            // 半透明(transparent 25%)のため合成先で値が変わる点は許容した上で採用している
+            // (計測値: 白 Lc 59.2。補助テキストの目安 Lc 60 をわずかに下回る)
+            color: "colorPalette.fg.subtle",
         },
         item: {
             display: "flex",
@@ -210,7 +232,7 @@ export const select = defineSlotRecipe({
             gap: "component.gap.sm",
             borderRadius: "md",
             px: "component.padding.md",
-            color: "fg",
+            color: "colorPalette.fg",
             cursor: "pointer",
             userSelect: "none",
             outline: "none",

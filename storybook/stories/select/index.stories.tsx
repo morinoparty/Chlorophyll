@@ -254,6 +254,55 @@ export const Controlled: Story = {
     render: () => <ControlledExample />,
 };
 
+// multiple で複数選択にした例。zag が multiple のときだけ closeOnSelect を false にするので、
+// 項目を選んでも一覧は開いたままになり、続けて選び足せる。
+// ValueText は選択中のラベルをカンマでつないで表示し、あふれた分は省略記号で切る
+const MultipleExample = () => {
+    const [value, setValue] = useState<string[]>(["mori-railway", "umi-transit"]);
+    const selected = groups.items.filter((item) => value.includes(item.value));
+
+    return (
+        <Field>
+            <Select.Root
+                collection={groups}
+                multiple
+                name="groups"
+                value={value}
+                onValueChange={(details) => setValue(details.value)}
+            >
+                <Select.Label>運営グループ(複数選択)</Select.Label>
+                <Select.Control>
+                    <Select.Trigger>
+                        <Select.ValueText placeholder="1 つ以上選んでください" />
+                        <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.ClearTrigger />
+                </Select.Control>
+                <Portal>
+                    <Select.Positioner>
+                        <Select.Content>
+                            {groups.items.map((item) => (
+                                <Select.Item key={item.value} item={item}>
+                                    <Select.ItemText>{item.label}</Select.ItemText>
+                                    <Select.ItemIndicator />
+                                </Select.Item>
+                            ))}
+                        </Select.Content>
+                    </Select.Positioner>
+                </Portal>
+                <Select.HiddenSelect />
+            </Select.Root>
+            <p className={valueStyle}>
+                選択中: {selected.length > 0 ? selected.map((item) => item.label).join("、") : "なし"}
+            </p>
+        </Field>
+    );
+};
+
+export const Multiple: Story = {
+    render: () => <MultipleExample />,
+};
+
 // 一覧を開いた状態。VRT で Content の見た目を固定するために defaultOpen にしている。
 // Portal は既定で document.body 直下に描画するため、開きっぱなしの Content が form ランドマークの
 // 外に出てしまい axe の region ルールに引っかかる。container で描画先を form の中に変えている
