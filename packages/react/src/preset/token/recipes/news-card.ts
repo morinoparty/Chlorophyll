@@ -10,7 +10,7 @@ export const newsCard = defineSlotRecipe({
     base: {
         root: {
             display: "grid",
-            gap: "4",
+            gap: "5",
             height: "fit-content",
             color: "colorPalette.fg",
             textDecoration: "none",
@@ -19,7 +19,7 @@ export const newsCard = defineSlotRecipe({
             // 角丸は中のサムネイル(2xl)より一回り大きくして入れ子の輪郭を揃える
             bg: "bg.panel",
             borderRadius: "3xl",
-            padding: "4",
+            padding: "5",
             transitionProperty: "background",
             transitionDuration: "normal",
             transitionTimingFunction: "easeInOut",
@@ -55,11 +55,11 @@ export const newsCard = defineSlotRecipe({
             gap: "0.5",
         },
         category: {
-            textStyle: "sm",
+            textStyle: "md",
             color: "colorPalette.fg",
         },
         title: {
-            textStyle: "xl",
+            textStyle: "2xl",
             fontWeight: "bold",
             color: "colorPalette.fg",
             // タイトルは 1 行に収め、あふれた分は省略記号にする
@@ -74,7 +74,7 @@ export const newsCard = defineSlotRecipe({
             gap: "2",
         },
         date: {
-            textStyle: "sm",
+            textStyle: "md",
             color: "colorPalette.fg",
         },
         authors: {
@@ -92,9 +92,9 @@ export const newsCard = defineSlotRecipe({
             // 2 人目以降は前の人へがっつり重ね、奥の人ほど少し傾けてトランプを扇状に持つような見た目にする。
             // アバター群(authors = group)に hover したら左へスライドして広がり、gap を空けて各人の顔が見えるようになる
             "&:not(:first-child)": {
-                marginLeft: "-6",
+                marginLeft: "-8",
                 _groupHover: {
-                    marginLeft: "1",
+                    marginLeft: "2",
                 },
             },
             "&:nth-child(1)": { zIndex: "[5]" },

@@ -86,7 +86,7 @@ const NewsCardAuthor = ({ players }: NewsCardAuthorProps) => {
         <span className={cx(styles.authors, "group")}>
             {players.map((player) => (
                 <span key={player.playerId} className={styles.author}>
-                    <PlayerAvatar playerId={player.playerId} playerName={player.playerName} size="sm" />
+                    <PlayerAvatar playerId={player.playerId} playerName={player.playerName} size="md" />
                 </span>
             ))}
         </span>
