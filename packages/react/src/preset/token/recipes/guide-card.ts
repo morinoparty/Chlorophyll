@@ -15,19 +15,21 @@ export const guideCard = defineSlotRecipe({
             alignItems: "center",
             overflow: "hidden",
             borderRadius: "3xl",
-            // 白背景・淡色背景のどちらに置いても面が見えるよう、UI 面用の surface で塗る
-            bg: "colorPalette.surface",
+            // カードはページの地色(colorPalette.bg)から浮かせたいので、白いパネル面で塗る
+            bg: "bg.panel",
             color: "colorPalette.fg",
             textDecoration: "none",
             transitionProperty: "background, box-shadow",
             transitionDuration: "normal",
             transitionTimingFunction: "easeInOut",
-            // リンクとして使われるカードなので、hover / active で面の色を 1 段ずつ濃くして反応を返す
+            // リンクとして使われるカードなので、hover / active で面に色を差して反応を返す。
+            // 白からいきなり surface(step3)まで濃くすると主張が強いので、
+            // hover は step2 のごく淡い色に留め、押し込んだ active で 1 段濃くする
             _hover: {
-                bg: "colorPalette.surface.hover",
+                bg: "colorPalette.2",
             },
             _active: {
-                bg: "colorPalette.surface.active",
+                bg: "colorPalette.surface",
             },
         },
         image: {

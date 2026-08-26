@@ -15,6 +15,23 @@ export const newsCard = defineSlotRecipe({
             color: "colorPalette.fg",
             textDecoration: "none",
             cursor: "pointer",
+            // カードはページの地色(colorPalette.bg)から浮かせたいので、白いパネル面で塗る。
+            // 角丸は中のサムネイル(2xl)より一回り大きくして入れ子の輪郭を揃える
+            bg: "bg.panel",
+            borderRadius: "3xl",
+            padding: "4",
+            transitionProperty: "background",
+            transitionDuration: "normal",
+            transitionTimingFunction: "easeInOut",
+            // リンクとして使われるカードなので、hover / active で面に色を差して反応を返す。
+            // 白からいきなり surface(step3)まで濃くすると主張が強いので、
+            // hover は step2 のごく淡い色に留め、押し込んだ active で 1 段濃くする
+            _hover: {
+                bg: "colorPalette.2",
+            },
+            _active: {
+                bg: "colorPalette.surface",
+            },
         },
         thumbnail: {
             display: "flex",
