@@ -6,18 +6,23 @@ import { defineSlotRecipe } from "@pandacss/dev";
 // striped: true の row にも同じ宣言を載せて同じレイヤーで競わせるため、ここで共有する
 const rowStateStyles = {
     // hover の地色は本文の行にだけ付ける(見出し行・フッター行は反応させない)。
-    // striped の偶数行(bg.subtle)の上でも見えるよう一段濃い bg.muted を使う
+    // 中立な gray ではなく colorPalette に追従させ、表全体をブランドカラーの側に寄せる。
+    // 面の濃さは step2(見出し行・縞) < step3(hover) < step4(選択) < step5(選択+hover) の順で、
+    // 縞の上に重なっても一段濃くなるよう surface(step3)を使う。
+    // 本文(fg)とのコントラストは APCA で mori Lc 95.9 / gray Lc 94.6(本文の目安 Lc 75 以上)
     "tbody > &:hover": {
-        bg: "bg.muted",
-    },
-    // 選択中の行。利用側が data-state="selected" を付けると colorPalette の淡色で塗る。
-    // hover のセレクタ(tbody > &:hover)より詳細度が低いと hover で消えてしまうため、
-    // hover 時の色も明示して選択状態を優先させる
-    '&[data-state="selected"]': {
         bg: "colorPalette.surface",
     },
-    '&[data-state="selected"]:hover': {
+    // 選択中の行。利用側が data-state="selected" を付けると hover より一段濃い色で塗る。
+    // hover のセレクタ(tbody > &:hover)より詳細度が低いと hover で消えてしまうため、
+    // hover 時の色も明示して選択状態を優先させる。
+    // 本文とのコントラストは APCA で選択 mori Lc 91.2 / gray Lc 89.9、
+    // 選択+hover は mori Lc 85.4 / gray Lc 85.8
+    '&[data-state="selected"]': {
         bg: "colorPalette.surface.hover",
+    },
+    '&[data-state="selected"]:hover': {
+        bg: "colorPalette.surface.active",
     },
 };
 
@@ -62,8 +67,12 @@ export const table = defineSlotRecipe({
             color: "fg",
         },
         header: {
-            // 見出し行はごく薄い地色と下線で本文と区切る
-            bg: "bg.subtle",
+            // 見出し行はごく薄い地色と下線で本文と区切る。
+            // colorPalette の step2 を使い、中立な gray ではなくブランドカラーの側に寄せる。
+            // 名前付きの semantic トークン(bg / bg.subtle / surface)は有彩色パレットだと step1 か step3 に寄り、
+            // step1 では白いパネルに埋もれ、step3 では hover の地色とぶつかるため、この面だけ step を直接指す。
+            // 見出し文字(fg.muted)とのコントラストは APCA で mori Lc 76.6 / gray Lc 76.2(本文の目安 Lc 75 以上)
+            bg: "colorPalette.2",
             borderBottomWidth: "1px",
             borderBottomStyle: "solid",
             borderBottomColor: "border.subtle",
@@ -76,8 +85,9 @@ export const table = defineSlotRecipe({
             },
         },
         footer: {
-            // 合計行などを置く場所。上線と薄い地色で本文と区切り、やや太字で読ませる
-            bg: "bg.subtle",
+            // 合計行などを置く場所。上線と薄い地色で本文と区切り、やや太字で読ませる。
+            // 地色は見出し行と揃えて表の上下を同じトーンで挟む
+            bg: "colorPalette.2",
             borderTopWidth: "1px",
             borderTopStyle: "solid",
             borderTopColor: "border.subtle",
@@ -180,7 +190,8 @@ export const table = defineSlotRecipe({
                 body: {
                     // :where() で詳細度を 0 にし、同じレイヤーにある row の hover / 選択色が必ず勝つようにする
                     "& > tr:where(:nth-of-type(even))": {
-                        bg: "bg.subtle",
+                        // 縞も見出し行と同じ step2。hover(step3)が必ず一段濃くなる
+                        bg: "colorPalette.2",
                     },
                 },
                 // 縞の地色と同じレイヤー(variant)に hover / 選択色を再宣言して、縞に負けないようにする

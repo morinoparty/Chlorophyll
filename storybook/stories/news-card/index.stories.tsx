@@ -24,7 +24,7 @@ const PLAYERS = [
 
 export const Default: Story = {
     render: () => (
-        <div style={{ width: "320px" }}>
+        <div style={{ width: "440px" }}>
             <NewsCard.Root>
                 <NewsCard.Thumbnail src={THUMBNAIL} alt="もりもと駅の様子" />
                 <NewsCard.Content>
@@ -43,7 +43,7 @@ export const Default: Story = {
 // 画像がない記事はプレースホルダー(ロゴやテキスト)を表示する
 export const WithoutImage: Story = {
     render: () => (
-        <div style={{ width: "320px" }}>
+        <div style={{ width: "440px" }}>
             <NewsCard.Root>
                 <NewsCard.Thumbnail>もりのパーティ</NewsCard.Thumbnail>
                 <NewsCard.Content>
@@ -62,7 +62,7 @@ export const WithoutImage: Story = {
 // タイトルが長い場合は 1 行に収めて省略記号で切る
 export const LongTitle: Story = {
     render: () => (
-        <div style={{ width: "320px" }}>
+        <div style={{ width: "440px" }}>
             <NewsCard.Root>
                 <NewsCard.Thumbnail src={THUMBNAIL} alt="もりもと駅の様子" />
                 <NewsCard.Content>
@@ -81,7 +81,7 @@ export const LongTitle: Story = {
 // 投稿者が複数の場合は、2 人目以降が少し傾いて背後に重なる
 export const MultipleAuthors: Story = {
     render: () => (
-        <div style={{ width: "320px" }}>
+        <div style={{ width: "440px" }}>
             <NewsCard.Root>
                 <NewsCard.Thumbnail src={THUMBNAIL} alt="もりもと駅の様子" />
                 <NewsCard.Content>
@@ -100,7 +100,7 @@ export const MultipleAuthors: Story = {
 // asChild で <a> に差し替えてリンクカードにした例
 export const AsLink: Story = {
     render: () => (
-        <div style={{ width: "320px" }}>
+        <div style={{ width: "440px" }}>
             <NewsCard.Root asChild>
                 <a href="https://morino.party/news/363807269fe4803aad0dc5431b5e22cf">
                     <NewsCard.Thumbnail src={THUMBNAIL} alt="もりもと駅の様子" />
@@ -121,7 +121,7 @@ export const AsLink: Story = {
 // トップページの NEWS セクションのように 3 カラムで並べた例
 export const Grid: Story = {
     render: () => (
-        <div style={{ width: "1000px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
+        <div style={{ width: "1440px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
             <NewsCard.Root>
                 <NewsCard.Thumbnail>もりのパーティ</NewsCard.Thumbnail>
                 <NewsCard.Content>
