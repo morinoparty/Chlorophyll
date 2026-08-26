@@ -44,6 +44,18 @@ export const select = defineSlotRecipe({
         control: {
             // Trigger と ClearTrigger を重ねる基準。ClearTrigger を absolute で置く前提
             position: "relative",
+            // ClearTrigger は absolute で Trigger に重なっており、Trigger の flex レイアウトからは
+            // 見えていない。そのままだと ValueText が×の下まで伸びて文字が重なるため、
+            // ×(20px)とその左の隙間(4px)ぶんだけ ValueText を内側に寄せて省略記号を手前で効かせる。
+            // padding ではなく margin にしているのは、padding は overflow の内側に入って
+            // text-overflow: ellipsis の位置が狂うため。
+            // sm: 右余白 12 + Indicator 12 + gap 8 = 32px の右端に対し×の左端は 52px、
+            // md: 右余白 14 + Indicator 14 + gap 8 = 36px に対し×の左端は 56px。どちらも 24px 空ければ足りる。
+            // hidden の有無で出し分けると選ぶたびに幅が跳ねるので、ClearTrigger を置いた構成では常に空ける。
+            // スロットのクラス名ではなく Ark が保証する data-part を参照する(クラス名は Panda の生成に依存するため)
+            "&:has([data-part='clear-trigger']) [data-part='value-text']": {
+                marginEnd: "6",
+            },
         },
         trigger: {
             // 入力欄と同じ「フォームコントロール」の見た目。
