@@ -11,6 +11,14 @@
 
 記述した後は、playwright mcpを利用してスクリーンショットを取得し、スタイルの確認を行ってください。サーバーはすでに5173番ポートで起動してるので、起動しようとしないでください。widthが1200px以下の場合は、widthを1200pxに設定してください。
 
+# 前景色（文字・アイコン）の選び方
+- コンポーネントの文字やアイコンの色は、グローバルの `fg` / `fg.muted` / `fg.subtle` ではなく、colorPalette 側の `colorPalette.fg` / `colorPalette.fg.muted` / `colorPalette.fg.subtle` を使ってください。
+  - コンポーネントが置かれたパレット（mori / umi / red など）に前景色まで追従させるためです。
+  - ex) `color: "colorPalette.fg"` / `color: "colorPalette.fg.muted"`
+- ラベルやグループの見出しなど、本文より一段引いて読ませる箇所には `colorPalette.fg.subtle` を使ってください。
+  - `colorPalette.fg.subtle` は半透明（transparent 25%）なので合成先で Lc が変わります。装飾的な見出しに限って許容しています。
+- `fg.disabled` のように colorPalette 側に対応するトークンが無いものは、グローバルのトークンをそのまま使ってください。
+
 # コントラスト（アクセシビリティ）の評価
 - 色のコントラストは WCAG 2 のコントラスト比（4.5:1 / 3:1）ではなく、**APCA（Accessible Perceptual Contrast Algorithm）の Lc 値**で評価してください。
   - このプロジェクトでは Storybook の a11y アドオンに APCA（silver）のチェックを登録し（`storybook/.storybook/a11y/`）、axe 標準の `color-contrast` ルールは無効化しています。
