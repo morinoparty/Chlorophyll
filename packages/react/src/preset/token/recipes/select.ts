@@ -204,6 +204,13 @@ export const select = defineSlotRecipe({
         itemGroup: {
             display: "flex",
             flexDirection: "column",
+            // 2 つ目以降のグループは、見出しが前のグループの最後の項目と地続きに見えてしまう。
+            // 見出しが持つ上余白(component.padding.sm)だけでは項目の行間と区別が付かないため、
+            // グループの塊が分かれて見えるところまで間隔を足す。
+            // 枠線は控えめにするというライブラリの方針に合わせ、区切り線ではなく余白で分ける
+            "& + &": {
+                marginTop: "component.padding.sm",
+            },
         },
         itemGroupLabel: {
             // ItemGroup の見出し。Menu と同じ小さな大文字のラベル
