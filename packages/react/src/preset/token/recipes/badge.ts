@@ -44,8 +44,8 @@ export const badge = defineRecipe({
             // 枠線のみ: 背景を持たせたくない場面向け。Badge の既定の見た目
             outline: {
                 borderWidth: "1px",
-                // アルファトークン(a3 ≒ 8.7%)を使い、文字色と同系色の極薄な枠線にする
-                borderColor: "colorPalette.a3",
+                // 文字色と同系色の極薄な枠線(step4)。輪郭を出す程度の装飾なので最も淡い段を使う
+                borderColor: "colorPalette.border.subtle",
                 color: "colorPalette.fg",
             },
             // 淡い背景 + 枠線: subtle よりも輪郭を出しつつ outline より主張を抑えたい場面向け

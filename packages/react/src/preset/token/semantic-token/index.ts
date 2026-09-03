@@ -1,8 +1,10 @@
 import { defineSemanticTokens } from "@pandacss/dev";
 import { durations, easings } from "./animations";
+import { borderWidths } from "./border-widths";
 import { borders } from "./borders";
 import { colors } from "./colors";
 import { shadows } from "./shadow";
+import { sizes } from "./sizes";
 import { spacing } from "./spacing";
 import { fontSizes, fontWeights, letterSpacings, lineHeights } from "./typography";
 
@@ -14,8 +16,10 @@ export const semanticTokens = defineSemanticTokens({
     letterSpacings,
     lineHeights,
     shadows,
+    sizes,
     spacing,
     borders,
+    borderWidths,
     durations,
     easings,
 });

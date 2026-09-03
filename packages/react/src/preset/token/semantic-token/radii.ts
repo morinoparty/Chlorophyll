@@ -26,5 +26,23 @@ export const radii = (size: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl") =>
         l3: {
             value: config.l3,
         },
+        // 役割別の角丸。l1 < l2 < l3 の 3 段に役割名を付けたもので、preset の radius オプションに連動する。
+        // radius: "xl" のとき item 8px / control・popover 12px / panel 16px
+        // Menu / Select の項目、小さなアイコンボタン、Editable、Tooltip など面の内側に置く小さな要素
+        item: {
+            value: config.l1,
+        },
+        // Button / Pagination / Select の trigger など、単体で押せるコントロール
+        control: {
+            value: config.l2,
+        },
+        // Menu / Select の content など、浮かせて表示するポップオーバー
+        popover: {
+            value: config.l2,
+        },
+        // List / Accordion / Table / Toast など、白いパネル面のカード
+        panel: {
+            value: config.l3,
+        },
     });
 };

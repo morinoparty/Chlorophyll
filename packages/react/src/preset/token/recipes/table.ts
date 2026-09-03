@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing, focusRingInset } from "./shared/focus-ring";
 
 // 本文の行の hover / 選択状態の地色。
 // Panda は base を @layer _base の中に、variant をその外側に出力するため、
@@ -44,17 +45,12 @@ export const table = defineSlotRecipe({
             borderWidth: "1px",
             borderStyle: "solid",
             borderColor: "border.subtle",
-            borderRadius: "xl",
+            borderRadius: "panel",
             // Chrome はスクロールできる領域をキーボードでフォーカスできるようにするため、
             // フォーカスリングを描けるようにしておく。
             // outline: none だと outline-style が none のまま残りリングが描かれないので
             // outline 系プロパティを個別に指定する
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
         },
         table: {
             width: "full",
@@ -68,11 +64,10 @@ export const table = defineSlotRecipe({
         },
         header: {
             // 見出し行はごく薄い地色と下線で本文と区切る。
-            // colorPalette の step2 を使い、中立な gray ではなくブランドカラーの側に寄せる。
-            // 名前付きの semantic トークン(bg / bg.subtle / surface)は有彩色パレットだと step1 か step3 に寄り、
-            // step1 では白いパネルに埋もれ、step3 では hover の地色とぶつかるため、この面だけ step を直接指す。
+            // 中立な gray ではなく colorPalette に追従させ、白いパネルに埋もれず hover(surface)ともぶつからない
+            // surface.subtle(step2)を使う。
             // 見出し文字(fg.muted)とのコントラストは APCA で mori Lc 76.6 / gray Lc 76.2(本文の目安 Lc 75 以上)
-            bg: "colorPalette.2",
+            bg: "colorPalette.surface.subtle",
             borderBottomWidth: "1px",
             borderBottomStyle: "solid",
             borderBottomColor: "border.subtle",
@@ -87,7 +82,7 @@ export const table = defineSlotRecipe({
         footer: {
             // 合計行などを置く場所。上線と薄い地色で本文と区切り、やや太字で読ませる。
             // 地色は見出し行と揃えて表の上下を同じトーンで挟む
-            bg: "colorPalette.2",
+            bg: "colorPalette.surface.subtle",
             borderTopWidth: "1px",
             borderTopStyle: "solid",
             borderTopColor: "border.subtle",
@@ -108,12 +103,7 @@ export const table = defineSlotRecipe({
             ...rowStateStyles,
             // 利用側が行に tabIndex を付けてフォーカスできるようにした場合のリング。
             // 行は枠線が結合されているため内側に描く
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "-2px",
-            },
+            _focusVisible: focusRingInset,
         },
         head: {
             textAlign: "start",
@@ -143,10 +133,10 @@ export const table = defineSlotRecipe({
     },
     variants: {
         size: {
-            // 標準サイズ。見出しの高さは Button md(40px) と揃える
+            // 標準サイズ。見出しの高さは Button md と同じ sizes.control.md(40px)
             md: {
                 head: {
-                    height: "{sizes.10}",
+                    height: "control.md",
                     px: "4",
                     py: "2",
                 },
@@ -163,10 +153,10 @@ export const table = defineSlotRecipe({
                     py: "10",
                 },
             },
-            // 情報密度を上げたいコンパクトサイズ。見出しの高さは Button sm(36px) と揃える
+            // 情報密度を上げたいコンパクトサイズ。見出しの高さは Button sm と同じ sizes.control.sm(36px)
             sm: {
                 head: {
-                    height: "{sizes.9}",
+                    height: "control.sm",
                     px: "3",
                     py: "1.5",
                 },
@@ -190,8 +180,8 @@ export const table = defineSlotRecipe({
                 body: {
                     // :where() で詳細度を 0 にし、同じレイヤーにある row の hover / 選択色が必ず勝つようにする
                     "& > tr:where(:nth-of-type(even))": {
-                        // 縞も見出し行と同じ step2。hover(step3)が必ず一段濃くなる
-                        bg: "colorPalette.2",
+                        // 縞も見出し行と同じ surface.subtle(step2)。hover(surface = step3)が必ず一段濃くなる
+                        bg: "colorPalette.surface.subtle",
                     },
                 },
                 // 縞の地色と同じレイヤー(variant)に hover / 選択色を再宣言して、縞に負けないようにする

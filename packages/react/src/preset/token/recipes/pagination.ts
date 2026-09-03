@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 // item / prevTrigger / nextTrigger は同じ「押せる四角いボタン」の見た目を共有する。
 // asChild で <a> を差し込む使い方が前提なので、リンクの下線と文字色も打ち消しておく
@@ -11,7 +12,7 @@ const control = {
     minWidth: "10",
     height: "10",
     px: "component.padding.sm",
-    borderRadius: "xl",
+    borderRadius: "control",
     // button 要素・a 要素どちらで描画されても同じ見た目になるようリセットする
     bg: "transparent",
     border: "none",
@@ -37,12 +38,7 @@ const control = {
     },
     // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
     // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-    _focusVisible: {
-        outlineStyle: "solid",
-        outlineWidth: "2px",
-        outlineColor: "colorPalette.focus.ring",
-        outlineOffset: "2px",
-    },
+    _focusVisible: focusRing,
     // 現在ページ。zag が data-selected と aria-current="page" を付ける
     _selected: {
         bg: "colorPalette.solid",

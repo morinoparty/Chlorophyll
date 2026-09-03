@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 export const menu = defineSlotRecipe({
     className: "menu",
@@ -15,17 +16,12 @@ export const menu = defineSlotRecipe({
             gap: "component.gap.xs",
             bg: "transparent",
             border: "none",
-            borderRadius: "lg",
+            borderRadius: "control",
             color: "colorPalette.fg",
             cursor: "pointer",
             // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
             // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
             _disabled: {
                 cursor: "not-allowed",
                 color: "colorPalette.fg.muted",
@@ -49,7 +45,7 @@ export const menu = defineSlotRecipe({
             bg: "bg.panel",
             borderWidth: "1px",
             borderColor: "border.subtle",
-            borderRadius: "xl",
+            borderRadius: "popover",
             boxShadow: "floating",
             p: "1.5",
             outline: "none",
@@ -64,7 +60,7 @@ export const menu = defineSlotRecipe({
             display: "flex",
             alignItems: "center",
             gap: "component.gap.sm",
-            borderRadius: "md",
+            borderRadius: "item",
             px: "component.padding.md",
             py: "component.padding.sm",
             fontSize: "sm",

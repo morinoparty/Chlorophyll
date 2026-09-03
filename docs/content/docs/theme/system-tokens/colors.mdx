@@ -13,11 +13,13 @@ description: 選択されたカラーパレットに適応するセマンティ�
 
 ### Background
 
-ページやセクション、セカンダリ面の背景に使うトークン
+ページやセクションの背景に使うトークン
 
 <SemanticColorGrid role="Background" />
 
-※ ページ全体には bg.subtle、セクションの面には bg を使う
+※ ページ全体の地色には colorPalette.bg を使い、その上に置くカードやパネルは bg.panel で浮かせる<br />
+※ colorPalette.bg.subtle は bg より淡い（step1）。グローバルの bg.subtle は bg より暗い（gray.2）で向きが逆なので混同しない<br />
+※ アラートやバナーの地色には bg.error / bg.warning / bg.success / bg.info を、同名の fg.* と組み合わせて使う
 
 ---
 
@@ -27,7 +29,8 @@ description: 選択されたカラーパレットに適応するセマンティ�
 
 <SemanticColorGrid role="Surface" />
 
-※ hover → active の順で一段ずつ濃くする。段階を飛ばさない
+※ subtle → surface → hover → active の順で一段ずつ濃くする。段階を飛ばさない<br />
+※ 白いパネル（bg.panel）の上にごく薄く色を差す面（表の見出し行や縞、カードの hover）には surface.subtle を使う
 
 ---
 
@@ -38,7 +41,7 @@ description: 選択されたカラーパレットに適応するセマンティ�
 <SemanticColorGrid role="Solid" />
 
 ※ solid の上のテキストには必ず contrast を使う<br />
-※ hover 時は solid.emphasized に切り替える
+※ hover 時は solid.emphasized、押下（active）時は solid.active に切り替える
 
 ---
 
@@ -48,7 +51,9 @@ description: 選択されたカラーパレットに適応するセマンティ�
 
 <SemanticColorGrid role="Foreground" />
 
-※ fg 系は bg / surface 系の上でのみ使う。solid の上には contrast を使う
+※ fg 系は bg / surface 系の上でのみ使う。solid の上には contrast を、bg.inverted の上には fg.inverted を使う<br />
+※ エラーメッセージなどのステータス文字には fg.error / fg.warning / fg.success / fg.info を使う<br />
+※ 入力欄や Select のプレースホルダーには fg.placeholder を使う（fg.subtle は半透明で白地の Lc が足りない）
 
 ---
 
@@ -68,7 +73,8 @@ solid 塗りつぶしの上に載せる文字色トークン
 
 <SemanticColorGrid role="Border" />
 
-※ 通常の区切りには border、入力欄など操作対象には border.interactive を使う
+※ 通常の区切りには border、入力欄など操作対象には border.interactive を使う<br />
+※ colorPalette.border.* はグローバルの border.* と同じ段構成（subtle / muted / 標準 / interactive / emphasized）で、パレットの色味を帯びた枠線が欲しいときに差し替える
 
 ---
 

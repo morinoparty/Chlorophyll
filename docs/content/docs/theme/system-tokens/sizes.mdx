@@ -1,0 +1,47 @@
+---
+title: Sizes
+description: アイコンやアバター、タッチターゲットなど「大きさ」のためのトークン
+---
+
+width / height / minHeight など、大きさを受け取るプロパティから参照するセマンティックトークン。
+余白（padding / gap）には Spacing のトークンを使い、大きさにはこちらを使います。
+
+## コントロールの高さ
+
+Button / Select の trigger / Table の見出し行が共有する高さ。横に並べたときに揃うことを保証します。
+
+<SemanticTokenTable
+    type="sizes"
+    filterPrefix="control"
+    showDescription={true}
+    descriptions={{
+        "control.sm": "コンパクトなコントロール（36px）",
+        "control.md": "標準のコントロール（40px）",
+        "control.lg": "大きめのコントロール（44px）。Button の既定サイズ"
+    }}
+/>
+
+## アイコン
+
+アイコンの大きさに使用するトークン。
+
+<SemanticTokenTable type="sizes" filterPrefix="icon" previewType="spacing" />
+
+## アバター
+
+アバターの大きさに使用するトークン。
+
+<SemanticTokenTable type="sizes" filterPrefix="avatar" previewType="spacing" />
+
+## タッチターゲット
+
+押せる行やボタンの最低の高さ。
+
+<SemanticTokenTable
+    type="sizes"
+    filterPrefix="touchTarget"
+    showDescription={true}
+    descriptions={{
+        touchTarget: "アクセシビリティ上の最小タッチ領域（44px）"
+    }}
+/>

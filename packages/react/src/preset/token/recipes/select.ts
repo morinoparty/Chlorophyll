@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 export const select = defineSlotRecipe({
     className: "select",
@@ -70,7 +71,7 @@ export const select = defineSlotRecipe({
             borderStyle: "solid",
             // ライブラリ方針: 枠線は控えめに。hover で一段濃くして押せることを伝える
             borderColor: "border.subtle",
-            borderRadius: "lg",
+            borderRadius: "control",
             color: "colorPalette.fg",
             textAlign: "start",
             cursor: "pointer",
@@ -81,20 +82,13 @@ export const select = defineSlotRecipe({
             "&:not(:disabled):not([data-disabled]):hover": {
                 borderColor: "border.interactive",
             },
-            // 未選択で placeholder を表示しているときは文字を弱める。
-            // fg.subtle(75% 透過)は白地でコントラストが足りないため、不透明な fg.muted で読める濃さを保つ
-            // (計測値: 白 Lc 79.8。プレースホルダーの目安 Lc 30 は大きく上回る)
+            // 未選択で placeholder を表示しているときは専用の文字色で弱める(濃さの根拠は fg.placeholder のコメント参照)
             "&[data-placeholder-shown]": {
-                color: "colorPalette.fg.muted",
+                color: "fg.placeholder",
             },
             // outline: none だと利用側で outline-style が none のまま残り、
             // フォーカスリングが描かれないため outline 一式を明示する
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
             "&[data-invalid]": {
                 borderColor: "border.error",
             },
@@ -148,7 +142,7 @@ export const select = defineSlotRecipe({
             p: "0",
             bg: "transparent",
             border: "none",
-            borderRadius: "md",
+            borderRadius: "item",
             color: "colorPalette.fg.muted",
             cursor: "pointer",
             transitionDuration: "fast",
@@ -162,12 +156,7 @@ export const select = defineSlotRecipe({
                 bg: "colorPalette.surface",
                 color: "colorPalette.fg",
             },
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
             // display を指定すると UA の [hidden] { display: none } に勝ってしまうため明示的に隠す
             _hidden: {
                 display: "none",
@@ -190,7 +179,7 @@ export const select = defineSlotRecipe({
             bg: "bg.panel",
             borderWidth: "1px",
             borderColor: "border.subtle",
-            borderRadius: "xl",
+            borderRadius: "popover",
             boxShadow: "floating",
             p: "1.5",
             outline: "none",
@@ -230,7 +219,7 @@ export const select = defineSlotRecipe({
             display: "flex",
             alignItems: "center",
             gap: "component.gap.sm",
-            borderRadius: "md",
+            borderRadius: "item",
             px: "component.padding.md",
             color: "colorPalette.fg",
             cursor: "pointer",
@@ -282,7 +271,7 @@ export const select = defineSlotRecipe({
         size: {
             sm: {
                 trigger: {
-                    height: "{sizes.9}",
+                    height: "control.sm",
                     px: "3",
                     fontSize: "xs",
                 },
@@ -297,7 +286,7 @@ export const select = defineSlotRecipe({
             },
             md: {
                 trigger: {
-                    height: "{sizes.10}",
+                    height: "control.md",
                     px: "3.5",
                     fontSize: "sm",
                 },

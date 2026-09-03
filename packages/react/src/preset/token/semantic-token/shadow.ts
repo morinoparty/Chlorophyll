@@ -22,15 +22,19 @@ export const shadows = defineSemanticTokens.shadows({
     inner: {
         value: "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
     },
-    // Elevation-based aliases (Atlassian style)
+    // Elevation-based aliases (Atlassian style)。
+    // 値は上のサイズ段階と同じなので、別名として参照する(値を二重管理しない)
+    // カードやボタンなど、面からわずかに浮かせる
     raised: {
-        value: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        value: "{shadows.sm}",
     },
+    // Toast など、ページ内容の上に重ねる
     overlay: {
-        value: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        value: "{shadows.lg}",
     },
+    // Menu / Select / Drawer など、ポップオーバーとして浮かせる
     floating: {
-        value: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+        value: "{shadows.xl}",
     },
     // ボタンなどの面に立体感を出す、内側のベベル(上辺ハイライト + 下辺シャドウ)
     inset: {
