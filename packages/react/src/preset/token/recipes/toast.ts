@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 export const toast = defineSlotRecipe({
     className: "toast",
@@ -18,7 +19,7 @@ export const toast = defineSlotRecipe({
             width: "sm",
             maxWidth: "[calc(100vw - 2rem)]",
             p: "component.padding.lg",
-            borderRadius: "2xl",
+            borderRadius: "panel",
             borderWidth: "1px",
             borderColor: "border.subtle",
             bg: "bg.panel",
@@ -53,12 +54,7 @@ export const toast = defineSlotRecipe({
             // root は tabIndex=0 でフォーカスできる(hotkey で移動してくる)
             // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
             // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
         },
         indicator: {
             // 種別を表すアイコン。1 行目の文字と目線が揃うよう少しだけ下げる
@@ -113,7 +109,7 @@ export const toast = defineSlotRecipe({
             alignSelf: "center",
             px: "component.padding.md",
             py: "component.padding.xs",
-            borderRadius: "lg",
+            borderRadius: "item",
             bg: "transparent",
             border: "none",
             color: "colorPalette.fg",
@@ -127,12 +123,7 @@ export const toast = defineSlotRecipe({
             _hover: {
                 bg: "colorPalette.surface",
             },
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
         },
         closeTrigger: {
             // 右上の × ボタン。本文より一段控えめな色にして視線を奪わない
@@ -162,12 +153,7 @@ export const toast = defineSlotRecipe({
                 bg: "bg.muted",
                 color: "fg",
             },
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
         },
     },
     // 利用者側で動的に使われても CSS が出るよう全 variant を生成する

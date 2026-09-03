@@ -1,13 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
-
-// 新しい focus ring の書き方。outline: none + ring の書き方は利用側で outline-style が
-// 出力されず輪が描かれないため、outline 系プロパティを明示して指定する
-const focusRing = {
-    outlineStyle: "solid",
-    outlineWidth: "2px",
-    outlineColor: "colorPalette.focus.ring",
-    outlineOffset: "2px",
-} as const;
+import { focusRing } from "./shared/focus-ring";
 
 // preview と input で共有する寸法。
 // 表示モード(preview)と編集モード(input)で文字サイズ・行高・余白・枠線幅・角丸が
@@ -18,7 +10,7 @@ const sharedMetrics = {
     boxSizing: "border-box",
     lineHeight: "normal",
     borderWidth: "1px",
-    borderRadius: "md",
+    borderRadius: "item",
     // 表示モードと編集モードで同じ書体にする(mono variant で両方まとめて等幅に切り替える)
     fontFamily: "inherit",
     fontWeight: "inherit",
@@ -36,7 +28,7 @@ const triggerStyle = {
     py: "0.5",
     bg: "transparent",
     border: "none",
-    borderRadius: "md",
+    borderRadius: "item",
     fontSize: "xs",
     fontWeight: "medium",
     lineHeight: "normal",
@@ -119,10 +111,9 @@ export const editable = defineSlotRecipe({
                 bg: "bg.muted",
             },
             _focusVisible: focusRing,
-            // 値が空でプレースホルダーが表示されているときは弱い文字色にする。
-            // fg.subtle(半透明)はページ背景の上で WCAG AA のコントラストを満たさないため fg.muted を使う
+            // 値が空でプレースホルダーが表示されているときは専用の文字色で弱める(濃さの根拠は fg.placeholder のコメント参照)
             _placeholderShown: {
-                color: "fg.muted",
+                color: "fg.placeholder",
             },
             // 読み取り専用: 編集には入れないので text カーソルや hover の枠を出さない。
             // Panda の _readOnly 条件は `:read-only` 擬似クラスを含み、編集不可の <span> は常にこれに
@@ -162,7 +153,7 @@ export const editable = defineSlotRecipe({
             color: "fg",
             // preview 側のプレースホルダーと同じ色で、モードを切り替えても見え方を揃える
             _placeholder: {
-                color: "fg.muted",
+                color: "fg.placeholder",
             },
             _focusVisible: focusRing,
             _invalid: {

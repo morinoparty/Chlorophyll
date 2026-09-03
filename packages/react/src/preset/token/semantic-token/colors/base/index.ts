@@ -8,7 +8,8 @@ import { yellow } from "./yellow";
 
 /**
  * Base color tokens
- * 色スケール（1〜12、a1〜a12）と色固有のsemantic tokenを含む
+ * 色スケール(1〜12、a1〜a12)と色固有の semantic token を含む。
+ * 各パレットは create-palette.ts の createPalette で同じ形に生成される
  */
 export const base = defineSemanticTokens.colors({
     ...gray,

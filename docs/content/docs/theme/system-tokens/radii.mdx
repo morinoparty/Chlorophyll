@@ -8,3 +8,22 @@ description: 一貫した角丸のためのセマンティック角丸トーク�
 ## スケール
 
 <SemanticTokenGrid type="radii" previewStyle="radii" />
+
+## 役割別の角丸
+
+`l1 < l2 < l3` の 3 段に役割名を付けたトークン。preset の `radius` オプションに連動して一括で変わります。
+
+<SemanticTokenTable
+    type="radii"
+    showDescription={true}
+    descriptions={{
+        default: "preset の radius オプションそのもの",
+        l1: "3 段のうち最も小さい角丸",
+        l2: "3 段のうち中間の角丸",
+        l3: "3 段のうち最も大きい角丸",
+        item: "Menu / Select の項目、小さなアイコンボタン、Editable、Tooltip など面の内側の小さな要素（l1）",
+        control: "Button / Pagination / Select の trigger など単体で押せるコントロール（l2）",
+        popover: "Menu / Select の content など浮かせて表示するポップオーバー（l2）",
+        panel: "List / Accordion / Table / Toast など白いパネル面のカード（l3）"
+    }}
+/>

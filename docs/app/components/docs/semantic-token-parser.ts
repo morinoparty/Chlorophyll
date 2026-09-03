@@ -15,7 +15,16 @@ export interface SemanticTokenWithConditions {
 }
 
 // Available semantic token types
-export type SemanticTokenType = "colors" | "spacing" | "radii" | "borders" | "shadows" | "durations" | "easings";
+export type SemanticTokenType =
+    | "colors"
+    | "sizes"
+    | "spacing"
+    | "radii"
+    | "borders"
+    | "borderWidths"
+    | "shadows"
+    | "durations"
+    | "easings";
 
 // Parse semantic tokens by type and optional filter prefix
 export function parseSemanticTokensByType(type: SemanticTokenType, filterPrefix?: string): SemanticToken[] {
