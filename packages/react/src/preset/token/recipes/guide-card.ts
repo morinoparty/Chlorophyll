@@ -24,9 +24,9 @@ export const guideCard = defineSlotRecipe({
             transitionTimingFunction: "easeInOut",
             // リンクとして使われるカードなので、hover / active で面に色を差して反応を返す。
             // 白からいきなり surface(step3)まで濃くすると主張が強いので、
-            // hover は step2 のごく淡い色に留め、押し込んだ active で 1 段濃くする
+            // hover は surface.subtle(step2)のごく淡い色に留め、押し込んだ active で 1 段濃くする
             _hover: {
-                bg: "colorPalette.2",
+                bg: "colorPalette.surface.subtle",
             },
             _active: {
                 bg: "colorPalette.surface",

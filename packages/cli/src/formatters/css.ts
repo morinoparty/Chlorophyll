@@ -125,21 +125,26 @@ export function formatCSS(specs: SpecData, options: CSSOptions = {}): string {
         }
 
         // Semantic colorPalette tokens
+        // (packages/react の semantic-token/colors/base/create-palette.ts と同じロール構成にしておく)
         const semanticNames = [
             "bg",
             "bg-subtle",
-            "bg-secondary",
+            "surface-subtle",
             "surface",
             "surface-hover",
             "surface-active",
             "fg",
             "fg-subtle",
             "fg-muted",
-            "fg-secondary",
             "solid",
             "solid-emphasized",
+            "solid-active",
             "contrast",
+            "border-subtle",
+            "border-muted",
             "border",
+            "border-interactive",
+            "border-emphasized",
             "focus-ring",
         ];
 

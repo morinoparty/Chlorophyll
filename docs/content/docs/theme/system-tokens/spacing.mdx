@@ -18,6 +18,19 @@ description: 一貫したレイアウトのためのマージンとパディン�
 
 <SemanticTokenTable type="spacing" filterPrefix="component.gap" previewType="spacing" />
 
+## フォーカスリング
+
+フォーカスリング（outline）と要素の間に空ける余白。太さは Borders の `borderWidths.focus.ring` と組み合わせます。
+
+<SemanticTokenTable
+    type="spacing"
+    filterPrefix="focus"
+    showDescription={true}
+    descriptions={{
+        "focus.ring.offset": "フォーカスリングと要素の間の余白（2px）。角丸を切り取る親の中では負の値で内側に描く"
+    }}
+/>
+
 ## レイアウト
 
 レイアウト用のスペーシングトークン。

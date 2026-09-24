@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRingInset } from "./shared/focus-ring";
 
 export const list = defineSlotRecipe({
     className: "list",
@@ -12,8 +13,8 @@ export const list = defineSlotRecipe({
             // 行を縦に並べたナビゲーション用リスト。背景色は variant で切り替える
             display: "flex",
             flexDirection: "column",
-            // 16px = radii.2xl。角丸でカード状に見せる
-            borderRadius: "2xl",
+            // 角丸でカード状に見せる(radii.panel = 16px)
+            borderRadius: "panel",
             // パネル端の余白は item 側に含めるため root には padding を持たせない。
             // 角丸からはみ出した行の hover 背景を切り取る
             overflow: "hidden",
@@ -42,14 +43,9 @@ export const list = defineSlotRecipe({
             },
             // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
             // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                // root が overflow:hidden で角丸を切り取るため、外側に出すリングは端が消える。
-                // 行の内側に描く(負のオフセット)ことで全周が見えるようにする
-                outlineOffset: "-2px",
-            },
+            // root が overflow:hidden で角丸を切り取るため、外側に出すリングは端が消える。
+            // 行の内側に描く(負のオフセット)ことで全周が見えるようにする
+            _focusVisible: focusRingInset,
             _disabled: {
                 cursor: "not-allowed",
                 // 文字(と currentColor を継承する chevron)を弱めて無効状態を伝える
@@ -87,10 +83,8 @@ export const list = defineSlotRecipe({
                     gap: "component.gap.md",
                     // touchTarget(44px) で最低の行高を保証してタップ領域も確保する
                     minHeight: "touchTarget",
-                    // Figma: 左 20px / 右 16px / 上下 12px。
-                    // pr/py/gap は semantic token に対応。pl の 20px に当たる
-                    // semantic token が無いため reference token(spacing.5)を使う
-                    pl: "5",
+                    // Figma: 左 20px / 右 16px / 上下 12px
+                    pl: "component.padding.xl",
                     pr: "component.padding.lg",
                     py: "component.padding.md",
                     fontSize: "md",

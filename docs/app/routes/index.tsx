@@ -130,18 +130,19 @@ const homeStyles = sva({
         demoCardTinted: {
             bg: "colorPalette.surface",
         },
-        // 濃いブランド色で反転させたカード。白いボタンを際立たせる
+        // 濃いブランド色で反転させたカード。白いボタンを際立たせる。
+        // 塗りは solid の濃い段(solid.emphasized)、文字は solid の上に載せる contrast を使う
         demoCardInverted: {
-            bg: "colorPalette.bg.secondary",
+            bg: "colorPalette.solid.emphasized",
         },
         invertedTitle: {
             fontSize: "md",
             fontWeight: "bold",
-            color: "colorPalette.fg.secondary",
+            color: "colorPalette.contrast",
         },
         invertedLead: {
             fontSize: "sm",
-            color: "colorPalette.fg.secondary/80",
+            color: "colorPalette.contrast/80",
         },
         demoHead: {
             display: "flex",

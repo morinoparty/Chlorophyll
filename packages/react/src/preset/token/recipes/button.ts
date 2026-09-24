@@ -1,4 +1,5 @@
 import { defineRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 export const button = defineRecipe({
     className: "button",
@@ -11,7 +12,7 @@ export const button = defineRecipe({
         alignItems: "center",
         justifyContent: "center",
         gap: "2",
-        borderRadius: "xl",
+        borderRadius: "control",
         fontWeight: "semibold",
         letterSpacing: "wide",
         isolation: "isolate",
@@ -62,14 +63,15 @@ export const button = defineRecipe({
                         boxShadow: "inset.raised.hover",
                     },
                 },
+                // 押下中は hover よりさらに一段沈めて、押し込んだ手応えを返す。
+                // hover と同じ詳細度なので、後に書いて active を優先させる
+                "&:not(:disabled):not([data-disabled]):active": {
+                    bg: "colorPalette.solid.active",
+                    boxShadow: "lg",
+                },
                 // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
                 // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-                _focusVisible: {
-                    outlineStyle: "solid",
-                    outlineWidth: "2px",
-                    outlineColor: "colorPalette.focus.ring",
-                    outlineOffset: "2px",
-                },
+                _focusVisible: focusRing,
                 _disabled: {
                     // 明るいままの背景に控えめな文字色を載せ、無効状態を読ませる
                     bg: "bg.disabled",
@@ -95,18 +97,13 @@ export const button = defineRecipe({
                 },
                 // disabled 状態では hover を効かせない
                 "&:not(:disabled):not([data-disabled]):hover": {
-                    bg: "gray.1",
+                    bg: "bg.panel.hover",
                     // hover で下辺の影を少し深め、立体感を強める
                     _after: {
                         boxShadow: "inset.raised.subtle.hover",
                     },
                 },
-                _focusVisible: {
-                    outlineStyle: "solid",
-                    outlineWidth: "2px",
-                    outlineColor: "colorPalette.focus.ring",
-                    outlineOffset: "2px",
-                },
+                _focusVisible: focusRing,
                 _disabled: {
                     bg: "bg.panel",
                     borderColor: "border.subtle",
@@ -122,24 +119,19 @@ export const button = defineRecipe({
                     bg: "colorPalette.surface",
                     color: "colorPalette.fg",
                 },
-                _focusVisible: {
-                    outlineStyle: "solid",
-                    outlineWidth: "2px",
-                    outlineColor: "colorPalette.focus.ring",
-                    outlineOffset: "2px",
-                },
+                _focusVisible: focusRing,
                 _disabled: {
                     color: "colorPalette.fg.muted",
                     opacity: "disabled",
                 },
             },
         },
-        // park-ui (md: 40px) / shadcn (default: 36px) に近いスケール。
-        // 高さ・横 padding・文字サイズを 1 段ずつ連動させ、どこで並べても揃って見えるようにする
+        // 高さは sizes.control(sm 36 / md 40 / lg 44px)で Select などと共有し、
+        // 横 padding・文字サイズを 1 段ずつ連動させ、どこで並べても揃って見えるようにする
         size: {
-            sm: { height: "{sizes.9}", px: "{spacing.3.5}", fontSize: "xs" },
-            md: { height: "{sizes.10}", px: "{spacing.4}", fontSize: "sm" },
-            lg: { height: "{sizes.11}", px: "{spacing.5}", fontSize: "md" },
+            sm: { height: "control.sm", px: "{spacing.3.5}", fontSize: "xs" },
+            md: { height: "control.md", px: "{spacing.4}", fontSize: "sm" },
+            lg: { height: "control.lg", px: "{spacing.5}", fontSize: "md" },
         },
     },
     defaultVariants: {

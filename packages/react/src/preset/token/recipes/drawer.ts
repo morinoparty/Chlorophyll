@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 export const drawer = defineSlotRecipe({
     className: "drawer",
@@ -14,17 +15,12 @@ export const drawer = defineSlotRecipe({
             justifyContent: "center",
             bg: "transparent",
             border: "none",
-            borderRadius: "md",
+            borderRadius: "item",
             color: "colorPalette.fg",
             cursor: "pointer",
             // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
             // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
             _disabled: {
                 cursor: "not-allowed",
                 color: "colorPalette.fg.muted",
@@ -88,20 +84,15 @@ export const drawer = defineSlotRecipe({
             _hover: {
                 bg: "bg.muted",
             },
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
         },
         title: {
             color: "colorPalette.fg",
             fontSize: "lg",
             fontWeight: "semibold",
             lineHeight: "normal",
-            px: "component.padding.xl",
-            pt: "component.padding.xl",
+            px: "component.padding.2xl",
+            pt: "component.padding.2xl",
         },
     },
     variants: {

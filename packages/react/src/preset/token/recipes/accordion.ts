@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRingInset } from "./shared/focus-ring";
 
 export const accordion = defineSlotRecipe({
     className: "accordion",
@@ -11,7 +12,7 @@ export const accordion = defineSlotRecipe({
             // 角丸でカード状に見せる。背景色は variant(panel/ghost)で切り替える
             display: "flex",
             flexDirection: "column",
-            borderRadius: "2xl",
+            borderRadius: "panel",
             // 角丸からはみ出す trigger の hover 背景を切り取る
             overflow: "hidden",
             width: "full",
@@ -33,8 +34,8 @@ export const accordion = defineSlotRecipe({
             width: "full",
             // touchTarget(44px) で押せる行高を確保する
             minHeight: "touchTarget",
-            // 左右 20px(semantic token が無いため reference token)/上下 12px
-            px: "5",
+            // 左右 20px / 上下 12px
+            px: "component.padding.xl",
             py: "component.padding.md",
             // button のデフォルト見た目をリセットする
             bg: "transparent",
@@ -46,14 +47,9 @@ export const accordion = defineSlotRecipe({
             cursor: "pointer",
             // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
             // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                // root が overflow:hidden で角丸を切り取るため、外側に出すリングは端が消える。
-                // 行の内側に描く(負のオフセット)ことで全周が見えるようにする
-                outlineOffset: "-2px",
-            },
+            // root が overflow:hidden で角丸を切り取るため、外側に出すリングは端が消える。
+            // 行の内側に描く(負のオフセット)ことで全周が見えるようにする
+            _focusVisible: focusRingInset,
             _disabled: {
                 cursor: "not-allowed",
                 color: "colorPalette.fg.muted",
@@ -79,7 +75,7 @@ export const accordion = defineSlotRecipe({
         },
         itemContent: {
             // 本文: 見出しと左を揃え、下に余白を取る
-            px: "5",
+            px: "component.padding.xl",
             pb: "component.padding.lg",
             color: "colorPalette.fg.muted",
             fontSize: "sm",

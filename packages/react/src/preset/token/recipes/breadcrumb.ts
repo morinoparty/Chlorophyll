@@ -1,4 +1,5 @@
 import { defineSlotRecipe } from "@pandacss/dev";
+import { focusRing } from "./shared/focus-ring";
 
 export const breadcrumb = defineSlotRecipe({
     className: "breadcrumb",
@@ -50,12 +51,7 @@ export const breadcrumb = defineSlotRecipe({
             },
             // outline: "none" + ringWidth の組み合わせだと outline-style が none のまま
             // 残り、利用側でフォーカスリングが一切描かれない。longhand で style まで指定する
-            _focusVisible: {
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: "colorPalette.focus.ring",
-                outlineOffset: "2px",
-            },
+            _focusVisible: focusRing,
         },
         page: {
             // 現在地。リンクではないので色を濃くし、太さでも区別する
