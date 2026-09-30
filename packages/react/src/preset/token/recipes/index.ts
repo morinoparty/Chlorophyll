@@ -4,6 +4,7 @@ import { breadcrumb } from "./breadcrumb";
 import { button } from "./button";
 import { drawer } from "./drawer";
 import { editable } from "./editable";
+import { field } from "./field";
 import { guideCard } from "./guide-card";
 import { list } from "./list";
 import { menu } from "./menu";
@@ -46,6 +47,7 @@ export const slotRecipes = {
     menu,
     drawer,
     editable,
+    field,
     modalDialog,
     pagination,
     select,
