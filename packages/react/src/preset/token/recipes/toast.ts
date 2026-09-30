@@ -66,18 +66,16 @@ export const toast = defineSlotRecipe({
             marginTop: "0.5",
             // アイコンは意味のある非テキスト要素なので Lc 45 以上を目安にする。
             // toast の面は bg.panel(白)。参考として各パレットの colorPalette.bg に置いた値も併記する
-            // (計測値 白 / bg: blue.9 58.2 / 49.7、mori.9 73.7 / 65.5、red.9 65.0 / 56.3、gray.9 60.4 / 56.8)
-            color: "colorPalette.solid",
+            // (計測値 白 / bg: blue.9 58.2 / 49.7、mori.9 73.7 / 65.5、red.9 65.0 / 56.3、gray.9 60.4 / 56.8、
+            //  yellow.11 73.2 / 65.4)。
+            // yellow は step9 が明るすぎるため、パレット側の fg.icon で step11 に差し替えてある。
+            // indicator 自身の data-type ではなくパレットに紐づけることで、Indicator に type を渡し忘れても
+            // root が切り替えた colorPalette に正しく追従する
+            color: "colorPalette.fg.icon",
             // 20px = sizes.5
             "& :where(svg)": {
                 width: "5",
                 height: "5",
-            },
-            // yellow.solid(step9)は明るい塗り色で、白の上で Lc 15.5 しか出ずアイコンとして読めない。
-            // warning だけ Lc 45 を満たす最初のステップである step11 に差し替える
-            // (計測値: 白 Lc 73.2 / yellow.bg Lc 65.4。yellow の focus.ring と同じ判断)
-            '&[data-type="warning"]': {
-                color: "colorPalette.11",
             },
             // loading のときだけアイコンをスピナーとして回す。
             // spin keyframes は create-preset.ts の theme.extend.keyframes に定義してある
@@ -121,7 +119,11 @@ export const toast = defineSlotRecipe({
             alignItems: "center",
             justifyContent: "center",
             flexShrink: "0",
-            alignSelf: "center",
+            // root は alignItems: start で 1 行目に揃えている。action も 1 行目の title と文字が
+            // 同じ行に並ぶよう上端に置き、title と同じ lineHeight にしたうえで上の padding 分(4px)だけ持ち上げる。
+            // こうすると description の有無に関わらず、文字のベースラインが title と一致する
+            alignSelf: "start",
+            marginTop: "-1",
             px: "component.padding.md",
             py: "component.padding.xs",
             borderRadius: "item",
@@ -131,6 +133,7 @@ export const toast = defineSlotRecipe({
             color: "colorPalette.fg",
             fontSize: "sm",
             fontWeight: "semibold",
+            lineHeight: "snug",
             whiteSpace: "nowrap",
             cursor: "pointer",
             transitionProperty: "[background-color, color]",

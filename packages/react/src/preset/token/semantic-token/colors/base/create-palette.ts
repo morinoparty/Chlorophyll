@@ -24,6 +24,8 @@ export interface PaletteOverrides {
     contrast?: string;
     /** フォーカスリング。既定は step9。solid が明るいパレット(yellow)は濃いステップに差し替える */
     focusRing?: string;
+    /** パレット色で描くアイコン(fg.icon)。既定は step9。solid が明るいパレット(yellow)は濃いステップに差し替える */
+    icon?: string;
 }
 
 // 12 段階スケールのステップ番号
@@ -123,6 +125,13 @@ export const createPalette = (name: PaletteName, overrides: PaletteOverrides = {
                 // 半透明なので合成先で Lc が変わる。本文には使わない
                 subtle: {
                     value: `color-mix(in oklch, ${ref(11)}, transparent 25%)`,
+                },
+                // 状態を表すアイコンなど、パレットの色味そのもので描く非テキスト要素の色。
+                // 非テキスト要素の目安 Lc 45 以上を白(bg.panel)と colorPalette.bg の両方で満たすステップを使う
+                // (計測値は各パレットのファイル参照)。solid(step9)と同じ色で揃えつつ、
+                // step9 が明るすぎるパレットだけ overrides.icon で差し替えられるよう solid とは別ロールにしている
+                icon: {
+                    value: overrides.icon ?? ref(9),
                 },
             },
 
