@@ -23,7 +23,8 @@ export const toast = defineSlotRecipe({
             borderWidth: "1px",
             borderColor: "border.subtle",
             bg: "bg.panel",
-            color: "fg",
+            // 既定の文字色も data-type で差し替えた colorPalette に追従させる
+            color: "colorPalette.fg",
             // ページ内容の上に浮かせるため、overlay 相当の影を落とす
             boxShadow: "overlay",
             // 種別ごとの色は data-type で colorPalette を差し替え、
@@ -63,11 +64,20 @@ export const toast = defineSlotRecipe({
             justifyContent: "center",
             flexShrink: "0",
             marginTop: "0.5",
+            // アイコンは意味のある非テキスト要素なので Lc 45 以上を目安にする。
+            // toast の面は bg.panel(白)。参考として各パレットの colorPalette.bg に置いた値も併記する
+            // (計測値 白 / bg: blue.9 58.2 / 49.7、mori.9 73.7 / 65.5、red.9 65.0 / 56.3、gray.9 60.4 / 56.8)
             color: "colorPalette.solid",
             // 20px = sizes.5
             "& :where(svg)": {
                 width: "5",
                 height: "5",
+            },
+            // yellow.solid(step9)は明るい塗り色で、白の上で Lc 15.5 しか出ずアイコンとして読めない。
+            // warning だけ Lc 45 を満たす最初のステップである step11 に差し替える
+            // (計測値: 白 Lc 73.2 / yellow.bg Lc 65.4。yellow の focus.ring と同じ判断)
+            '&[data-type="warning"]': {
+                color: "colorPalette.11",
             },
             // loading のときだけアイコンをスピナーとして回す。
             // spin keyframes は create-preset.ts の theme.extend.keyframes に定義してある
@@ -88,13 +98,18 @@ export const toast = defineSlotRecipe({
             minWidth: "0",
         },
         title: {
+            // 本文の目安 Lc 75 を toast の面(白)の上で満たす
+            // (計測値 白 / colorPalette.bg: blue 80.1 / 71.7、mori 82.1 / 73.8、yellow 80.6 / 72.8、
+            //  red 81.8 / 73.1、gray 88.7 / 85.1。colorPalette.bg の上には置かないので白の値で判断する)
             color: "colorPalette.fg",
             fontSize: "sm",
             fontWeight: "semibold",
             lineHeight: "snug",
         },
         description: {
-            color: "fg.muted",
+            // 補助テキストの目安 Lc 60 を満たす。fg.muted は全パレット共通で gray.11
+            // (計測値: 白 Lc 79.8 / colorPalette.bg Lc 71.2〜76.2)
+            color: "colorPalette.fg.muted",
             fontSize: "sm",
             lineHeight: "relaxed",
             // URL のような区切りのない文字列でも折り返す
@@ -112,6 +127,7 @@ export const toast = defineSlotRecipe({
             borderRadius: "item",
             bg: "transparent",
             border: "none",
+            // title と同じ色(計測値は title を参照。白の上で Lc 80.1〜88.7)
             color: "colorPalette.fg",
             fontSize: "sm",
             fontWeight: "semibold",
@@ -139,7 +155,8 @@ export const toast = defineSlotRecipe({
             borderRadius: "full",
             bg: "transparent",
             border: "none",
-            color: "fg.muted",
+            // 非テキスト要素(アイコン)の目安 Lc 45 を十分に上回る(計測値: 白 Lc 79.8 / colorPalette.bg Lc 71.2〜76.2)
+            color: "colorPalette.fg.muted",
             cursor: "pointer",
             transitionProperty: "[background-color, color]",
             transitionDuration: "fast",
@@ -150,8 +167,8 @@ export const toast = defineSlotRecipe({
                 height: "4",
             },
             _hover: {
-                bg: "bg.muted",
-                color: "fg",
+                bg: "colorPalette.surface",
+                color: "colorPalette.fg",
             },
             _focusVisible: focusRing,
         },

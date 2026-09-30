@@ -29,6 +29,10 @@ const typeIcons: Record<string, ReactNode> = {
 /**
  * createToaster の薄いラッパー。
  * placement / pauseOnPageIdle の既定値だけ与え、残りは Ark にそのまま渡す。
+ *
+ * 自動で閉じるまでの時間は zag の既定値に従う
+ * (success: 2 秒 / info・warning・error: 5 秒 / loading: 閉じない)。
+ * toast ごとの duration、または createToaster の duration で上書きでき、Infinity を渡すと自動では閉じない。
  */
 const createToaster = (props: CreateToasterProps = {}): CreateToasterReturn =>
     createArkToaster({
