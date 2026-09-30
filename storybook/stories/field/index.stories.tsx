@@ -13,12 +13,6 @@ const meta: Meta<typeof Field> = {
         layout: "centered",
     },
     tags: ["autodocs"],
-    argTypes: {
-        size: {
-            control: "select",
-            options: ["sm", "md"],
-        },
-    },
 };
 
 export default meta;
@@ -200,7 +194,8 @@ export const WithIcon: Story = {
 // Select と横に並べたときに、高さ・枠線・角丸が揃うことを確認する見本
 const rowStyle = css({
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
+    // 375px の幅では横に 2 つ並べると窮屈なので、sm(480px)未満では縦に積む
+    gridTemplateColumns: { base: "1fr", sm: "1fr 1fr" },
     gap: "4",
     alignItems: "start",
     width: "full",
@@ -215,7 +210,9 @@ const lines = createListCollection({
 
 export const WithSelect: Story = {
     render: () => (
-        <form className={css({ width: "xl" })} aria-label="駅の設定">
+        // 固定幅 xl(36rem)のままだと 375px の VRT で横にはみ出すため、
+        // md(768px)未満は幅いっぱい、それ以上は 2 列が読みやすい xl に固定する
+        <form className={css({ width: { base: "full", md: "xl" } })} aria-label="駅の設定">
             {(["md", "sm"] as const).map((size) => (
                 <div key={size} className={css({ mb: "6" })}>
                     <div className={rowStyle}>

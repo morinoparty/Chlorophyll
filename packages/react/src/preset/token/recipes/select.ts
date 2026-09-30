@@ -78,8 +78,9 @@ export const select = defineSlotRecipe({
             transitionDuration: "fast",
             transitionProperty: "border-color, background, color, box-shadow",
             transitionTimingFunction: "easeInOut",
-            // disabled 状態では hover を効かせない
-            "&:not(:disabled):not([data-disabled]):hover": {
+            // disabled 状態では hover を効かせない。
+            // invalid も除外する。hover のセレクタの方が詳細度が高く、除外しないと hover 中にエラーの赤い枠線が消えるため
+            "&:not(:disabled):not([data-disabled]):not([data-invalid]):hover": {
                 borderColor: "border.interactive",
             },
             // 未選択で placeholder を表示しているときは専用の文字色で弱める(濃さの根拠は fg.placeholder のコメント参照)
@@ -89,8 +90,10 @@ export const select = defineSlotRecipe({
             // outline: none だと利用側で outline-style が none のまま残り、
             // フォーカスリングが描かれないため outline 一式を明示する
             _focusVisible: focusRing,
+            // エラー状態。枠線だけでエラーを伝えられるよう非テキスト要素の目安 Lc 45 を満たす濃い赤にする
+            // (border.error.emphasized = red.9 の計測値: 白 Lc 65.0 / colorPalette.bg(mori) Lc 56.8)
             "&[data-invalid]": {
-                borderColor: "border.error",
+                borderColor: "border.error.emphasized",
             },
             _disabled: {
                 bg: "bg.disabled",

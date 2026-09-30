@@ -32,19 +32,21 @@ const controlStyle = {
     },
     // disabled / readOnly では hover を効かせない。
     // readOnly は Ark が付ける data-readonly を見る(Panda の _readOnly は :read-only を含み、
-    // disabled な input にもマッチしてしまうため)
-    "&:not(:disabled):not([data-disabled]):not([data-readonly]):not([readonly]):hover": {
-        borderColor: "border.interactive",
-    },
+    // disabled な input にもマッチしてしまうため)。
+    // invalid も除外する。hover のセレクタの方が詳細度が高く、除外しないと hover 中にエラーの赤い枠線が消えるため
+    "&:not(:disabled):not([data-disabled]):not([data-readonly]):not([readonly]):not([data-invalid]):not([aria-invalid=true]):hover":
+        {
+            borderColor: "border.interactive",
+        },
     // outline: none だと利用側で outline-style が none のまま残るため outline 一式を明示する
     _focusVisible: focusRing,
     // エラー状態。Panda の _invalid は :invalid を含み、required な空欄が操作前から赤くなるため使わない。
     // Field.Root の invalid(Ark が付ける data-invalid)と、単体利用時の aria-invalid だけを見る。
-    // 枠線は Select の trigger と同じ border.error(red.7)。
-    // (計測値: 白 Lc 37.4 / colorPalette.bg(mori) Lc 29.2。非テキスト要素の目安 Lc 45 には届かないため、
-    //  エラーであることは枠線だけに頼らず、ErrorText(fg.error)と下の赤いフォーカスリングで伝える)
+    // 単体の Input のように ErrorText を伴わない場合は枠線が唯一の手がかりになるため、
+    // Select の trigger と同じ border.error.emphasized(red.9)で非テキスト要素の目安 Lc 45 を満たす
+    // (計測値: 白 Lc 65.0 / colorPalette.bg(mori) Lc 56.8)
     "&:is([data-invalid], [aria-invalid=true])": {
-        borderColor: "border.error",
+        borderColor: "border.error.emphasized",
         // エラー時のフォーカスリングは赤で揃える(focus.ring.error の計測値: 白 Lc 65.0 / colorPalette.bg(mori) Lc 56.8)
         _focusVisible: {
             outlineColor: "focus.ring.error",

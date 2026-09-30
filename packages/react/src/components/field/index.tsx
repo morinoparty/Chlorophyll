@@ -1,5 +1,5 @@
 "use client";
-import { Field as ArkField } from "@ark-ui/react/field";
+import { Field as ArkField, useFieldContext } from "@ark-ui/react/field";
 import type { ComponentProps } from "react";
 import { createContext, useContext } from "react";
 import { cx } from "styled-system/css";
@@ -45,9 +45,18 @@ const FieldLabel = ({ className, ...props }: FieldLabelProps) => {
 
 type FieldRequiredIndicatorProps = ComponentProps<typeof ArkField.RequiredIndicator>;
 
-// 必須項目の印。Root が required のときだけ描画され、children を渡さなければ「*」を表示する。
-// Label の中に置く想定。aria-hidden なので、必須であることは input の required 属性で支援技術に伝わる
+/**
+ * 必須項目の印。Field.Root が required のときだけ描画され、children を渡さなければ「*」を表示する。
+ *
+ * - Field.Root(の Label)の中に置く。Root の外では required を知る手段が無いため何も描画しない
+ * - aria-hidden なので、必須であることは input の required 属性で支援技術に伝わる
+ */
 const FieldRequiredIndicator = ({ className, ...props }: FieldRequiredIndicatorProps) => {
+    // Ark の RequiredIndicator は Root の Context が無いと例外を投げるため、Root の外では描画しない
+    const fieldContext = useFieldContext();
+    if (!fieldContext) {
+        return null;
+    }
     return <ArkField.RequiredIndicator {...props} className={cx(styles.requiredIndicator, className)} />;
 };
 
@@ -100,10 +109,24 @@ const FieldHelperText = ({ className, ...props }: FieldHelperTextProps) => {
 
 type FieldErrorTextProps = ComponentProps<typeof ArkField.ErrorText>;
 
-// バリデーションのエラーメッセージ。Root が invalid のときだけ描画され、aria-live で読み上げられる
+/**
+ * バリデーションのエラーメッセージ。Field.Root が invalid のときだけ描画される。
+ *
+ * - Field.Root の中に置く。Root の外では invalid を知る手段が無いため何も描画しない
+ *   (単体の Input でエラーを伝えるときは、Field.Root で包んで Root に invalid を渡す)
+ * - エラーは入力欄の aria-invalid と aria-describedby(このテキストの id)で、入力欄にフォーカスしたときに伝わる。
+ *   Ark が aria-live="polite" を付けるが、テキストごと DOM に挿入されるため、
+ *   スクリーンリーダーによっては変化として読み上げられない(読み上げはベストエフォート)
+ */
 const FieldErrorText = ({ className, ...props }: FieldErrorTextProps) => {
     const size = useContext(FieldSizeContext);
     const errorTextClass = field({ size }).errorText;
+    // Ark の ErrorText は Root の Context が無いと例外を投げるため、Root の外では描画しない。
+    // (Hooks の呼び出し順を変えないよう、早期 return はすべての Hooks の後に置く)
+    const fieldContext = useFieldContext();
+    if (!fieldContext) {
+        return null;
+    }
     return <ArkField.ErrorText {...props} className={cx(errorTextClass, className)} />;
 };
 
