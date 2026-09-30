@@ -29,6 +29,15 @@ const typeIcons: Record<string, ReactNode> = {
 /**
  * createToaster の薄いラッパー。
  * placement / pauseOnPageIdle の既定値だけ与え、残りは Ark にそのまま渡す。
+ *
+ * 自動で閉じるまでの時間は zag の既定値に従う
+ * (success: 2 秒 / info・warning・error: 5 秒 / loading: 閉じない)。
+ * toast ごとの duration、または createToaster の duration で上書きでき、Infinity を渡すと自動では閉じない。
+ *
+ * 注意: 現在の Ark / zag(@zag-js/react・@zag-js/toast 1.31.1)では、同じ tick の中で create() を
+ * 複数回呼ぶと最後の 1 件しか残らない。zag の useBindable が関数形式の set を描画前の古い prev から
+ * 計算するため、同期的に積んだ toast が互いに上書きされる。複数件を出すときは
+ * setTimeout やイベントごとに分けて呼び出すこと(upstream で直るまでの回避策)。
  */
 const createToaster = (props: CreateToasterProps = {}): CreateToasterReturn =>
     createArkToaster({
