@@ -15,6 +15,9 @@ const sharedMetrics = {
     fontFamily: "inherit",
     fontWeight: "inherit",
     letterSpacing: "inherit",
+    // 値が短くてもある程度の幅を確保する(24 = 96px)。
+    // input だけに付けると、短い値のとき編集に入った瞬間だけ箱が広がり横にずれるため両スロットで共有する
+    minWidth: "24",
 } as const;
 
 // Edit / Submit / Cancel の 3 トリガーに共通する、控えめな小さいボタンの見た目。
@@ -145,8 +148,6 @@ export const editable = defineSlotRecipe({
             // 横幅もほぼ一致させる(Chrome / Edge)。未対応ブラウザ(Firefox / Safari)は従来どおり
             // 固有幅になるため、列幅の安定が必要な場面では利用側が Area / Root に幅を指定する
             fieldSizing: "content",
-            // 値が短くてもある程度の入力幅を確保する(24 = 96px)
-            minWidth: "24",
             borderStyle: "solid",
             borderColor: "border.interactive",
             bg: "bg.panel",
@@ -194,17 +195,20 @@ export const editable = defineSlotRecipe({
             false: {},
         },
         // サイズ依存の値も preview / input で必ず同じにする(行高の跳ねを防ぐ)。
-        // minHeight は「行高 + 上下 padding + 上下枠線」の自然な高さをトークンに丸めたもの
+        // 「行高 + 上下 padding + 上下枠線」がちょうど minHeight になるよう行高を決める。
+        // 自然な高さが minHeight に満たないと、余りの分だけ preview(上寄せ)と input(中央寄せ)で
+        // 文字の縦位置がずれるため、minHeight は保険としてだけ置く
         size: {
             // sm: 12px * 1.5 + 2px * 2 + 1px * 2 = 24px = sizes.6
             sm: {
                 preview: { fontSize: "xs", px: "1.5", py: "0.5", minHeight: "6" },
                 input: { fontSize: "xs", px: "1.5", py: "0.5", minHeight: "6" },
             },
-            // md: 14px * 1.5 + 4px * 2 + 1px * 2 = 31px -> sizes.8(32px) に揃える
+            // md: 22px + 4px * 2 + 1px * 2 = 32px = sizes.8
+            // (行高 normal の 14px * 1.5 = 21px だと 31px になり 1px 余るので 22px に広げる)
             md: {
-                preview: { fontSize: "sm", px: "2", py: "1", minHeight: "8" },
-                input: { fontSize: "sm", px: "2", py: "1", minHeight: "8" },
+                preview: { fontSize: "sm", lineHeight: "22px", px: "2", py: "1", minHeight: "8" },
+                input: { fontSize: "sm", lineHeight: "22px", px: "2", py: "1", minHeight: "8" },
             },
         },
     },
