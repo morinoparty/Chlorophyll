@@ -74,6 +74,8 @@ export const editable = defineSlotRecipe({
             // ラベル・編集領域・操作ボタンを横一列に並べる。
             // 表の中やテキストの流れに置ける想定なので inline-flex にする
             display: "inline-flex",
+            // 操作ボタンや利用側が置く Spinner などは縦中央に置く。
+            // ラベルと値だけは label / area 側の alignSelf でベースラインを揃える
             alignItems: "center",
             gap: "component.gap.sm",
         },
@@ -85,6 +87,9 @@ export const editable = defineSlotRecipe({
             // ただし見た目は通常のフォーム項目のラベルに揃え、ボタンのようには見せない
             cursor: "default",
             whiteSpace: "nowrap",
+            // 値(area)とベースラインを揃える。mono variant のように書体が違うと ascent が異なり、
+            // 箱の中心揃えでは文字の高さが 1px 以上ずれるため
+            alignSelf: "baseline",
         },
         area: {
             // preview / input のどちらか一方だけが表示される箱。
@@ -92,6 +97,8 @@ export const editable = defineSlotRecipe({
             display: "inline-flex",
             alignItems: "center",
             minWidth: "0",
+            // label とベースラインを揃える(理由は label 側のコメント参照)
+            alignSelf: "baseline",
         },
         preview: {
             ...sharedMetrics,
