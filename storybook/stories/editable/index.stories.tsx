@@ -62,6 +62,11 @@ export const Mono: Story = {
 // 明示的なボタンで操作する例。
 // Context の render prop から editing を受け取り、表示中は Edit・編集中は Submit / Cancel を出す
 export const WithControls: Story = {
+    parameters: {
+        // ボタンの数が変わると Root の幅が変わる。centered だと全体が寄せ直されてラベルや入力欄まで
+        // 横に跳ねるため、実際のフォームと同じ左寄せで置く
+        layout: "padded",
+    },
     render: () => (
         <Editable.Root defaultValue="森野環状線" activationMode="click" onValueCommit={logCommit}>
             <Editable.Label>路線名</Editable.Label>
