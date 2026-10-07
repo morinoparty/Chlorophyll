@@ -1,33 +1,22 @@
 "use client";
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
-import { useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 import {
     CrouchAnimation,
-    FlyingAnimation,
     HitAnimation,
     IdleAnimation,
     type PlayerAnimation,
     RunningAnimation,
     SkinViewer as SkinViewer3D,
-    SwimAnimation,
     WalkingAnimation,
     WaveAnimation,
 } from "skinview3d";
 import { skinViewer as skinViewerRecipe } from "styled-system/recipes";
 import { useMinecraftConfig } from "../minecraft-provider";
-import { TorchAnimation } from "./torch-animation";
+import { type Hand, type HeldItem, type HeldItemResolvers, loadHeldItem } from "./held-item";
+import { RaiseAnimation } from "./raise-animation";
 
-type SkinViewerAnimation =
-    | "idle"
-    | "walking"
-    | "running"
-    | "wave"
-    | "crouch"
-    | "hit"
-    | "flying"
-    | "swim"
-    | "torch"
-    | "none";
+type SkinViewerAnimation = "idle" | "walking" | "running" | "wave" | "crouch" | "hit" | "raise" | "none";
 
 // アニメーション名 -> skinview3d の PlayerAnimation インスタンスを作る関数。
 // "none" は毎回 null を返す(インスタンス生成が不要なため関数化する必要はないが、
@@ -44,11 +33,8 @@ const ANIMATION_FACTORY: Record<SkinViewerAnimation, () => PlayerAnimation | nul
         return crouch;
     },
     hit: () => new HitAnimation(),
-    // エリトラ飛行の姿勢(体を水平に倒して腕を広げる)
-    flying: () => new FlyingAnimation(),
-    swim: () => new SwimAnimation(),
-    // skinview3d には無い独自ポーズ。右手で松明を掲げる
-    torch: () => new TorchAnimation(),
+    // skinview3d には無い独自ポーズ。右腕を前に掲げる(rightHandItem="torch" で松明を掲げる)
+    raise: () => new RaiseAnimation(),
     none: () => null,
 };
 
@@ -79,6 +65,17 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     /** 再生するアニメーション。"none" ならポーズしたまま静止表示する */
     animation?: SkinViewerAnimation;
     /**
+     * 右手に持たせるアイテムの ID(例: "torch" / "diamond_sword")。Minecraft のアイテム ID とそのまま対応する。
+     * 平面スプライトのアイテム(item/generated・item/handheld 系)のみ対応し、ブロックは表示されない
+     */
+    rightHandItem?: string;
+    /** 左手に持たせるアイテムの ID。rightHandItem と同じ */
+    leftHandItem?: string;
+    /** モデル JSON のファイルパスから URL を解決する関数。省略時は MinecraftProvider から受け取る */
+    resolveModel?: (path: string) => string;
+    /** テクスチャのファイル名から URL を解決する関数。省略時は MinecraftProvider から受け取る */
+    resolveTexture?: (fileName: string) => string;
+    /**
      * マウス操作(回転・ズーム・パン)を受け付けるか。false にすると操作を全てロックした
      * 表示専用モードになる。autoRotate による自動回転は操作ロックとは独立して機能する
      */
@@ -87,6 +84,41 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
 
 const DEFAULT_WIDTH = 300;
 const DEFAULT_HEIGHT = 400;
+
+// 指定した手にアイテムを持たせ、ID や解決関数が変わったら持ち替える。
+// 読み込みは非同期なので、完了前に持ち替え・アンマウントされた場合は結果を捨てて解放する
+const useHeldItem = (
+    viewerRef: RefObject<SkinViewer3D | null>,
+    hand: Hand,
+    id: string | undefined,
+    { resolveModel, resolveTexture }: Partial<HeldItemResolvers>,
+) => {
+    useEffect(() => {
+        const viewer = viewerRef.current;
+        if (!viewer || !id || !resolveModel || !resolveTexture) {
+            return;
+        }
+
+        let cancelled = false;
+        let heldItem: HeldItem | null = null;
+        loadHeldItem(viewer.playerObject.skin, hand, id, { resolveModel, resolveTexture })
+            .then((loaded) => {
+                if (cancelled) {
+                    loaded?.dispose();
+                    return;
+                }
+                heldItem = loaded;
+            })
+            .catch(() => {
+                // モデルやテクスチャが取得できない場合は何も持たせない
+            });
+
+        return () => {
+            cancelled = true;
+            heldItem?.dispose();
+        };
+    }, [viewerRef, hand, id, resolveModel, resolveTexture]);
+};
 
 // Minecraft のプレイヤースキンを 3D で表示するコンポーネント。
 // skinview3d は react-three-fiber を介さず自前で WebGLRenderer / requestAnimationFrame ループを
@@ -102,13 +134,23 @@ const SkinViewer = ({
     pitch,
     animation = "idle",
     interactive = true,
+    rightHandItem,
+    leftHandItem,
+    resolveModel: resolveModelProp,
+    resolveTexture: resolveTextureProp,
     ...props
 }: SkinViewerProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const viewerRef = useRef<SkinViewer3D | null>(null);
     const styles = skinViewerRecipe({ interactive });
     // skinUrl 未指定時に playerId からテクスチャ URL を解決する(既定は mc-heads.net)
-    const { skinUrl: resolveSkinUrl } = useMinecraftConfig();
+    const config = useMinecraftConfig();
+    const resolveSkinUrl = config.skinUrl;
+    // アイテムのアセット解決は props を優先し、なければ MinecraftProvider から受け取る
+    const itemResolvers = {
+        resolveModel: resolveModelProp ?? config.resolveModel,
+        resolveTexture: resolveTextureProp ?? config.resolveTexture,
+    };
 
     // マウント時に 1 度だけ SkinViewer3D を生成し、アンマウント時に必ず dispose する。
     // WebGL コンテキストはリークしやすく、StrictMode の二重実行下でも安全なように
@@ -183,16 +225,12 @@ const SkinViewer = ({
         if (!viewer) {
             return;
         }
-        const nextAnimation = ANIMATION_FACTORY[animation]();
-        viewer.animation = nextAnimation;
-
-        // 松明のように独自に 3D オブジェクトを足すポーズは、切り替え時に取り外して解放する
-        return () => {
-            if (nextAnimation instanceof TorchAnimation) {
-                nextAnimation.dispose();
-            }
-        };
+        viewer.animation = ANIMATION_FACTORY[animation]();
     }, [animation]);
+
+    // 生成 effect より後に宣言し、viewer が作られてからアイテムを持たせる
+    useHeldItem(viewerRef, "right", rightHandItem, itemResolvers);
+    useHeldItem(viewerRef, "left", leftHandItem, itemResolvers);
 
     // skin の読み込みは非同期(内部で画像を fetch してからテクスチャ化する)なので、
     // 不正な URL でも例外で落ちないよう catch で握りつぶす(表示は前回のスキンのまま残る)
@@ -206,6 +244,13 @@ const SkinViewer = ({
             // 読み込み失敗時は何もしない(前回表示していたスキンのままにする)
         });
     }, [skinUrl, playerId, resolveSkinUrl]);
+
+    // Hooks をすべて呼んだ後で検査する(Rules of Hooks)。MinecraftItem と同じく設定漏れは例外にする
+    if ((rightHandItem || leftHandItem) && (!itemResolvers.resolveModel || !itemResolvers.resolveTexture)) {
+        throw new Error(
+            "SkinViewer requires resolveModel/resolveTexture to show held items, either as props or via a wrapping MinecraftProvider.",
+        );
+    }
 
     return (
         <ark.canvas

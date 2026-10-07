@@ -8,6 +8,15 @@ const meta: Meta<typeof SkinViewer> = {
     parameters: {
         layout: "centered",
     },
+    // 手に持たせるアイテムのモデル/テクスチャを、MinecraftItem のストーリーと同じローカルアセット
+    // (.storybook/main.ts の staticDirs で /minecraft-assets として公開)から解決する
+    decorators: [
+        (Story) => (
+            <MinecraftProvider assets="/minecraft-assets">
+                <Story />
+            </MinecraftProvider>
+        ),
+    ],
     tags: ["autodocs"],
     argTypes: {
         playerId: { control: "text" },
@@ -17,7 +26,15 @@ const meta: Meta<typeof SkinViewer> = {
         autoRotate: { control: "boolean" },
         animation: {
             control: "select",
-            options: ["idle", "walking", "running", "wave", "crouch", "hit", "flying", "swim", "torch", "none"],
+            options: ["idle", "walking", "running", "wave", "crouch", "hit", "raise", "none"],
+        },
+        rightHandItem: {
+            control: "select",
+            options: [undefined, "torch", "diamond_sword", "iron_pickaxe", "apple", "stick"],
+        },
+        leftHandItem: {
+            control: "select",
+            options: [undefined, "torch", "diamond_sword", "iron_pickaxe", "apple", "stick"],
         },
         yaw: { control: { type: "range", min: -180, max: 180, step: 5 } },
         pitch: { control: { type: "range", min: -89, max: 89, step: 1 } },
@@ -42,9 +59,15 @@ export const Walking: Story = {
     args: { animation: "walking" },
 };
 
-// 右手で松明を前方に掲げる独自ポーズ。炎のまわりを暖色のライトで照らす
+// raise ポーズで右手の松明を掲げる。松明は Minecraft のアセットから描画し、炎のまわりを暖色のライトで照らす
 export const Torch: Story = {
-    args: { animation: "torch", autoRotate: false },
+    args: { animation: "raise", rightHandItem: "torch", yaw: 30, pitch: 10 },
+};
+
+// 任意のアイテム ID を両手に持たせる例。モデル JSON の display 設定に従い、
+// 剣やツルハシ(item/handheld)は斜めに、りんごや松明(item/generated)は小さく持つ
+export const HeldItems: Story = {
+    args: { rightHandItem: "diamond_sword", leftHandItem: "torch", yaw: 30, pitch: 10 },
 };
 
 // yaw / pitch で視点の角度を固定した例。斜め前やや上から見下ろす。
@@ -68,23 +91,30 @@ const poseItemStyle = css({
     textStyle: "sm",
 });
 
-// 追加したポーズを固定角度で並べた一覧。体を水平に倒す flying / swim は斜め上から見せる
-const POSE_ANGLE = {
-    crouch: { yaw: 30, pitch: 10 },
-    hit: { yaw: 30, pitch: 10 },
-    flying: { yaw: 60, pitch: 30 },
-    swim: { yaw: 60, pitch: 30 },
-    torch: { yaw: 30, pitch: 10 },
-} as const;
+// 追加したポーズと、そのポーズに合うアイテムの組み合わせ
+const POSES = [
+    { animation: "crouch", rightHandItem: undefined },
+    { animation: "hit", rightHandItem: "diamond_sword" },
+    { animation: "raise", rightHandItem: "torch" },
+    { animation: "walking", rightHandItem: "iron_pickaxe" },
+] as const;
 
-// 追加したポーズの一覧
+// 追加したポーズの一覧。斜め前からの固定角度で並べる
 export const Poses: Story = {
     render: (args) => (
         <div className={posesStyle}>
-            {(Object.keys(POSE_ANGLE) as (keyof typeof POSE_ANGLE)[]).map((pose) => (
-                <div key={pose} className={poseItemStyle}>
-                    <SkinViewer {...args} animation={pose} width={220} height={280} {...POSE_ANGLE[pose]} />
-                    <span>{pose}</span>
+            {POSES.map(({ animation, rightHandItem }) => (
+                <div key={animation} className={poseItemStyle}>
+                    <SkinViewer
+                        {...args}
+                        animation={animation}
+                        rightHandItem={rightHandItem}
+                        width={220}
+                        height={280}
+                        yaw={30}
+                        pitch={10}
+                    />
+                    <span>{rightHandItem ? `${animation} + ${rightHandItem}` : animation}</span>
                 </div>
             ))}
         </div>
