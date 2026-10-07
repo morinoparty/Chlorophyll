@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { css } from "styled-system/css";
 import { MinecraftProvider, SkinViewer } from "../../../packages/react";
 
 const meta: Meta<typeof SkinViewer> = {
@@ -16,8 +17,10 @@ const meta: Meta<typeof SkinViewer> = {
         autoRotate: { control: "boolean" },
         animation: {
             control: "select",
-            options: ["idle", "walking", "running", "wave", "none"],
+            options: ["idle", "walking", "running", "wave", "crouch", "hit", "flying", "swim", "torch", "none"],
         },
+        yaw: { control: { type: "range", min: -180, max: 180, step: 5 } },
+        pitch: { control: { type: "range", min: -89, max: 89, step: 1 } },
         interactive: { control: "boolean" },
     },
     args: {
@@ -37,6 +40,55 @@ export const Default: Story = {};
 
 export const Walking: Story = {
     args: { animation: "walking" },
+};
+
+// 右手で松明を前方に掲げる独自ポーズ。炎のまわりを暖色のライトで照らす
+export const Torch: Story = {
+    args: { animation: "torch", autoRotate: false },
+};
+
+// yaw / pitch で視点の角度を固定した例。斜め前やや上から見下ろす。
+// 固定中はドラッグ回転と autoRotate が無効になる(ズームは可能)
+export const FixedAngle: Story = {
+    args: { yaw: 30, pitch: 15 },
+};
+
+const posesStyle = css({
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "4",
+});
+
+const poseItemStyle = css({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "2",
+    color: "colorPalette.fg.muted",
+    textStyle: "sm",
+});
+
+// 追加したポーズを固定角度で並べた一覧。体を水平に倒す flying / swim は斜め上から見せる
+const POSE_ANGLE = {
+    crouch: { yaw: 30, pitch: 10 },
+    hit: { yaw: 30, pitch: 10 },
+    flying: { yaw: 60, pitch: 30 },
+    swim: { yaw: 60, pitch: 30 },
+    torch: { yaw: 30, pitch: 10 },
+} as const;
+
+// 追加したポーズの一覧
+export const Poses: Story = {
+    render: (args) => (
+        <div className={posesStyle}>
+            {(Object.keys(POSE_ANGLE) as (keyof typeof POSE_ANGLE)[]).map((pose) => (
+                <div key={pose} className={poseItemStyle}>
+                    <SkinViewer {...args} animation={pose} width={220} height={280} {...POSE_ANGLE[pose]} />
+                    <span>{pose}</span>
+                </div>
+            ))}
+        </div>
+    ),
 };
 
 export const Static: Story = {

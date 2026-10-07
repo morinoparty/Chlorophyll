@@ -2,30 +2,60 @@
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
 import { useEffect, useRef } from "react";
 import {
+    CrouchAnimation,
+    FlyingAnimation,
+    HitAnimation,
     IdleAnimation,
+    type PlayerAnimation,
     RunningAnimation,
     SkinViewer as SkinViewer3D,
+    SwimAnimation,
     WalkingAnimation,
     WaveAnimation,
 } from "skinview3d";
 import { skinViewer as skinViewerRecipe } from "styled-system/recipes";
 import { useMinecraftConfig } from "../minecraft-provider";
+import { TorchAnimation } from "./torch-animation";
 
-type SkinViewerAnimation = "idle" | "walking" | "running" | "wave" | "none";
+type SkinViewerAnimation =
+    | "idle"
+    | "walking"
+    | "running"
+    | "wave"
+    | "crouch"
+    | "hit"
+    | "flying"
+    | "swim"
+    | "torch"
+    | "none";
 
 // アニメーション名 -> skinview3d の PlayerAnimation インスタンスを作る関数。
 // "none" は毎回 null を返す(インスタンス生成が不要なため関数化する必要はないが、
 // 他のキーと同じ形にして Record で一括管理できるようにする)
-const ANIMATION_FACTORY: Record<
-    SkinViewerAnimation,
-    () => IdleAnimation | WalkingAnimation | RunningAnimation | WaveAnimation | null
-> = {
+const ANIMATION_FACTORY: Record<SkinViewerAnimation, () => PlayerAnimation | null> = {
     idle: () => new IdleAnimation(),
     walking: () => new WalkingAnimation(),
     running: () => new RunningAnimation(),
     wave: () => new WaveAnimation(),
+    // CrouchAnimation は既定だとしゃがむ/立つを繰り返すので、1 回しゃがんだ姿勢で止める
+    crouch: () => {
+        const crouch = new CrouchAnimation();
+        crouch.runOnce = true;
+        return crouch;
+    },
+    hit: () => new HitAnimation(),
+    // エリトラ飛行の姿勢(体を水平に倒して腕を広げる)
+    flying: () => new FlyingAnimation(),
+    swim: () => new SwimAnimation(),
+    // skinview3d には無い独自ポーズ。右手で松明を掲げる
+    torch: () => new TorchAnimation(),
     none: () => null,
 };
+
+// pitch を ±90 度ちょうどにするとカメラの up ベクトルと視線が平行になり向きが定まらないため、手前で止める
+const MAX_PITCH_DEG = 89;
+
+const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
 interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height"> {
     /** プレイヤーの UUID。skinUrl 省略時、MinecraftProvider の skinUrl でスキンテクスチャの URL に解決される */
@@ -36,8 +66,16 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     width?: number;
     /** キャンバスの高さ(px) */
     height?: number;
-    /** 自動でぐるぐる回転させるか */
+    /** 自動でぐるぐる回転させるか。yaw / pitch で角度を固定している間は無効になる */
     autoRotate?: boolean;
+    /**
+     * 水平方向の視点角度(度)。0 で正面、90 でプレイヤーの左側面、180 で背面。
+     * yaw / pitch のどちらかを指定すると角度が固定され、ドラッグによる回転と autoRotate が無効になる
+     * (ズームは interactive に従う)
+     */
+    yaw?: number;
+    /** 垂直方向の視点角度(度)。正の値で上から見下ろし、負の値で下から見上げる。±89 度に丸められる */
+    pitch?: number;
     /** 再生するアニメーション。"none" ならポーズしたまま静止表示する */
     animation?: SkinViewerAnimation;
     /**
@@ -60,6 +98,8 @@ const SkinViewer = ({
     width = DEFAULT_WIDTH,
     height = DEFAULT_HEIGHT,
     autoRotate = true,
+    yaw,
+    pitch,
     animation = "idle",
     interactive = true,
     ...props
@@ -99,13 +139,34 @@ const SkinViewer = ({
         viewer.height = height;
     }, [width, height]);
 
+    // yaw / pitch が指定されていれば、カメラをその角度に固定する。
+    // 固定中は autoRotate とドラッグ回転を止め、指定した見た目から動かないようにする
     useEffect(() => {
         const viewer = viewerRef.current;
         if (!viewer) {
             return;
         }
-        viewer.autoRotate = autoRotate;
-    }, [autoRotate]);
+
+        const isAngleFixed = yaw !== undefined || pitch !== undefined;
+        viewer.autoRotate = autoRotate && !isAngleFixed;
+        viewer.controls.enableRotate = !isAngleFixed;
+        if (!isAngleFixed) {
+            return;
+        }
+
+        // autoRotate はプレイヤー側(playerWrapper)を回すため、その回転を戻してからカメラで角度を作る
+        viewer.playerWrapper.rotation.y = 0;
+        const clampedPitch = Math.min(Math.max(pitch ?? 0, -MAX_PITCH_DEG), MAX_PITCH_DEG);
+        // zoom で決まるカメラ距離はそのままに、球面座標で位置だけ差し替える。
+        // phi は +y 軸からの角度、theta は +z(正面)から +x 方向への角度
+        viewer.camera.position.setFromSphericalCoords(
+            viewer.camera.position.length(),
+            toRadians(90 - clampedPitch),
+            toRadians(yaw ?? 0),
+        );
+        // OrbitControls が target(原点)を向くようカメラの向きを更新する
+        viewer.controls.update();
+    }, [autoRotate, yaw, pitch]);
 
     // マウス操作の受け付けを OrbitControls の enabled で一括制御する。
     // false で回転・ズーム・パンを全てロックし、表示専用にする
@@ -122,7 +183,15 @@ const SkinViewer = ({
         if (!viewer) {
             return;
         }
-        viewer.animation = ANIMATION_FACTORY[animation]();
+        const nextAnimation = ANIMATION_FACTORY[animation]();
+        viewer.animation = nextAnimation;
+
+        // 松明のように独自に 3D オブジェクトを足すポーズは、切り替え時に取り外して解放する
+        return () => {
+            if (nextAnimation instanceof TorchAnimation) {
+                nextAnimation.dispose();
+            }
+        };
     }, [animation]);
 
     // skin の読み込みは非同期(内部で画像を fetch してからテクスチャ化する)なので、
