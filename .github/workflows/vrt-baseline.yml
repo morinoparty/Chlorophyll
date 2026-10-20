@@ -3,6 +3,8 @@ name: VRT Baseline
 # main へのマージ後にスナップショットを取得し、reg-suit のベースラインとして R2 へ公開する。
 # 以降の PR はこのコミットのスナップショットを期待値として比較する。
 on:
+  # ベースライン公開が一時的な障害で失敗した場合に手動で再公開できるようにする
+  workflow_dispatch:
   push:
     branches: [main]
     paths:

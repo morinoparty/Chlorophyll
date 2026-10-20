@@ -64,7 +64,24 @@ jobs:
       - name: Capture screenshots
         run: pnpm --filter @chlorophyll/storybook vrt:capture
 
+      # Bitwarden Secrets Manager が一時的に 503 を返して落ちることがあるため、
+      # 1 回目の失敗は許容し、少し待ってから 1 度だけ再試行する
       - name: Get secrets from Bitwarden
+        id: bitwarden
+        continue-on-error: true
+        uses: bitwarden/sm-action@v2
+        with:
+          access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
+          secrets: |
+            37e4d53a-a898-4e9f-b067-b49900deaf4f > AWS_ACCESS_KEY_ID
+            4d92b739-40fc-467f-97fa-b49900deb52c > AWS_SECRET_ACCESS_KEY
+
+      - name: Wait before retrying Bitwarden
+        if: steps.bitwarden.outcome == 'failure'
+        run: sleep 30
+
+      - name: Get secrets from Bitwarden (retry)
+        if: steps.bitwarden.outcome == 'failure'
         uses: bitwarden/sm-action@v2
         with:
           access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
