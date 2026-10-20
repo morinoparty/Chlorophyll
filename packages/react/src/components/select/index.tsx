@@ -206,26 +206,26 @@ const Select = Object.assign(SelectRoot, {
     Context: SelectContext,
 });
 
-// 利用側が @ark-ui/react を直接 import せずに済むよう、collection の生成関数と型も再 export する
-export { Select, createListCollection };
 export type {
     CollectionItem,
     ListCollection,
-    SelectRootProps,
-    SelectLabelProps,
-    SelectControlProps,
-    SelectTriggerProps,
-    SelectValueTextProps,
-    SelectIndicatorProps,
     SelectClearTriggerProps,
-    SelectPositionerProps,
     SelectContentProps,
-    SelectItemGroupProps,
+    SelectContextProps,
+    SelectControlProps,
+    SelectHiddenSelectProps,
+    SelectIndicatorProps,
     SelectItemGroupLabelProps,
+    SelectItemGroupProps,
+    SelectItemIndicatorProps,
     SelectItemProps,
     SelectItemTextProps,
-    SelectItemIndicatorProps,
-    SelectHiddenSelectProps,
-    SelectContextProps,
+    SelectLabelProps,
+    SelectPositionerProps,
+    SelectRootProps,
     SelectSize,
+    SelectTriggerProps,
+    SelectValueTextProps,
 };
+// 利用側が @ark-ui/react を直接 import せずに済むよう、collection の生成関数と型も再 export する
+export { createListCollection, Select };

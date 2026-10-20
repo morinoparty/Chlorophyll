@@ -63,12 +63,12 @@ const Pagination = Object.assign(PaginationRoot, {
     Context: PaginationContext,
 });
 
-export { Pagination };
 export type {
-    PaginationRootProps,
-    PaginationPrevTriggerProps,
-    PaginationNextTriggerProps,
-    PaginationItemProps,
-    PaginationEllipsisProps,
     PaginationContextProps,
+    PaginationEllipsisProps,
+    PaginationItemProps,
+    PaginationNextTriggerProps,
+    PaginationPrevTriggerProps,
+    PaginationRootProps,
 };
+export { Pagination };

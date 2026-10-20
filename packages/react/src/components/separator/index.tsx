@@ -34,5 +34,5 @@ const Separator = ({ className, orientation = "horizontal", semantic = false, ..
     );
 };
 
+export type { SeparatorOrientation, SeparatorProps };
 export { Separator };
-export type { SeparatorProps, SeparatorOrientation };

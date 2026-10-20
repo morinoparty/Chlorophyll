@@ -1,5 +1,5 @@
+import { useTranslations } from "@fuma-translate/react";
 import type { AnchorProviderProps, TOCItemType } from "fumadocs-core/toc";
-import { I18nLabel } from "fumadocs-ui/contexts/i18n";
 import { Edit, Text } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../../../../lib/cn";
@@ -147,7 +147,7 @@ export function DocsPage({
                             className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground"
                         >
                             <Text className="size-4" />
-                            <I18nLabel label="toc" />
+                            <TranslatedLabel text="On this page" />
                         </h3>
                         <TOCScrollArea>
                             {tocOptions.style === "clerk" ? <TocClerk.TOCItems /> : <TocDefault.TOCItems />}
@@ -177,7 +177,7 @@ export function EditOnGitHub(props: ComponentProps<"a">) {
             {props.children ?? (
                 <>
                     <Edit className="size-3.5" />
-                    <I18nLabel label="editOnGithub" />
+                    <TranslatedLabel text="Edit on GitHub" />
                 </>
             )}
         </a>
@@ -215,3 +215,9 @@ export function DocsTitle({ children, className, ...props }: ComponentProps<"h1"
 }
 
 export { PageBreadcrumb, PageLastUpdate } from "./client";
+
+// fumadocs-ui 16.x で I18nLabel が削除され、翻訳は @fuma-translate/react の useTranslations に移ったため置き換える
+function TranslatedLabel({ text }: { text: string }) {
+    const t = useTranslations();
+    return t(text);
+}

@@ -44,5 +44,5 @@ const PlayerAvatar = ({ playerId, playerName, size = "md" }: PlayerAvatarProps) 
     );
 };
 
-export { PlayerAvatar };
 export type { PlayerAvatarProps, PlayerAvatarSize };
+export { PlayerAvatar };

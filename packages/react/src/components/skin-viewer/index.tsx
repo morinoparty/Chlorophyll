@@ -148,5 +148,5 @@ const SkinViewer = ({
     );
 };
 
+export type { SkinViewerAnimation, SkinViewerProps };
 export { SkinViewer };
-export type { SkinViewerProps, SkinViewerAnimation };

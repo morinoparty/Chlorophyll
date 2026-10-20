@@ -147,17 +147,17 @@ const Editable = Object.assign(EditableRoot, {
     Context: EditableContext,
 });
 
-export { Editable };
 export type {
-    EditableRootProps,
-    EditableLabelProps,
     EditableAreaProps,
-    EditableInputProps,
-    EditablePreviewProps,
-    EditableControlProps,
-    EditableEditTriggerProps,
-    EditableSubmitTriggerProps,
     EditableCancelTriggerProps,
     EditableContextProps,
+    EditableControlProps,
+    EditableEditTriggerProps,
+    EditableInputProps,
+    EditableLabelProps,
+    EditablePreviewProps,
+    EditableRootProps,
     EditableSize,
+    EditableSubmitTriggerProps,
 };
+export { Editable };

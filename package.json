@@ -15,7 +15,7 @@
         "chlorophyll-cli": "node packages/cli/bin/cli.mjs"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.3.10"
+        "@biomejs/biome": "2.5.15"
     },
     "license": "CC0-1.0",
     "engines": {
@@ -27,8 +27,9 @@
             "puppeteer"
         ],
         "overrides": {
-            "three": "^0.185.1",
-            "@types/three": "^0.185.0"
+            "three": "^0.186.1",
+            "@types/three": "^0.186.0",
+            "jest-runtime": "~30.4.2"
         }
     },
     "packageManager": "pnpm@10.28.1"

@@ -21,5 +21,5 @@ const Spinner = ({ className, size, ...props }: SpinnerProps) => {
     );
 };
 
-export { Spinner };
 export type { SpinnerProps, SpinnerSize };
+export { Spinner };

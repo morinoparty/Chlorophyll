@@ -88,6 +88,6 @@ export function createPageTreeRenderer({
             }
 
             return <Fragment key={root.$id}>{renderSidebarList(root.children)}</Fragment>;
-        }, [Folder, Item, Separator, root, SidebarItem, SidebarSeparator]);
+        }, [Folder, Item, Separator, root]);
     };
 }

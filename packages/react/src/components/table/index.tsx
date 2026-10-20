@@ -187,16 +187,16 @@ const Table = Object.assign(TableRoot, {
     Empty: TableEmpty,
 });
 
-export { Table };
 export type {
-    TableRootProps,
-    TableHeaderProps,
     TableBodyProps,
-    TableFooterProps,
-    TableRowProps,
-    TableHeadProps,
-    TableCellProps,
     TableCaptionProps,
+    TableCellProps,
     TableEmptyProps,
+    TableFooterProps,
+    TableHeaderProps,
+    TableHeadProps,
+    TableRootProps,
+    TableRowProps,
     TableSize,
 };
+export { Table };

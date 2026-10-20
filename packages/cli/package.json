@@ -16,14 +16,14 @@
         "dev": "unbuild --stub"
     },
     "dependencies": {
-        "citty": "^0.1.6",
+        "citty": "^0.2.2",
         "consola": "^3.4.2",
         "culori": "^4.0.2"
     },
     "devDependencies": {
         "@morinoparty/chlorophyll-react": "workspace:*",
         "typescript": "~5.9.3",
-        "unbuild": "^3.5.0"
+        "unbuild": "^3.6.1"
     },
     "license": "CC0-1.0"
 }

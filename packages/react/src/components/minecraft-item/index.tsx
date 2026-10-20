@@ -103,6 +103,6 @@ const MinecraftItem = ({
     );
 };
 
-export { MinecraftItem };
-export type { MinecraftItemProps };
 export type { ResolvedMinecraftItem } from "./resolve-minecraft-item";
+export type { MinecraftItemProps };
+export { MinecraftItem };

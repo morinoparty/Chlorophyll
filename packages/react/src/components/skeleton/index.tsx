@@ -14,5 +14,5 @@ const Skeleton = ({ className, variant, ...props }: SkeletonProps) => {
     return <ark.div aria-hidden="true" {...props} className={skeleton({ variant }).concat(" ", className || "")} />;
 };
 
-export { Skeleton };
 export type { SkeletonProps, SkeletonVariant };
+export { Skeleton };

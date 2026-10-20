@@ -81,5 +81,5 @@ const PlayerPhraseCard = Object.assign(PlayerPhraseCardRoot, {
     Name: PlayerPhraseCardName,
 });
 
+export type { PlayerPhraseCardBodyProps, PlayerPhraseCardRootProps };
 export { PlayerPhraseCard };
-export type { PlayerPhraseCardRootProps, PlayerPhraseCardBodyProps };
