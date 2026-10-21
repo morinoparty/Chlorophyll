@@ -1,3 +1,10 @@
+# docs (Worker "chlorophyll") を cf で deploy する。
+# Storybook は docs の静的アセットとして /storybook/ 配下に同梱する (docs/vite.config.ts)。
+#
+# build と dry-run を行い、main のときだけ本番 deploy する。
+# 必要な secret (cf CLI 用。Worker には渡さない):
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
+# Worker はアプリ用の secret を持たないので --secrets-file は使わない。
 name: Deploy
 
 on:
@@ -14,32 +21,42 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
+    env:
+      CF_SEND_TELEMETRY: "false"
     steps:
       - uses: actions/checkout@v6
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm run build
+      # cf build は package.json の scripts を通らないので、生成物は先に作る。
+      # storybook-static は docs の cf build (Vite) が /storybook/ 配下にコピーする
+      - name: Build storybook
+        run: pnpm run build:storybook
 
-      - name: Deploy storybook preview
-        id: deploy-storybook-preview
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CF_API_KEY }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: storybook
-          packageManager: pnpm
+      - name: Generate docs assets
+        run: pnpm --filter @chlorophyll/docs generate
 
-      - name: Deploy docs preview
-        id: deploy-docs-preview
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CF_API_KEY }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: docs
-          packageManager: pnpm
+      # docs は TanStack Start と判定され、cf build は --mode を受け付けない (Vite のビルドは production を記録する)
+      - name: Build docs worker
+        working-directory: docs
+        run: |
+          pnpm exec cf build
+          pnpm exec cf deploy --prebuilt --mode production --dry-run
+
+      # 本番 deploy は main のときだけ
+      - name: Deploy docs
+        if: github.ref == 'refs/heads/main'
+        working-directory: docs
+        run: pnpm exec cf deploy --prebuilt --mode production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

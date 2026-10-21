@@ -34,7 +34,7 @@
         "@storybook/react": "^10.1.10",
         "@storybook/react-vite": "^10.1.10",
         "@storybook/test-runner": "^0.24.2",
-        "@types/node": "^25.0.3",
+        "@types/node": "^26.6.5",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.2",
@@ -56,8 +56,7 @@
         "storybook-design-token": "^5.0.0",
         "typescript": "~5.9.3",
         "vite": "^7.3.0",
-        "vitest": "^4.0.16",
-        "wrangler": "^4.55.0"
+        "vitest": "^4.0.16"
     },
     "jest-junit": {
         "outputDirectory": "reports",

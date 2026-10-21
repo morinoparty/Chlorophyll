@@ -5,11 +5,12 @@
     "version": "0.0.1",
     "scripts": {
         "prepare": "panda codegen",
-        "dev": "panda cssgen && panda spec && node scripts/generate-llms-tokens.mjs && vite dev --host",
-        "build": "panda cssgen && panda spec && node scripts/generate-llms-tokens.mjs && vite build",
+        "generate": "panda cssgen && panda spec && node scripts/generate-llms-tokens.mjs",
+        "dev": "pnpm generate && vite dev --host",
+        "build": "pnpm generate && vite build",
         "start": "vite preview",
-        "deploy": "pnpm build && wrangler deploy",
-        "cf-typegen": "wrangler types"
+        "deploy": "pnpm generate && cf deploy",
+        "cf-typegen": "cf workers types"
     },
     "dependencies": {
         "@ark-ui/react": "^5.30.0",
@@ -36,24 +37,23 @@
         "tailwindcss": "^4.1.18"
     },
     "devDependencies": {
-        "@cloudflare/vite-plugin": "^1.18.0",
+        "@cloudflare/vite-plugin": "^2.0.0-beta.v.3",
         "@pandacss/dev": "^1.7.2",
         "@pandacss/preset-base": "^1.7.2",
-        "@types/node": "^25.0.3",
+        "@types/node": "^26.6.5",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.2",
         "autoprefixer": "^10.4.23",
+        "cf": "1.0.0-beta.20",
         "class-variance-authority": "^0.7.1",
         "typescript": "^5.9.3",
         "vite": "^7.3.0",
-        "vite-tsconfig-paths": "^6.0.3",
-        "wrangler": "^4.55.0"
+        "vite-tsconfig-paths": "^6.0.3"
     },
     "license": "CC0-1.0",
     "engines": {
         "yarn": "please use pnpm",
         "npm": "please use pnpm"
-    },
-    "packageManager": "pnpm@10.26.1"
+    }
 }
