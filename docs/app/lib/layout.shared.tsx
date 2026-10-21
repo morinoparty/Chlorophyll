@@ -19,6 +19,7 @@ export function baseOptions(): BaseLayoutProps {
             mode: "toggle",
         },
         githubUrl: "https://github.com/morinoparty/chlorophyll",
-        storybookUrl: "https://chlorophyll.morinoparty.workers.dev/storybook/",
+        // Storybook は同じ Worker の静的アセットとして /storybook/ で配信している
+        storybookUrl: "/storybook/",
     };
 }

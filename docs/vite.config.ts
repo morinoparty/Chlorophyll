@@ -51,6 +51,9 @@ export default defineConfig({
             srcDirectory: "app",
             prerender: {
                 enabled: true,
+                // /storybook/ は Storybook の静的ビルド (bundleStorybook がコピー) なので
+                // TanStack Start のルートとして描画しない
+                filter: ({ path }) => !path.startsWith("/storybook"),
             },
         }),
         tsconfigPaths(),
