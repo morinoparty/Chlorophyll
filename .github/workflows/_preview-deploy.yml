@@ -11,8 +11,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      CF_SEND_TELEMETRY: "false"
     outputs:
-      storybook_url: ${{ steps.deploy-storybook-preview.outputs.deployment-url }}
+      # Storybook は docs Worker の /storybook/ 配下で配信する
+      storybook_url: ${{ steps.deploy-docs-preview.outputs.storybook-url }}
       docs_url: ${{ steps.deploy-docs-preview.outputs.deployment-url }}
     steps:
       - uses: actions/checkout@v6
@@ -22,34 +25,31 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version-file: .node-version
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # cf は package.json の scripts を通らないので、生成物は先に作る。
+      # storybook-static は docs のビルド (Vite) が /storybook/ 配下にコピーする
       - name: Build storybook
-        run: pnpm --filter @chlorophyll/storybook build
+        run: pnpm run build:storybook
 
-      - name: Build docs
-        run: pnpm --filter @chlorophyll/docs build
+      - name: Generate docs assets
+        run: pnpm --filter @chlorophyll/docs generate
 
-      - name: Deploy storybook preview
-        id: deploy-storybook-preview
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CF_API_KEY }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: storybook
-          packageManager: pnpm
-          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
-
+      # cf previews deploy はビルドしてから Worker Preview を作り、結果を JSON で標準出力に出す。
+      # preview 名は GITHUB_HEAD_REF (PR のブランチ名) から決まる。
       - name: Deploy docs preview
         id: deploy-docs-preview
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CF_API_KEY }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: docs
-          packageManager: pnpm
-          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
+        working-directory: docs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          pnpm exec cf previews deploy > "$RUNNER_TEMP/docs-preview.json"
+          cat "$RUNNER_TEMP/docs-preview.json"
+          url=$(jq -r '(.preview_urls // .deployment_urls) | if type == "array" then .[0] else . end // empty' "$RUNNER_TEMP/docs-preview.json")
+          echo "deployment-url=$url" >> "$GITHUB_OUTPUT"
+          if [ -n "$url" ]; then echo "storybook-url=${url%/}/storybook/" >> "$GITHUB_OUTPUT"; fi

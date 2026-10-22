@@ -5,6 +5,14 @@ export {
     type AccordionItemTriggerProps,
     type AccordionRootProps,
 } from "./accordion";
+export {
+    Avatar,
+    type AvatarFallbackProps,
+    type AvatarImageProps,
+    type AvatarRootProps,
+    type AvatarShape,
+    type AvatarSize,
+} from "./avatar";
 export { Badge, type BadgeProps } from "./badge";
 export {
     Breadcrumb,
@@ -17,6 +25,46 @@ export {
     type BreadcrumbSeparatorProps,
 } from "./breadcrumb";
 export { Button, type ButtonProps } from "./button";
+export {
+    Card,
+    type CardBodyProps,
+    type CardDescriptionProps,
+    type CardFooterProps,
+    type CardHeaderProps,
+    type CardImageProps,
+    type CardRootProps,
+    type CardSize,
+    type CardTitleProps,
+    type CardVariant,
+} from "./card";
+export {
+    Checkbox,
+    type CheckboxCheckedChangeDetails,
+    type CheckboxCheckedState,
+    type CheckboxContextProps,
+    type CheckboxControlProps,
+    type CheckboxGroupProps,
+    type CheckboxHiddenInputProps,
+    type CheckboxIndicatorProps,
+    type CheckboxLabelProps,
+    type CheckboxRootProps,
+    type CheckboxSize,
+} from "./checkbox";
+export {
+    Dialog,
+    type DialogBackdropProps,
+    type DialogBodyProps,
+    type DialogCloseTriggerProps,
+    type DialogContentProps,
+    type DialogDescriptionProps,
+    type DialogFooterProps,
+    type DialogHeaderProps,
+    type DialogPositionerProps,
+    type DialogRootProps,
+    type DialogSize,
+    type DialogTitleProps,
+    type DialogTriggerProps,
+} from "./dialog";
 export {
     Drawer,
     type DrawerBackdropProps,
@@ -57,6 +105,13 @@ export {
     Textarea,
 } from "./field";
 export { GuideCard } from "./guide-card";
+export {
+    IconButton,
+    type IconButtonProps,
+    type IconButtonShape,
+    type IconButtonSize,
+    type IconButtonVariant,
+} from "./icon-button";
 export { List, ListItem, type ListItemProps, type ListProps, type ListSize } from "./list";
 export {
     Menu,
@@ -104,6 +159,14 @@ export {
     type PaginationRootProps,
 } from "./pagination";
 export { PlayerAvatar, type PlayerAvatarProps, type PlayerAvatarSize } from "./player-avatar";
+export {
+    PlayerCard,
+    type PlayerCardAvatarProps,
+    type PlayerCardBodyProps,
+    type PlayerCardDescriptionProps,
+    type PlayerCardNameProps,
+    type PlayerCardRootProps,
+} from "./player-card";
 export { PlayerMap, type PlayerMapProps, type PlayerMapSize } from "./player-map";
 export {
     PlayerPhraseCard,
@@ -111,6 +174,30 @@ export {
     type PlayerPhraseCardRootProps,
 } from "./player-phrase-card";
 export { Portal, type PortalProps } from "./portal";
+export {
+    RadioGroup,
+    type RadioGroupContextProps,
+    type RadioGroupItemControlProps,
+    type RadioGroupItemHiddenInputProps,
+    type RadioGroupItemProps,
+    type RadioGroupItemTextProps,
+    type RadioGroupLabelProps,
+    type RadioGroupRootProps,
+    type RadioGroupSize,
+} from "./radio-group";
+export {
+    SegmentGroup,
+    type SegmentGroupContextProps,
+    type SegmentGroupControlProps,
+    type SegmentGroupIndicatorProps,
+    type SegmentGroupItemControlProps,
+    type SegmentGroupItemHiddenInputProps,
+    type SegmentGroupItemProps,
+    type SegmentGroupItemTextProps,
+    type SegmentGroupLabelProps,
+    type SegmentGroupRootProps,
+    type SegmentGroupSize,
+} from "./segment-group";
 export {
     type CollectionItem,
     createListCollection,
@@ -139,6 +226,16 @@ export { Skeleton, type SkeletonProps, type SkeletonVariant } from "./skeleton";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";
 export { Spinner, type SpinnerProps, type SpinnerSize } from "./spinner";
 export {
+    Switch,
+    type SwitchContextProps,
+    type SwitchControlProps,
+    type SwitchHiddenInputProps,
+    type SwitchLabelProps,
+    type SwitchRootProps,
+    type SwitchSize,
+    type SwitchThumbProps,
+} from "./switch";
+export {
     Table,
     type TableBodyProps,
     type TableCaptionProps,
@@ -151,6 +248,16 @@ export {
     type TableRowProps,
     type TableSize,
 } from "./table";
+export {
+    Tabs,
+    type TabsContentProps,
+    type TabsIndicatorProps,
+    type TabsListProps,
+    type TabsRootProps,
+    type TabsSize,
+    type TabsTriggerProps,
+    type TabsVariant,
+} from "./tabs";
 export {
     type CreateToasterProps,
     type CreateToasterReturn,

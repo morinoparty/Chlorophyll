@@ -56,3 +56,8 @@ vrt/*
 
 storybook/playwright-report/
 storybook/test-results/
+# Cloudflare (cf)
+# 認証情報などを置くローカル専用ファイル。キーの一覧は .env.example を参照
+.env
+!.env.example
+.cloudflare/
