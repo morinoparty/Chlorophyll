@@ -24,6 +24,10 @@ export const checkbox = defineSlotRecipe({
             _disabled: {
                 cursor: "not-allowed",
             },
+            // 読み取り専用は zag が切り替えを止めるため、押せるように見せない
+            "&[data-readonly]": {
+                cursor: "default",
+            },
         },
         control: {
             // チェックの四角。中に Indicator(チェック / マイナスのアイコン)を中央寄せで置く
@@ -48,18 +52,21 @@ export const checkbox = defineSlotRecipe({
             // ホバーで枠線を一段濃くして押せることを伝える。Ark は Root にポインタが乗ると
             // Control にも data-hover を付けるので、ラベルの上でも四角が反応する
             // (gray.10 の計測値: 白 Lc 65.6 / colorPalette.bg(mori) Lc 57.4)。
-            // invalid / disabled は除外する(hover の方が詳細度が高く、赤い枠線や無効の見た目が消えるため)
-            "&:is(:hover, [data-hover]):not([data-disabled]):not([data-invalid])": {
+            // invalid / disabled は除外する(hover の方が詳細度が高く、赤い枠線や無効の見た目が消えるため)。
+            // readOnly も Field / Editable と同じく除外し、切り替えられない四角が押せるように見えないようにする
+            "&:is(:hover, [data-hover]):not([data-disabled]):not([data-readonly]):not([data-invalid])": {
                 borderColor: "gray.10",
             },
             // チェック済み・未確定(indeterminate)は colorPalette の solid で塗り、白いアイコンを載せる。
             // (colorPalette.solid = mori.9 の計測値: 白 Lc 73.7 / colorPalette.bg(mori) Lc 65.5。
-            //  上に載せる colorPalette.contrast(白)のアイコン: mori.9 の上で Lc 79.1)
+            //  上に載せる colorPalette.contrast(白)のアイコン: mori.9 の上で Lc 79.1)。
+            // 計測値は mori のもの。step9 が明るいパレット(yellow.9: 白 Lc 12.9)では塗りが手がかりにならず、
+            // パレット側で暗いインクに差し替えた colorPalette.contrast のアイコンで状態を示す(Button の solid と同じ扱い)
             "&:is([data-state=checked], [data-state=indeterminate])": {
                 bg: "colorPalette.solid",
                 borderColor: "colorPalette.solid",
                 // ホバー時の塗り(colorPalette.solid.emphasized = mori.10 の計測値: 白 Lc 79.3 / colorPalette.bg(mori) Lc 71.0)
-                "&:is(:hover, [data-hover]):not([data-disabled]):not([data-invalid])": {
+                "&:is(:hover, [data-hover]):not([data-disabled]):not([data-readonly]):not([data-invalid])": {
                     bg: "colorPalette.solid.emphasized",
                     borderColor: "colorPalette.solid.emphasized",
                 },
