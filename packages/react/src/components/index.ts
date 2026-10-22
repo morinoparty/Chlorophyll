@@ -135,6 +135,18 @@ export {
     type RadioGroupRootProps,
     type RadioGroupSize,
 } from "./radio-group";
+    SegmentGroup,
+    type SegmentGroupContextProps,
+    type SegmentGroupControlProps,
+    type SegmentGroupIndicatorProps,
+    type SegmentGroupItemControlProps,
+    type SegmentGroupItemHiddenInputProps,
+    type SegmentGroupItemProps,
+    type SegmentGroupItemTextProps,
+    type SegmentGroupLabelProps,
+    type SegmentGroupRootProps,
+    type SegmentGroupSize,
+} from "./segment-group";
 export {
     type CollectionItem,
     createListCollection,
