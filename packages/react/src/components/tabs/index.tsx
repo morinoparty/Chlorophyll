@@ -75,7 +75,6 @@ const Tabs = Object.assign(TabsRoot, {
     Indicator: TabsIndicator,
 });
 
-export { Tabs };
 export type {
     TabsContentProps,
     TabsIndicatorProps,
@@ -85,3 +84,4 @@ export type {
     TabsTriggerProps,
     TabsVariant,
 };
+export { Tabs };

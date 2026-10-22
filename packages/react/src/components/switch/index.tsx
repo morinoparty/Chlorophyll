@@ -87,7 +87,6 @@ const Switch = Object.assign(SwitchRoot, {
     Context: SwitchContext,
 });
 
-export { Switch };
 export type {
     SwitchContextProps,
     SwitchControlProps,
@@ -97,3 +96,4 @@ export type {
     SwitchSize,
     SwitchThumbProps,
 };
+export { Switch };

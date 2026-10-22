@@ -33,5 +33,5 @@ const IconButton = ({ className, variant, size, shape, ...props }: IconButtonPro
     );
 };
 
-export { IconButton };
 export type { IconButtonProps, IconButtonShape, IconButtonSize, IconButtonVariant };
+export { IconButton };

@@ -5,8 +5,9 @@ packages:
 
 # pnpm 11 以降は package.json の "pnpm" 欄を読まないため、ここに移した
 overrides:
-  three: ^0.185.1
-  "@types/three": ^0.185.0
+  three: ^0.186.1
+  "@types/three": ^0.186.0
+  jest-runtime: ~30.4.2
 
 # install スクリプトの実行を許可する依存 (pnpm 11 以降は未承認だと install が失敗する)
 allowBuilds:

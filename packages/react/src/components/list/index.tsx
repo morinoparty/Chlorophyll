@@ -57,5 +57,5 @@ const List = Object.assign(ListRoot, {
     Item: ListItem,
 });
 
+export type { ListItemProps, ListProps, ListSize, ListVariant };
 export { List, ListItem };
-export type { ListProps, ListItemProps, ListSize, ListVariant };

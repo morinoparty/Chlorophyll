@@ -101,5 +101,5 @@ const useMinecraftConfig = (): ResolvedMinecraftConfig => useContext(MinecraftCo
 /** @deprecated MinecraftConfig に置き換えられました */
 type MinecraftAssetsResolver = Required<Pick<MinecraftConfig, "resolveModel" | "resolveTexture">>;
 
-export { MinecraftProvider, useMinecraftConfig, DEFAULT_MINECRAFT_CONFIG };
 export type { MinecraftAssetsResolver, MinecraftConfig, MinecraftProviderProps, ResolvedMinecraftConfig };
+export { DEFAULT_MINECRAFT_CONFIG, MinecraftProvider, useMinecraftConfig };

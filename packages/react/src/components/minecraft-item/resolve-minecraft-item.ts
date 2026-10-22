@@ -235,7 +235,6 @@ const resolveMinecraftItem = async (
     return { type: "block", ...block };
 };
 
-export { fetchModel, MAX_PARENT_HOPS, resolveMinecraftItem, stripNamespace, toTextureFileName };
 export type {
     MinecraftFace,
     MinecraftModel,
@@ -244,3 +243,4 @@ export type {
     ResolvedFace,
     ResolvedMinecraftItem,
 };
+export { fetchModel, MAX_PARENT_HOPS, resolveMinecraftItem, stripNamespace, toTextureFileName };

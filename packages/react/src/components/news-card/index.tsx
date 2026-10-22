@@ -105,5 +105,5 @@ const NewsCard = Object.assign(NewsCardRoot, {
     Author: NewsCardAuthor,
 });
 
+export type { NewsCardAuthorProps, NewsCardDateProps, NewsCardPlayer, NewsCardThumbnailProps };
 export { NewsCard };
-export type { NewsCardThumbnailProps, NewsCardDateProps, NewsCardAuthorProps, NewsCardPlayer };

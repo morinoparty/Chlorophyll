@@ -163,5 +163,5 @@ const MinecraftBlockModel = ({ elements, rotation, resolveTexture, pixelSize }: 
     );
 };
 
-export { MinecraftBlockModel };
 export type { MinecraftBlockModelProps };
+export { MinecraftBlockModel };

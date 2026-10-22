@@ -56,5 +56,5 @@ const Tooltip = Object.assign(TooltipRoot, {
     Arrow: TooltipArrow,
 });
 
+export type { TooltipArrowProps, TooltipContentProps, TooltipPositionerProps, TooltipRootProps, TooltipTriggerProps };
 export { Tooltip };
-export type { TooltipRootProps, TooltipTriggerProps, TooltipPositionerProps, TooltipContentProps, TooltipArrowProps };

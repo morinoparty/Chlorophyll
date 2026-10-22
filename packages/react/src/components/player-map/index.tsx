@@ -43,5 +43,5 @@ const PlayerMap = ({ playerId, playerName, size = "md" }: PlayerMapProps) => {
     );
 };
 
-export { PlayerMap };
 export type { PlayerMapProps, PlayerMapSize };
+export { PlayerMap };

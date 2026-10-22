@@ -152,19 +152,19 @@ const Dialog = Object.assign(DialogRoot, {
     Context: DialogContext,
 });
 
-export { Dialog };
 export type {
-    DialogRootProps,
-    DialogTriggerProps,
     DialogBackdropProps,
-    DialogPositionerProps,
-    DialogContentProps,
-    DialogHeaderProps,
-    DialogTitleProps,
-    DialogDescriptionProps,
     DialogBodyProps,
-    DialogFooterProps,
     DialogCloseTriggerProps,
+    DialogContentProps,
     DialogContextProps,
+    DialogDescriptionProps,
+    DialogFooterProps,
+    DialogHeaderProps,
+    DialogPositionerProps,
+    DialogRootProps,
     DialogSize,
+    DialogTitleProps,
+    DialogTriggerProps,
 };
+export { Dialog };

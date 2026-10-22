@@ -11,5 +11,5 @@ const Button = ({ className, intent, size, ...props }: ButtonProps) => {
     return <ark.button {...props} className={button({ intent, size }).concat(" ", className || "")} />;
 };
 
-export { Button };
 export type { ButtonProps };
+export { Button };

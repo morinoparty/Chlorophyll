@@ -148,18 +148,18 @@ const Toaster = Object.assign(ToasterRoot, {
     CloseTrigger: ToastCloseTrigger,
 });
 
-export { createToaster, Toaster };
 export type {
     CreateToasterProps,
     CreateToasterReturn,
-    ToastOptions,
-    ToastType,
-    ToasterRootProps,
-    ToastRootProps,
-    ToastIndicatorProps,
-    ToastContentProps,
-    ToastTitleProps,
-    ToastDescriptionProps,
     ToastActionTriggerProps,
     ToastCloseTriggerProps,
+    ToastContentProps,
+    ToastDescriptionProps,
+    ToasterRootProps,
+    ToastIndicatorProps,
+    ToastOptions,
+    ToastRootProps,
+    ToastTitleProps,
+    ToastType,
 };
+export { createToaster, Toaster };

@@ -58,11 +58,11 @@ const Accordion = Object.assign(AccordionRoot, {
     ItemContent: AccordionItemContent,
 });
 
-export { Accordion };
 export type {
-    AccordionRootProps,
+    AccordionItemContentProps,
     AccordionItemProps,
     AccordionItemTriggerProps,
-    AccordionItemContentProps,
+    AccordionRootProps,
     AccordionVariant,
 };
+export { Accordion };

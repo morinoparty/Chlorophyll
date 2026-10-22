@@ -131,16 +131,16 @@ const Checkbox = Object.assign(CheckboxRoot, {
 type CheckboxCheckedState = ArkCheckbox.CheckedState;
 type CheckboxCheckedChangeDetails = ArkCheckbox.CheckedChangeDetails;
 
-export { Checkbox };
 export type {
-    CheckboxRootProps,
+    CheckboxCheckedChangeDetails,
+    CheckboxCheckedState,
+    CheckboxContextProps,
     CheckboxControlProps,
+    CheckboxGroupProps,
+    CheckboxHiddenInputProps,
     CheckboxIndicatorProps,
     CheckboxLabelProps,
-    CheckboxHiddenInputProps,
-    CheckboxGroupProps,
-    CheckboxContextProps,
-    CheckboxCheckedState,
-    CheckboxCheckedChangeDetails,
+    CheckboxRootProps,
     CheckboxSize,
 };
+export { Checkbox };
