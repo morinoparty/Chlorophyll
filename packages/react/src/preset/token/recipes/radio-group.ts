@@ -97,12 +97,22 @@ export const radioGroup = defineSlotRecipe({
             // outline: none だと利用側で outline-style が none のまま残るため outline 一式を明示する
             _focusVisible: focusRing,
             // エラー状態。Panda の _invalid は :invalid を含むため使わず、Ark が付ける data-invalid だけを見る。
-            // パレットごと red に切り替えて、未選択の枠線・選択中の塗り・フォーカスリングをまとめて赤にする
-            // (red.9 = colorPalette.solid の計測値: 白 Lc 65.0 / colorPalette.bg(mori) Lc 56.8)
+            // 選択中の塗り(colorPalette.solid)も赤にするためパレットごと red に切り替える。
+            // 枠線とフォーカスリングは Field / Select と同じ共有のエラートークンを指し、変更が一箇所で届くようにする
+            // (border.error.emphasized / focus.ring.error = red.9 の計測値: 白 Lc 65.0 / colorPalette.bg(mori) Lc 56.8)
             // disabled を優先するため、無効な項目は除く
             "&[data-invalid]:not([data-disabled])": {
                 colorPalette: "red",
-                borderColor: "colorPalette.solid",
+                borderColor: "border.error.emphasized",
+                _focusVisible: {
+                    outlineColor: "focus.ring.error",
+                },
+            },
+            // invalid の hover。通常の hover は赤い枠線を消さないよう invalid を除外しているため、
+            // 代わりに一段濃い赤へ変えてマウスの手応えを残す
+            // (colorPalette.solid.emphasized = red.10 の計測値: 白 Lc 69.0 / colorPalette.bg(mori) Lc 60.8)
+            "&[data-invalid][data-hover]:not([data-disabled]):not([data-state=checked])": {
+                borderColor: "colorPalette.solid.emphasized",
             },
             // 無効: 面を沈めて枠線を落とす。選択中でも塗りを灰色にしてブランド色を外す
             // (fg.disabled = gray.9 の計測値: bg.disabled(gray.4) Lc 46.9 / 白 Lc 60.4 / colorPalette.bg(mori) Lc 52.2。

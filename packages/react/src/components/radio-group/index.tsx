@@ -26,6 +26,8 @@ type RadioGroupRootProps = ComponentProps<typeof ArkRadioGroup.Root> & {
  * - disabled / invalid / required / readOnly は Root に 1 回渡せば、Ark が各項目に data-* 属性を配る。
  *   特定の項目だけ無効にするときは Item に disabled を渡す
  * - <form> 送信に値を載せるには name を渡し、各 Item に ItemHiddenInput を置く
+ * - Ark の Indicator(選択中の項目へ動く 1 枚の装飾)は含めない。選択中の点は ItemControl の擬似要素で描くため、
+ *   併用すると印が二重になる。useRadioGroup で状態を外に持つ RootProvider も現状の用途が無いため出していない
  */
 const RadioGroupRoot = ({ className, size = "md", ...props }: RadioGroupRootProps) => {
     return (
