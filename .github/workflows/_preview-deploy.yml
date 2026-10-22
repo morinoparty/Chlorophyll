@@ -18,15 +18,14 @@ jobs:
       storybook_url: ${{ steps.deploy-docs-preview.outputs.storybook-url }}
       docs_url: ${{ steps.deploy-docs-preview.outputs.deployment-url }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
-
-      - uses: actions/setup-node@v6
+      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
+      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
+      - uses: pnpm/setup@v3
         with:
-          node-version-file: .node-version
-          cache: 'pnpm'
+          cache: true      # pnpm store を lockfile ごとにキャッシュ
+          install: false   # install は次の手順で --frozen-lockfile 付きで行う
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

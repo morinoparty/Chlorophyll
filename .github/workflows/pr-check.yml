@@ -19,7 +19,7 @@ jobs:
     outputs:
       commit_sha: ${{ steps.vars.outputs.commit_sha }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set short git commit SHA
         id: vars
@@ -52,35 +52,26 @@ jobs:
       diff_size: ${{ steps.compare.outputs.diff_size }}
       diff_percent: ${{ steps.compare.outputs.diff_percent }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: pr
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: main
           path: main
 
-      # pnpm/action-setup はルート package.json の packageManager 欄から自動でバージョンを
-      # 拾うが、このジョブは checkout 先が pr/main サブディレクトリなので自動検出できない。
-      # PR 側の package.json から明示的にバージョンを読み取って渡す
-      - name: Resolve pnpm version
-        id: pnpm_version
-        run: echo "version=$(node -p "require('./pr/package.json').packageManager.split('@')[1]")" >> "$GITHUB_OUTPUT"
-
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
+      # checkout 先が pr/main サブディレクトリなので working-directory で PR 側を指す。
+      # pnpm は pr/package.json の packageManager、Node は pr/.node-version から入る。
+      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
+      - uses: pnpm/setup@v3
         with:
-          version: ${{ steps.pnpm_version.outputs.version }}
-          run_install: false
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "pnpm"
+          working-directory: pr
+          cache: true      # pnpm store を PR / main 両方の lockfile をキーにキャッシュ
           cache-dependency-path: |
             pr/pnpm-lock.yaml
             main/pnpm-lock.yaml
+          install: false   # install は pr / main それぞれで行う
 
       - name: Pack PR branch
         id: pr_pack
@@ -124,7 +115,7 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Create unified PR comment
         env:
