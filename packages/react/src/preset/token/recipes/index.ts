@@ -2,6 +2,7 @@ import { accordion } from "./accordion";
 import { badge } from "./badge";
 import { breadcrumb } from "./breadcrumb";
 import { button } from "./button";
+import { checkbox } from "./checkbox";
 import { drawer } from "./drawer";
 import { editable } from "./editable";
 import { field } from "./field";
@@ -55,6 +56,7 @@ export const slotRecipes = {
     // `switch` は予約語で styled-system/recipes の export 名にできないため、キーは switchRecipe にする
     switchRecipe,
     breadcrumb,
+    checkbox,
     table,
     toast,
     tooltip,

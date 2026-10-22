@@ -18,6 +18,19 @@ export {
 } from "./breadcrumb";
 export { Button, type ButtonProps } from "./button";
 export {
+    Checkbox,
+    type CheckboxCheckedChangeDetails,
+    type CheckboxCheckedState,
+    type CheckboxContextProps,
+    type CheckboxControlProps,
+    type CheckboxGroupProps,
+    type CheckboxHiddenInputProps,
+    type CheckboxIndicatorProps,
+    type CheckboxLabelProps,
+    type CheckboxRootProps,
+    type CheckboxSize,
+} from "./checkbox";
+export {
     Drawer,
     type DrawerBackdropProps,
     type DrawerCloseTriggerProps,
