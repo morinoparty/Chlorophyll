@@ -40,9 +40,9 @@ export const button = defineRecipe({
             primary: {
                 bg: "colorPalette.solid",
                 color: "colorPalette.contrast",
-                // 濃い solid 色の上では小さい影が沈んで浮き上がって見えないため、
-                // しっかり浮き上がる柔らかい影に見えるよう lg を使う
-                boxShadow: "lg",
+                // 濃い solid 色の上では小さい影が沈んで浮き上がって見えないため sm より一段強い md を使う。
+                // lg だと影が濃く広がって重たく見えたため、一段抑えている
+                boxShadow: "md",
                 _after: {
                     content: '""',
                     position: "absolute",
@@ -57,7 +57,7 @@ export const button = defineRecipe({
                 // disabled 状態では hover を効かせない
                 "&:not(:disabled):not([data-disabled]):hover": {
                     bg: "colorPalette.solid.emphasized",
-                    boxShadow: "xl",
+                    boxShadow: "lg",
                     // hover で隆起感を少し強め、押し上がる印象にする
                     _after: {
                         boxShadow: "inset.raised.hover",
@@ -67,7 +67,7 @@ export const button = defineRecipe({
                 // hover と同じ詳細度なので、後に書いて active を優先させる
                 "&:not(:disabled):not([data-disabled]):active": {
                     bg: "colorPalette.solid.active",
-                    boxShadow: "lg",
+                    boxShadow: "md",
                 },
                 // フォーカスリングは outline のロングハンドで明示する。outline: "none" のショートハンドは
                 // 消費側に borders.none トークンがあると var() に解決されて outline-style が消える(#78)

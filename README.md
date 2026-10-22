@@ -69,6 +69,20 @@ pnpm test           # component tests
 pnpm test:vrt       # visual regression tests
 ```
 
+### Deploy
+
+`docs/` is deployed as a single Cloudflare Worker (`chlorophyll`) with [`cf`](https://developers.cloudflare.com/cf/) from GitHub Actions (`.github/workflows/deploy.yml`, PR previews via `cf previews deploy`). The Storybook build (`storybook/storybook-static`) is copied into the docs static assets under `/storybook/` during the docs build (`docs/vite.config.ts`).
+
+- Production: https://chlorophyll.morinoparty.workers.dev (Storybook: https://chlorophyll.morinoparty.workers.dev/storybook/)
+- CI reads `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` from GitHub secrets.
+- For local `cf` commands, copy `docs/.env.example` to `docs/.env` and fill in the values (`.env` is git-ignored).
+
+```bash
+pnpm build:storybook                       # cf does not run package scripts, so build Storybook first
+pnpm --filter @chlorophyll/docs generate
+(cd docs && pnpm exec cf build && pnpm exec cf deploy --prebuilt --mode production --dry-run)
+```
+
 ## 🤝 Contributing
 
 1. Fork this repository
@@ -76,8 +90,8 @@ pnpm test:vrt       # visual regression tests
 3. Commit your changes
 4. Open a pull request
 
-[docs]: https://chlorophyll-docs.nikomaru.workers.dev/docs/getting-started/introduction/
-[storybook]: https://chlorophyll-storybook.nikomaru.workers.dev
+[docs]: https://chlorophyll.morinoparty.workers.dev/docs/getting-started/introduction/
+[storybook]: https://chlorophyll.morinoparty.workers.dev/storybook/
 [npm]: https://github.com/morinoparty/chlorophyll/pkgs/npm/chlorophyll-react
 
 ---

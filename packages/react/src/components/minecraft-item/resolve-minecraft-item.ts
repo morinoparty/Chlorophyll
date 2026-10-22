@@ -21,14 +21,20 @@ interface MinecraftModelElement {
     faces?: Partial<Record<MinecraftFace, MinecraftModelFace>>;
 }
 
+// display の各コンテキスト(gui / thirdperson_righthand など)ごとの変換。単位は rotation が度、translation が px
+interface MinecraftModelTransform {
+    rotation?: number[];
+    translation?: number[];
+    scale?: number[];
+}
+
 interface MinecraftModel {
     parent?: string;
     textures?: Record<string, string>;
     elements?: MinecraftModelElement[];
     display?: {
-        gui?: {
-            rotation?: number[];
-        };
+        gui?: MinecraftModelTransform;
+        thirdperson_righthand?: MinecraftModelTransform;
     };
 }
 
@@ -229,5 +235,12 @@ const resolveMinecraftItem = async (
     return { type: "block", ...block };
 };
 
-export { resolveMinecraftItem };
-export type { ResolvedMinecraftItem, ResolvedElement, ResolvedFace, MinecraftFace };
+export { fetchModel, MAX_PARENT_HOPS, resolveMinecraftItem, stripNamespace, toTextureFileName };
+export type {
+    MinecraftFace,
+    MinecraftModel,
+    MinecraftModelTransform,
+    ResolvedElement,
+    ResolvedFace,
+    ResolvedMinecraftItem,
+};
