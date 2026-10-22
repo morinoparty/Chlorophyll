@@ -1,4 +1,5 @@
 import { accordion } from "./accordion";
+import { avatar } from "./avatar";
 import { badge } from "./badge";
 import { breadcrumb } from "./breadcrumb";
 import { button } from "./button";
@@ -48,6 +49,7 @@ export const slotRecipes = {
     playerPhraseCard,
     list,
     accordion,
+    avatar,
     minecraftItem,
     guideCard,
     newsCard,

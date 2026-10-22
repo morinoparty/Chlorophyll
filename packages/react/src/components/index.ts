@@ -5,6 +5,14 @@ export {
     type AccordionItemTriggerProps,
     type AccordionRootProps,
 } from "./accordion";
+export {
+    Avatar,
+    type AvatarFallbackProps,
+    type AvatarImageProps,
+    type AvatarRootProps,
+    type AvatarShape,
+    type AvatarSize,
+} from "./avatar";
 export { Badge, type BadgeProps } from "./badge";
 export {
     Breadcrumb,
