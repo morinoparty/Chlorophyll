@@ -66,8 +66,10 @@ const SwitchLabel = ({ className, ...props }: SwitchLabelProps) => {
 
 type SwitchHiddenInputProps = ComponentProps<typeof ArkSwitch.HiddenInput>;
 
-// 実際にフォーカスを受ける <input type="checkbox">。zag が visually-hidden を当てるのでスタイルは持たない
-const SwitchHiddenInput = ArkSwitch.HiddenInput;
+// 実際にフォーカスを受ける <input type="checkbox">。zag が visually-hidden を当てるのでスタイルは持たない。
+// zag は role を付けず、このままでは支援技術に「チェックボックス」と読まれる。
+// role="switch" を足して「スイッチ、オン / オフ」と読ませる(Control / Thumb は aria-hidden なので、ここが唯一の手がかり)
+const SwitchHiddenInput = (props: SwitchHiddenInputProps) => <ArkSwitch.HiddenInput role="switch" {...props} />;
 
 type SwitchContextProps = ComponentProps<typeof ArkSwitch.Context>;
 

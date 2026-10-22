@@ -114,6 +114,28 @@ export const Disabled: Story = {
     ),
 };
 
+// 読み取り専用。値は見せるが切り替えられない。hover の色替えをせず、カーソルも通常の矢印にする
+export const ReadOnly: Story = {
+    render: () => (
+        <Form>
+            <Switch.Root readOnly>
+                <Switch.Control>
+                    <Switch.Thumb />
+                </Switch.Control>
+                <Switch.Label>更新を通知する(オフ)</Switch.Label>
+                <Switch.HiddenInput />
+            </Switch.Root>
+            <Switch.Root readOnly defaultChecked>
+                <Switch.Control>
+                    <Switch.Thumb />
+                </Switch.Control>
+                <Switch.Label>更新を通知する(オン)</Switch.Label>
+                <Switch.HiddenInput />
+            </Switch.Root>
+        </Form>
+    ),
+};
+
 // エラー状態。トラックを赤にし、オン / オフはつまみの位置で読ませる
 export const Invalid: Story = {
     render: () => (

@@ -29,6 +29,12 @@ export const switchRecipe = defineSlotRecipe({
             _disabled: {
                 cursor: "not-allowed",
             },
+            // 読み取り専用: クリックしても切り替わらないので、押せる見た目をやめる。
+            // Panda の _readOnly は :read-only を含み、編集できない要素(この <label> 自体)に常にマッチするため、
+            // Ark が付ける data-readonly だけを見る
+            "&[data-readonly]": {
+                cursor: "default",
+            },
         },
         control: {
             // つまみを左端に置き、_checked で右へ送る
@@ -47,16 +53,20 @@ export const switchRecipe = defineSlotRecipe({
             transitionDuration: "fast",
             transitionProperty: "background, box-shadow",
             transitionTimingFunction: "easeInOut",
-            // 無効 / エラー状態では hover の色替えを効かせない(エラーの赤を hover 中も保つため)。
+            // 無効 / エラー / 読み取り専用では hover の色替えを効かせない
+            // (エラーの赤を hover 中も保つため。読み取り専用は押しても変わらないため、押せそうに見せない)。
             // Ark は Root にポインタが乗っている間 Control に data-hover を付けるので、ラベルの hover でも反応する
-            "&:is(:hover, [data-hover]):not([data-disabled]):not([data-invalid])": {
+            "&:is(:hover, [data-hover]):not([data-disabled]):not([data-invalid]):not([data-readonly])": {
                 // gray.10 の計測値: 白 Lc 65.6 / colorPalette.bg(mori) Lc 57.4
                 bg: "gray.solid.emphasized",
             },
-            // オン: パレットの solid で塗る(mori.9 の計測値: 白 Lc 73.7 / colorPalette.bg(mori) Lc 65.5)
+            // オン: パレットの solid で塗る(mori.9 の計測値: 白 Lc 73.7 / colorPalette.bg(mori) Lc 65.5)。
+            // 注意: colorPalette="gray" ではオン / オフのトラックが同じ gray.9 になり、
+            // "yellow" ではオンの yellow.9 が白に対して Lc 15.5 しかない。どちらもオン / オフはつまみの位置で読ませる前提になるため、
+            // Switch にはこの 2 つ以外のパレット(mori / umi など)を使う
             _checked: {
                 bg: "colorPalette.solid",
-                "&:is(:hover, [data-hover]):not([data-disabled]):not([data-invalid])": {
+                "&:is(:hover, [data-hover]):not([data-disabled]):not([data-invalid]):not([data-readonly])": {
                     // mori.10 の計測値: 白 Lc 79.3 / colorPalette.bg(mori) Lc 71.0
                     bg: "colorPalette.solid.emphasized",
                 },
