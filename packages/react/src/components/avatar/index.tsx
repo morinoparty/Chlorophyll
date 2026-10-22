@@ -5,7 +5,10 @@ import { createContext, useContext } from "react";
 import { cx } from "styled-system/css";
 import { avatar } from "styled-system/recipes";
 
-// sizes.avatar のトークン(24 / 32 / 40 / 48 / 64px)と 1 対 1 で対応する大きさ
+// sizes.avatar のトークン(24 / 32 / 40 / 48 / 64px)と 1 対 1 で対応する大きさ。
+// PlayerAvatar(sm / md / lg = 32 / 48 / 64px)とは名前が sm 以外ずれている。
+// PlayerAvatar を Avatar に委譲するときは sm → sm、md → lg、lg → xl と読み替えること
+// (そのまま渡すと md が 40px に縮み、48px 前提の PlayerPhraseCard などのレイアウトが崩れる)
 type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 // circle: 人物(既定) / rounded: サーバーやチームなど人以外
@@ -41,7 +44,9 @@ const AvatarRoot = ({ className, size, shape, ...props }: AvatarRootProps) => {
 type AvatarImageProps = Omit<ComponentProps<typeof ArkAvatar.Image>, "alt"> & {
     /**
      * 画像の代替テキスト。通常は人物名を渡す。
-     * 隣に名前が書いてあるなど、画像が装飾にすぎない場合は空文字("")を渡して読み上げから外す
+     * 隣に名前が書いてあるなど、画像が装飾にすぎない場合は空文字("")を渡して読み上げから外す。
+     * そのときは Fallback にも aria-hidden を渡すこと。渡さないと読み込み中・失敗時だけ
+     * Fallback の aria-label(name)が読まれ、隣の名前と二重に読み上げられる
      */
     alt: string;
 };
@@ -56,7 +61,8 @@ type AvatarFallbackProps = ComponentProps<typeof ArkAvatar.Fallback> & {
     /**
      * 人物名。children を省略すると、ここから頭文字(最大 2 文字)を作って表示する。
      * 指定すると Fallback 全体が role="img" + aria-label={name} になり、
-     * 頭文字ではなく名前そのものが読み上げられる
+     * 頭文字ではなく名前そのものが読み上げられる。
+     * 装飾的なアバター(Image の alt="")では aria-hidden を併せて渡し、頭文字は見せたまま読み上げから外す
      */
     name?: string;
 };

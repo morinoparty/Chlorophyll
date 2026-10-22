@@ -43,6 +43,12 @@ const PEOPLE = [
     { name: "Nikomaru", src: portrait("#6b4fa0", "#e8e0f5") },
 ];
 
+// サーバーやチームを表す正方形のアイコン。端まで塗った正方形なので、circle / rounded のどちらで
+// 切り抜いても図柄が欠けない(透過の横長ロゴを cover で切り抜くと左右が削れてしまう)
+const TEAM_SRC = `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" fill="#2f7d5b"/><path d="M32 12c-11 8-16 18-16 27a16 16 0 0 0 32 0c0-9-5-19-16-27z" fill="#d8f0e4"/><path d="M32 26v28" stroke="#2f7d5b" stroke-width="3" stroke-linecap="round"/></svg>`,
+)}`;
+
 // 確実に読み込みに失敗する画像。壊れた base64 なのでネットワークに出ず、毎回同じタイミングで error になる
 const BROKEN_SRC = "data:image/png;base64,AAAA";
 
@@ -145,8 +151,7 @@ export const Shapes: Story = {
                         <div key={size} className={styles.cell}>
                             <Avatar.Root {...args} size={size} shape={shape}>
                                 <Avatar.Fallback name="Chlorophyll" />
-                                {/* Storybook の staticDirs(docs/public)から配信するローカル画像 */}
-                                <Avatar.Image src="/chlorophyll.svg" alt="Chlorophyll" />
+                                <Avatar.Image src={TEAM_SRC} alt="Chlorophyll" />
                             </Avatar.Root>
                             <span className={styles.caption}>
                                 {shape} / {size}
