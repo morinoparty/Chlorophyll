@@ -126,11 +126,11 @@ const ModalDialog = Object.assign(ModalDialogRoot, {
     Footer: ModalDialogFooter,
 });
 
-export { ModalDialog };
 export type {
-    ModalDialogRootProps,
     ModalDialogContainerProps,
-    ModalDialogTitleProps,
     ModalDialogContentProps,
     ModalDialogFooterProps,
+    ModalDialogRootProps,
+    ModalDialogTitleProps,
 };
+export { ModalDialog };

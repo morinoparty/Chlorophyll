@@ -117,7 +117,6 @@ const SegmentGroup = Object.assign(SegmentGroupRoot, {
     Context: SegmentGroupContext,
 });
 
-export { SegmentGroup };
 export type {
     SegmentGroupContextProps,
     SegmentGroupControlProps,
@@ -130,3 +129,4 @@ export type {
     SegmentGroupRootProps,
     SegmentGroupSize,
 };
+export { SegmentGroup };

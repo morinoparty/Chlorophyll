@@ -92,14 +92,14 @@ const Drawer = Object.assign(DrawerRoot, {
     Title: DrawerTitle,
 });
 
-export { Drawer };
 export type {
-    DrawerRootProps,
-    DrawerTriggerProps,
     DrawerBackdropProps,
-    DrawerPositionerProps,
-    DrawerContentProps,
     DrawerCloseTriggerProps,
-    DrawerTitleProps,
+    DrawerContentProps,
     DrawerPlacement,
+    DrawerPositionerProps,
+    DrawerRootProps,
+    DrawerTitleProps,
+    DrawerTriggerProps,
 };
+export { Drawer };

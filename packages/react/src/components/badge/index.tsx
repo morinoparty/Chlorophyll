@@ -49,5 +49,5 @@ const dotStyle = css({
     flexShrink: 0,
 });
 
-export { Badge };
 export type { BadgeProps, BadgeStatus };
+export { Badge };

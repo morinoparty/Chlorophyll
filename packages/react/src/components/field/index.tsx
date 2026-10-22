@@ -154,15 +154,15 @@ const Field = Object.assign(FieldRoot, {
 const Input = FieldInput;
 const Textarea = FieldTextarea;
 
-export { Field, Input, Textarea };
 export type {
-    FieldRootProps,
+    FieldContextProps,
+    FieldErrorTextProps,
+    FieldHelperTextProps,
+    FieldInputProps,
     FieldLabelProps,
     FieldRequiredIndicatorProps,
-    FieldInputProps,
-    FieldTextareaProps,
-    FieldHelperTextProps,
-    FieldErrorTextProps,
-    FieldContextProps,
+    FieldRootProps,
     FieldSize,
+    FieldTextareaProps,
 };
+export { Field, Input, Textarea };

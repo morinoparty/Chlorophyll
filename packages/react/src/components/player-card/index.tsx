@@ -128,11 +128,11 @@ const PlayerCard = Object.assign(PlayerCardRoot, {
     Description: PlayerCardDescription,
 });
 
-export { PlayerCard };
 export type {
-    PlayerCardRootProps,
     PlayerCardAvatarProps,
     PlayerCardBodyProps,
-    PlayerCardNameProps,
     PlayerCardDescriptionProps,
+    PlayerCardNameProps,
+    PlayerCardRootProps,
 };
+export { PlayerCard };

@@ -268,5 +268,5 @@ const loadHeldItem = async (
     };
 };
 
-export { loadHeldItem };
 export type { Hand, HeldItem, HeldItemResolvers };
+export { loadHeldItem };

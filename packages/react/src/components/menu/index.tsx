@@ -83,15 +83,15 @@ const Menu = Object.assign(MenuRoot, {
     ItemGroupLabel: MenuItemGroupLabel,
 });
 
-export { Menu };
 export type {
-    MenuRootProps,
-    MenuTriggerProps,
-    MenuPositionerProps,
     MenuContentProps,
-    MenuItemProps,
-    MenuSeparatorProps,
-    MenuItemGroupProps,
     MenuItemGroupLabelProps,
+    MenuItemGroupProps,
+    MenuItemProps,
     MenuItemVariant,
+    MenuPositionerProps,
+    MenuRootProps,
+    MenuSeparatorProps,
+    MenuTriggerProps,
 };
+export { Menu };

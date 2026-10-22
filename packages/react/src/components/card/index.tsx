@@ -115,15 +115,15 @@ const Card = Object.assign(CardRoot, {
     Image: CardImage,
 });
 
-export { Card };
 export type {
-    CardRootProps,
-    CardHeaderProps,
-    CardTitleProps,
-    CardDescriptionProps,
     CardBodyProps,
+    CardDescriptionProps,
     CardFooterProps,
+    CardHeaderProps,
     CardImageProps,
-    CardVariant,
+    CardRootProps,
     CardSize,
+    CardTitleProps,
+    CardVariant,
 };
+export { Card };

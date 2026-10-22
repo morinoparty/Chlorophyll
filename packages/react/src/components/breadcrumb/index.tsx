@@ -119,13 +119,13 @@ const Breadcrumb = Object.assign(BreadcrumbRoot, {
     Ellipsis: BreadcrumbEllipsis,
 });
 
-export { Breadcrumb };
 export type {
-    BreadcrumbRootProps,
-    BreadcrumbListProps,
+    BreadcrumbEllipsisProps,
     BreadcrumbItemProps,
     BreadcrumbLinkProps,
+    BreadcrumbListProps,
     BreadcrumbPageProps,
+    BreadcrumbRootProps,
     BreadcrumbSeparatorProps,
-    BreadcrumbEllipsisProps,
 };
+export { Breadcrumb };

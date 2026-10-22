@@ -111,5 +111,5 @@ const Avatar = Object.assign(AvatarRoot, {
     Fallback: AvatarFallback,
 });
 
+export type { AvatarFallbackProps, AvatarImageProps, AvatarRootProps, AvatarShape, AvatarSize };
 export { Avatar };
-export type { AvatarRootProps, AvatarImageProps, AvatarFallbackProps, AvatarSize, AvatarShape };

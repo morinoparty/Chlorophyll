@@ -95,7 +95,6 @@ const RadioGroup = Object.assign(RadioGroupRoot, {
     Context: RadioGroupContext,
 });
 
-export { RadioGroup };
 export type {
     RadioGroupContextProps,
     RadioGroupItemControlProps,
@@ -106,3 +105,4 @@ export type {
     RadioGroupRootProps,
     RadioGroupSize,
 };
+export { RadioGroup };
