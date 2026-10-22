@@ -167,9 +167,17 @@ export const tabs = defineSlotRecipe({
                     _horizontal: {
                         width: "fit-content",
                     },
+                    // 縦並びでは root の align-items: stretch でパネルの高さまで白い枠が伸びるため、タブの分だけの高さに留める
+                    _vertical: {
+                        alignSelf: "flex-start",
+                    },
                 },
                 trigger: {
-                    justifyContent: "center",
+                    // base のスタイルは _base レイヤーに入り variant 側が常に勝つため、
+                    // 中央揃えは横並びに限定し、縦並びでは base の左揃えを残す
+                    _horizontal: {
+                        justifyContent: "center",
+                    },
                     borderRadius: "item",
                     "&:not([data-selected]):not(:disabled):not([data-disabled]):hover": {
                         bg: "colorPalette.surface",
@@ -206,16 +214,27 @@ export const tabs = defineSlotRecipe({
         },
     },
     compoundVariants: [
-        // line はタブ自身の高さを control.* に揃え、Button / Select と横に並べたときに高さを合わせる
+        // line は区切り線(1px)を含めたタブ列の高さを control.* に揃え、Button / Select と横に並べたときに高さを合わせる。
+        // 縦並びの区切り線は横にあり高さに効かないので、タブ自身を control.* にする
         {
             variant: "line",
             size: "sm",
-            css: { trigger: { height: "control.sm" } },
+            css: {
+                trigger: {
+                    height: "control.sm",
+                    _horizontal: { height: "calc(token(sizes.control.sm) - 1px)" },
+                },
+            },
         },
         {
             variant: "line",
             size: "md",
-            css: { trigger: { height: "control.md" } },
+            css: {
+                trigger: {
+                    height: "control.md",
+                    _horizontal: { height: "calc(token(sizes.control.md) - 1px)" },
+                },
+            },
         },
         // enclosed は枠(1px × 2)と内側の余白(4px × 2)を含めた全体の高さを control.* に揃える
         {
