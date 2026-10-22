@@ -28,9 +28,12 @@ interface MinecraftModelTransform {
     scale?: number[];
 }
 
+// テクスチャ変数の値。1.21.x 以降は色付きガラスなどで { sprite, force_translucent } の形も使われる
+type MinecraftTextureRef = string | { sprite: string; force_translucent?: boolean };
+
 interface MinecraftModel {
     parent?: string;
-    textures?: Record<string, string>;
+    textures?: Record<string, MinecraftTextureRef>;
     elements?: MinecraftModelElement[];
     display?: {
         gui?: MinecraftModelTransform;
@@ -68,23 +71,54 @@ const DEFAULT_GUI_ROTATION: [number, number, number] = [30, 225, 0];
 // 連鎖をたどる parent の最大ホップ数。無限ループの安全弁
 const MAX_PARENT_HOPS = 8;
 
+// items/<id>.json(アイテム定義)の item model ツリーのノード。1.21.4 以降はアイテムの見た目を
+// models/item/<id>.json ではなくこのツリーで選ぶ(ブロックのアイテムは models/item/ を持たない)。
+// 代表のモデルを 1 つ選ぶのに必要なフィールドだけを持つ
+interface MinecraftItemModelNode {
+    type: string;
+    /** minecraft:model のモデル参照(例: "minecraft:block/stone") */
+    model?: string;
+    /** minecraft:condition の分岐 */
+    on_true?: MinecraftItemModelNode;
+    on_false?: MinecraftItemModelNode;
+    /** minecraft:select / minecraft:range_dispatch の分岐 */
+    cases?: { model: MinecraftItemModelNode }[];
+    entries?: { model: MinecraftItemModelNode }[];
+    fallback?: MinecraftItemModelNode;
+    /** minecraft:composite の重ね合わせ */
+    models?: MinecraftItemModelNode[];
+    /** minecraft:special の、パーティクルなどに使う通常モデル */
+    base?: string;
+}
+
+interface MinecraftItemDefinition {
+    model?: MinecraftItemModelNode;
+}
+
 // モデル JSON の取得結果をキャッシュする。同じアイテムが複数箇所(sm/md/lg など)で
 // 描画されても、また共通の親モデルも fetch は 1 回だけで済む
-const modelCache = new Map<string, Promise<MinecraftModel | null>>();
+// アイテム定義(items/<id>.json)も同じキャッシュに載せる
+const jsonCache = new Map<string, Promise<unknown>>();
 
-const fetchModel = (url: string): Promise<MinecraftModel | null> => {
-    let cached = modelCache.get(url);
+const fetchJson = <T>(url: string): Promise<T | null> => {
+    let cached = jsonCache.get(url);
     if (!cached) {
         cached = fetch(url)
-            .then((res) => (res.ok ? (res.json() as Promise<MinecraftModel>) : null))
+            .then((res) => (res.ok ? res.json() : null))
             .catch(() => null);
-        modelCache.set(url, cached);
+        jsonCache.set(url, cached);
     }
-    return cached;
+    return cached as Promise<T | null>;
 };
+
+const fetchModel = (url: string): Promise<MinecraftModel | null> => fetchJson<MinecraftModel>(url);
 
 // "minecraft:block/oak_log" のような namespace 付き参照から namespace を取り除く
 const stripNamespace = (ref: string): string => ref.replace(/^minecraft:/, "");
+
+// テクスチャ変数の値を参照文字列にそろえる({ sprite } 形式なら sprite を使う)
+const toTextureRef = (value: MinecraftTextureRef | undefined): string | undefined =>
+    typeof value === "string" ? value : value?.sprite;
 
 // テクスチャ参照("minecraft:block/oak_log_top" 等)から resolveTexture に渡すパスを作る。
 // textures/ 配下のディレクトリ(block/ item/ など)は残す。block/ と item/ には
@@ -179,8 +213,9 @@ const resolveBlockModel = async (
 
         // 先(葉)に近い階層の値ほど具体的なので、後から見つかった同名キーでは上書きしない
         for (const [key, value] of Object.entries(model.textures ?? {})) {
-            if (!(key in textures)) {
-                textures[key] = value;
+            const ref = toTextureRef(value);
+            if (ref && !(key in textures)) {
+                textures[key] = ref;
             }
         }
 
@@ -206,23 +241,77 @@ const resolveBlockModel = async (
     return null;
 };
 
+// item model ツリーをたどる深さの上限。無限ループの安全弁
+const MAX_ITEM_MODEL_DEPTH = 8;
+
+// item model ツリーから、アイテム欄に表示する代表のモデル参照("block/stone" など)を 1 つ選ぶ。
+// 条件分岐は、何も持っていない・使っていない既定の状態にあたる側を選ぶ
+// (condition は on_false、select / range_dispatch は fallback、なければ先頭)。
+// composite は先頭のモデルを、special(チェストやベッドなど独自描画のもの)は base を使う
+const pickItemModelPath = (node: MinecraftItemModelNode | undefined, depth = 0): string | null => {
+    if (!node || depth > MAX_ITEM_MODEL_DEPTH) return null;
+
+    switch (stripNamespace(node.type)) {
+        case "model":
+            return node.model ? stripNamespace(node.model) : null;
+        case "condition":
+            return pickItemModelPath(node.on_false ?? node.on_true, depth + 1);
+        case "select":
+            return pickItemModelPath(node.fallback ?? node.cases?.[0]?.model, depth + 1);
+        case "range_dispatch":
+            return pickItemModelPath(node.fallback ?? node.entries?.[0]?.model, depth + 1);
+        case "composite":
+            return pickItemModelPath(node.models?.[0], depth + 1);
+        case "special":
+            return node.base ? stripNamespace(node.base) : null;
+        default:
+            // minecraft:empty や minecraft:bundle/selected_item など、モデルを持たないもの
+            return null;
+    }
+};
+
+// アイテム ID から、たどり始めるモデル参照("block/stone" / "item/diamond_sword" など)を決める。
+// アイテム定義(items/<id>.json)があればそこから選び、無ければ 1.21.4 より前の構成とみなして
+// models/item/<id>.json を直接使う
+const resolveItemModelPath = async (
+    id: string,
+    resolveItemDefinition: ((id: string) => string) | undefined,
+): Promise<string> => {
+    if (resolveItemDefinition) {
+        const definition = await fetchJson<MinecraftItemDefinition>(resolveItemDefinition(id));
+        const path = pickItemModelPath(definition?.model);
+        if (path) return path;
+    }
+    return `item/${id}`;
+};
+
 interface ResolveMinecraftItemOptions {
     /** モデル JSON のファイルパス(例: "item/stone.json" / "block/stone.json")から実際の URL を解決する */
     resolveModel: (path: string) => string;
+    /** アイテム ID からアイテム定義(items/<id>.json)の URL を解決する。省略時は models/item/<id>.json を直接読む */
+    resolveItemDefinition?: (id: string) => string;
 }
 
-// id からモデル JSON を実際にたどり、平面/ブロックの種別・形状・GUI 回転角を導出する。
+// id からアイテム定義とモデル JSON を実際にたどり、平面/ブロックの種別・形状・GUI 回転角を導出する。
 // モデルが見つからない、あるいは parent 連鎖のどこにも elements が現れない場合は
 // null を返す(= 非対応として描画しない)
 const resolveMinecraftItem = async (
     id: string,
-    { resolveModel }: ResolveMinecraftItemOptions,
+    { resolveModel, resolveItemDefinition }: ResolveMinecraftItemOptions,
 ): Promise<ResolvedMinecraftItem | null> => {
-    const itemModel = await fetchModel(resolveModel(`item/${id}.json`));
+    const modelPath = await resolveItemModelPath(id, resolveItemDefinition);
+
+    // アイテム定義がブロックモデルを直接指している(ブロックのアイテム)
+    if (modelPath.startsWith("block/")) {
+        const block = await resolveBlockModel(modelPath, resolveModel);
+        return block ? { type: "block", ...block } : null;
+    }
+
+    const itemModel = await fetchModel(resolveModel(`${modelPath}.json`));
     if (!itemModel) return null;
 
     // layer0 を自分自身で持つモデルは、handheld/generated 系の平面アイテム
-    const layer0 = itemModel.textures?.layer0;
+    const layer0 = toTextureRef(itemModel.textures?.layer0);
     if (layer0) {
         return { type: "flat", texture: toTexturePath(layer0) };
     }
@@ -238,10 +327,21 @@ const resolveMinecraftItem = async (
 
 export type {
     MinecraftFace,
+    MinecraftItemDefinition,
+    MinecraftItemModelNode,
     MinecraftModel,
     MinecraftModelTransform,
     ResolvedElement,
     ResolvedFace,
     ResolvedMinecraftItem,
 };
-export { fetchModel, MAX_PARENT_HOPS, resolveMinecraftItem, stripNamespace, toTexturePath };
+export {
+    fetchModel,
+    MAX_PARENT_HOPS,
+    pickItemModelPath,
+    resolveItemModelPath,
+    resolveMinecraftItem,
+    stripNamespace,
+    toTexturePath,
+    toTextureRef,
+};

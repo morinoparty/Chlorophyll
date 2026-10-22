@@ -8,6 +8,8 @@ interface MinecraftConfig {
     resolveModel?: (path: string) => string;
     /** テクスチャのパス(textures/ からの相対パス。例: "block/oak_log.png")から実際に表示する URL を解決する (MinecraftItem / SkinViewer) */
     resolveTexture?: (path: string) => string;
+    /** アイテム ID からアイテム定義(items/<id>.json)の URL を解決する (MinecraftItem / SkinViewer)。省略時は models/item/<id>.json を直接読む */
+    resolveItemDefinition?: (id: string) => string;
     /** プレイヤー UUID から顔画像の URL を解決する (PlayerAvatar / PlayerMap / NewsCard.Author) */
     avatarUrl?: (playerId: string, pixelSize: number) => string;
     /** プレイヤー UUID からスキンテクスチャの URL を解決する (SkinViewer) */
@@ -35,7 +37,7 @@ interface MinecraftProviderProps {
      * Minecraft のモデル/テクスチャアセット一式が置かれている場所。
      * "http://" / "https://" から始まる場合はリモートの URL とみなし、
      * それ以外はローカルパス(例: "/minecraft-assets")として扱う。
-     * 配下は本家リソースパックと同じ "models/" "textures/" 構成を想定する
+     * 配下は本家リソースパックと同じ "models/" "textures/" "items/" 構成を想定する
      */
     assets?: string;
     /**
@@ -77,7 +79,7 @@ const MinecraftProvider = ({ assets, config, children }: MinecraftProviderProps)
     // 依存が変わらない限り同じ関数参照を保つ。利用側は解決関数を useEffect の依存配列に
     // 含めるため、参照を安定させないと不要な再解決が走ってしまう。
     // config をインラインで書くと毎レンダー参照が変わるため、個々の関数を分解して依存に取る
-    const { resolveModel, resolveTexture, avatarUrl, skinUrl } = config ?? {};
+    const { resolveModel, resolveTexture, resolveItemDefinition, avatarUrl, skinUrl } = config ?? {};
     const value = useMemo<ResolvedMinecraftConfig>(
         () => ({
             ...DEFAULT_MINECRAFT_CONFIG,
@@ -85,11 +87,12 @@ const MinecraftProvider = ({ assets, config, children }: MinecraftProviderProps)
                 ? {
                       resolveModel: (path: string) => joinAssetsPath(assets, `models/${path}`),
                       resolveTexture: (path: string) => joinAssetsPath(assets, `textures/${path}`),
+                      resolveItemDefinition: (id: string) => joinAssetsPath(assets, `items/${id}.json`),
                   }
                 : {}),
-            ...pickDefined({ resolveModel, resolveTexture, avatarUrl, skinUrl }),
+            ...pickDefined({ resolveModel, resolveTexture, resolveItemDefinition, avatarUrl, skinUrl }),
         }),
-        [assets, resolveModel, resolveTexture, avatarUrl, skinUrl],
+        [assets, resolveModel, resolveTexture, resolveItemDefinition, avatarUrl, skinUrl],
     );
 
     return <MinecraftContext.Provider value={value}>{children}</MinecraftContext.Provider>;

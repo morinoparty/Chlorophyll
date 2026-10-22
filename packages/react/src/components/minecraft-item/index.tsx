@@ -13,6 +13,8 @@ interface MinecraftItemProps extends HTMLArkProps<"div"> {
     resolveModel?: (path: string) => string;
     /** テクスチャのパス(textures/ からの相対パス。例: "block/oak_log.png")から実際に表示する URL を解決する関数。ライブラリ側はテクスチャ画像を同梱しないため必須。省略した場合は、囲んでいる MinecraftProvider から解決関数を受け取る */
     resolveTexture?: (path: string) => string;
+    /** アイテム ID からアイテム定義(items/<id>.json)の URL を解決する関数。1.21.4 以降のアセットでブロックのアイテムを表示するのに必要。省略した場合は MinecraftProvider から受け取り、そこにも無ければ models/item/<id>.json を直接読む */
+    resolveItemDefinition?: (id: string) => string;
     /** アイテムスロットの大きさ */
     size?: "sm" | "md" | "lg";
 }
@@ -37,6 +39,7 @@ const MinecraftItem = ({
     id,
     resolveModel: resolveModelProp,
     resolveTexture: resolveTextureProp,
+    resolveItemDefinition: resolveItemDefinitionProp,
     size,
     ...props
 }: MinecraftItemProps) => {
@@ -44,6 +47,7 @@ const MinecraftItem = ({
     const config = useMinecraftConfig();
     const resolveModel = resolveModelProp ?? config.resolveModel;
     const resolveTexture = resolveTextureProp ?? config.resolveTexture;
+    const resolveItemDefinition = resolveItemDefinitionProp ?? config.resolveItemDefinition;
 
     // Hooks は早期 throw より前に、レンダーのたびに必ず同じ順序・回数で呼び出す必要があるため
     // (Rules of Hooks)、resolveModel/resolveTexture の有無チェックはすべての hooks の後に行う
@@ -61,7 +65,7 @@ const MinecraftItem = ({
         setResolved(null);
         let cancelled = false;
 
-        resolveMinecraftItem(id, { resolveModel }).then((result) => {
+        resolveMinecraftItem(id, { resolveModel, resolveItemDefinition }).then((result) => {
             if (!cancelled) {
                 setResolved(result);
             }
@@ -70,7 +74,7 @@ const MinecraftItem = ({
         return () => {
             cancelled = true;
         };
-    }, [id, resolveModel]);
+    }, [id, resolveModel, resolveItemDefinition]);
 
     if (!resolveModel || !resolveTexture) {
         throw new Error(
