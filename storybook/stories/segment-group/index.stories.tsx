@@ -99,6 +99,18 @@ export const Disabled: Story = {
     ),
 };
 
+// エラー状態。Root の invalid でトラックの枠線が赤くなる。理由は近くの文章で伝える
+export const Invalid: Story = {
+    render: () => (
+        <Form>
+            <SegmentGroup.Root name="period-invalid" invalid>
+                <SegmentGroup.Label>集計期間(未選択)</SegmentGroup.Label>
+                <PeriodItems />
+            </SegmentGroup.Root>
+        </Form>
+    ),
+};
+
 // 表示の切り替え。アイコンは ItemText と並べて Item の直下に置く(svg は 1em に揃う)
 const views = [
     { label: "一覧", value: "list", icon: <ListIcon aria-hidden /> },

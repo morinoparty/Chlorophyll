@@ -45,10 +45,17 @@ export const segmentGroup = defineSlotRecipe({
             borderRadius: "control",
             // Indicator がトラックの内側に浮いて見えるよう、枠線との間に少し隙間を空ける
             p: "1",
-            // 縦向き(orientation="vertical")では項目を縦に積み、高さの固定を外す。Root に zag が data-orientation を付ける
-            "[data-orientation=vertical] &": {
+            // 縦向き(orientation="vertical")では項目を縦に積み、高さの固定を外す。Root に zag が data-orientation を付ける。
+            // Accordion(既定が vertical)など他の Ark 部品も data-orientation を出すため、自分の Root に絞って見る
+            "[data-scope=segment-group][data-part=root][data-orientation=vertical] &": {
                 gridAutoFlow: "row",
                 height: "auto",
+            },
+            // エラー状態。Root の invalid で zag が data-invalid を付ける。
+            // Select の trigger / Field と同じ border.error.emphasized(red.9)で非テキスト要素の目安 Lc 45 を満たす
+            // (計測値: 白 Lc 65.0 / colorPalette.bg(mori) Lc 56.8)
+            "[data-scope=segment-group][data-part=root][data-invalid] &": {
+                borderColor: "border.error.emphasized",
             },
         },
         indicator: {
@@ -105,10 +112,10 @@ export const segmentGroup = defineSlotRecipe({
             transitionProperty: "background, color",
             transitionTimingFunction: "easeInOut",
             // 未選択の項目だけ hover で面を薄く差し、押せることを伝える。
-            // 選択中は Indicator が下にあるため面を重ねない。disabled では hover を効かせない
+            // 選択中は Indicator が下にあるため面を重ねない。disabled / readOnly では hover を効かせない
             // (hover 中の文字 colorPalette.fg の計測値: colorPalette.surface(mori.3) Lc 74.6。
             //  本文の目安 Lc 75 をわずかに下回るが、選択肢の短いラベルなので補助テキストの目安 Lc 60 で評価している)
-            "&:not([data-disabled]):not([data-state=checked]):hover": {
+            "&:not([data-disabled]):not([data-readonly]):not([data-state=checked]):hover": {
                 bg: "colorPalette.surface",
                 color: "colorPalette.fg",
             },
@@ -125,6 +132,10 @@ export const segmentGroup = defineSlotRecipe({
             _disabled: {
                 color: "fg.disabled",
                 cursor: "not-allowed",
+            },
+            // 読み取り専用: zag が値の変更を止めるので、押せるように見せない(hover も上で除外している)
+            "&[data-readonly]": {
+                cursor: "default",
             },
             // グループ全体が無効なときは Indicator が bg.disabled に沈むので、選択中の項目も白ではなく fg.disabled にする。
             // _checked は _disabled より後に出力されて勝つため、Root の data-disabled を見て詳細度を上げて上書きする
