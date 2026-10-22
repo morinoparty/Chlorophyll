@@ -38,14 +38,15 @@ export const shadows = defineSemanticTokens.shadows({
     },
     // ボタンなどの面に立体感を出す、内側のベベル(上辺ハイライト + 下辺シャドウ)
     inset: {
-        // 濃い solid 面用。上から光が当たって隆起しているように見せる
+        // 濃い solid 面用。上から光が当たって隆起しているように見せる。
+        // 下辺の影は濃いと solid 面が黒ずんで重く見えるため、0.27 から 0.16 に抑えている
         raised: {
             DEFAULT: {
-                value: "inset 0 1.5px 0 0 rgba(255,255,255,0.34), inset 0 -2.5px 5px 0 rgba(0,0,0,0.27)",
+                value: "inset 0 1.5px 0 0 rgba(255,255,255,0.34), inset 0 -2.5px 5px 0 rgba(0,0,0,0.16)",
             },
             // hover 時は隆起感を少し強め、押し上がる印象にする
             hover: {
-                value: "inset 0 1.5px 0 0 rgba(255,255,255,0.38), inset 0 -3px 6px 0 rgba(0,0,0,0.3)",
+                value: "inset 0 1.5px 0 0 rgba(255,255,255,0.38), inset 0 -3px 6px 0 rgba(0,0,0,0.2)",
             },
             // 白い面用の控えめなベベル。濃い影だと汚れて見えるため薄くする
             subtle: {

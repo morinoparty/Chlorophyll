@@ -20,11 +20,12 @@ const meta: Meta<typeof MinecraftItem> = {
         size: "md",
     },
     // 全ストーリーを MinecraftProvider でラップし、assets のローカルパス(.storybook/main.ts の
-    // staticDirs で /minecraft-assets として公開している)から resolveModel/resolveTexture を
-    // 自動的に解決させる。個々の MinecraftItem に resolveModel/resolveTexture を渡す必要はない
+    // staticDirs で minecraft-assets として公開している)から resolveModel/resolveTexture を
+    // 自動的に解決させる。個々の MinecraftItem に resolveModel/resolveTexture を渡す必要はない。
+    // Storybook は docs Worker の /storybook/ 配下で配信するため、iframe.html からの相対パスで渡す
     decorators: [
         (Story) => (
-            <MinecraftProvider assets="/minecraft-assets">
+            <MinecraftProvider assets="./minecraft-assets">
                 <Story />
             </MinecraftProvider>
         ),

@@ -9,10 +9,11 @@ const meta: Meta<typeof SkinViewer> = {
         layout: "centered",
     },
     // 手に持たせるアイテムのモデル/テクスチャを、MinecraftItem のストーリーと同じローカルアセット
-    // (.storybook/main.ts の staticDirs で /minecraft-assets として公開)から解決する
+    // (.storybook/main.ts の staticDirs で minecraft-assets として公開)から解決する。
+    // /storybook/ 配下で配信しても解決できるよう、iframe.html からの相対パスで渡す
     decorators: [
         (Story) => (
-            <MinecraftProvider assets="/minecraft-assets">
+            <MinecraftProvider assets="./minecraft-assets">
                 <Story />
             </MinecraftProvider>
         ),
