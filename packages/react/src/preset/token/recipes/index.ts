@@ -16,6 +16,7 @@ import { pagination } from "./pagination";
 import { playerAvatar } from "./player-avatar";
 import { playerMap } from "./player-map";
 import { playerPhraseCard } from "./player-phrase-card";
+import { radioGroup } from "./radio-group";
 import { select } from "./select";
 import { separator } from "./separator";
 import { skeleton } from "./skeleton";
@@ -52,6 +53,7 @@ export const slotRecipes = {
     field,
     modalDialog,
     pagination,
+    radioGroup,
     select,
     // `switch` は予約語で styled-system/recipes の export 名にできないため、キーは switchRecipe にする
     switchRecipe,
