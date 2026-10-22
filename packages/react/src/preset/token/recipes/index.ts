@@ -18,6 +18,7 @@ import { modalDialog } from "./modal-dialog";
 import { newsCard } from "./news-card";
 import { pagination } from "./pagination";
 import { playerAvatar } from "./player-avatar";
+import { playerCard } from "./player-card";
 import { playerMap } from "./player-map";
 import { playerPhraseCard } from "./player-phrase-card";
 import { radioGroup } from "./radio-group";
@@ -74,4 +75,5 @@ export const slotRecipes = {
     toast,
     tooltip,
     card,
+    playerCard,
 };

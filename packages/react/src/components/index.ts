@@ -157,6 +157,14 @@ export {
     type PaginationRootProps,
 } from "./pagination";
 export { PlayerAvatar, type PlayerAvatarProps, type PlayerAvatarSize } from "./player-avatar";
+export {
+    PlayerCard,
+    type PlayerCardAvatarProps,
+    type PlayerCardBodyProps,
+    type PlayerCardDescriptionProps,
+    type PlayerCardNameProps,
+    type PlayerCardRootProps,
+} from "./player-card";
 export { PlayerMap, type PlayerMapProps, type PlayerMapSize } from "./player-map";
 export {
     PlayerPhraseCard,
