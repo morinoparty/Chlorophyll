@@ -24,14 +24,14 @@ jobs:
       test_skipped: ${{ steps.parse.outputs.skipped }}
       test_result: ${{ steps.test.outcome }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6.1.0
         name: Install pnpm
         with:
           run_install: false
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: 'pnpm'
@@ -41,7 +41,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-chromium-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}

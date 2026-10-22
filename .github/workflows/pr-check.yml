@@ -19,7 +19,7 @@ jobs:
     outputs:
       commit_sha: ${{ steps.vars.outputs.commit_sha }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set short git commit SHA
         id: vars
@@ -52,11 +52,11 @@ jobs:
       diff_size: ${{ steps.compare.outputs.diff_size }}
       diff_percent: ${{ steps.compare.outputs.diff_percent }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: pr
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: main
           path: main
@@ -68,13 +68,13 @@ jobs:
         id: pnpm_version
         run: echo "version=$(node -p "require('./pr/package.json').packageManager.split('@')[1]")" >> "$GITHUB_OUTPUT"
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6.1.0
         name: Install pnpm
         with:
           version: ${{ steps.pnpm_version.outputs.version }}
           run_install: false
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: "pnpm"
@@ -124,7 +124,7 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Create unified PR comment
         env:
