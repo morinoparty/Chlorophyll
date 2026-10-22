@@ -30,6 +30,20 @@ const CONCURRENCY = Number(process.env.VRT_CONCURRENCY) || Math.min(4, Math.max(
 // 同時に走らせると初期化が大きく遅れるため、これらだけは並列撮影の後に 1 枚ずつ撮る
 const SERIAL_TITLES = new Set(["MINECRAFT/Items", "MINECRAFT/SkinViewer"]);
 
+// CI の matrix で撮影を複数ジョブに分けるための指定("1/4" なら 4 分割の 1 番目)。
+// 未指定なら全件を撮る。1 台の CPU を増やすより、ランナーを分けた方が速くなる
+const parseShard = (value) => {
+    if (!value) return { index: 0, total: 1 };
+    const match = /^(\d+)\/(\d+)$/.exec(value);
+    const index = Number(match?.[1]) - 1;
+    const total = Number(match?.[2]);
+    if (!match || total < 1 || index < 0 || index >= total) {
+        throw new Error(`VRT_SHARD must look like "1/4": ${value}`);
+    }
+    return { index, total };
+};
+const SHARD = parseShard(process.env.VRT_SHARD);
+
 // アニメーション・トランジションを止めてフレーム差異を無くす
 const DISABLE_ANIMATION_CSS = `*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important;}`;
 
@@ -278,7 +292,11 @@ async function main() {
     try {
         const stories = await fetchStories(server.baseUrl);
         // ビューポート × ストーリーを 1 枚ずつの撮影ジョブに展開する
-        const jobs = VIEWPORTS.flatMap((viewport) => stories.map((story) => ({ story, viewport })));
+        // 担当分だけを番号の剰余で選ぶ。連続するストーリーが別のシャードに散るため、
+        // 重い WebGL ストーリーも 1 つのシャードに偏らない
+        const jobs = VIEWPORTS.flatMap((viewport) => stories.map((story) => ({ story, viewport }))).filter(
+            (_, i) => i % SHARD.total === SHARD.index,
+        );
         const parallelJobs = jobs.filter((job) => !SERIAL_TITLES.has(job.story.title));
         const serialJobs = jobs.filter((job) => SERIAL_TITLES.has(job.story.title));
 
@@ -293,7 +311,7 @@ async function main() {
         // WebGL は並列撮影が終わってから直列で撮り、SwiftShader の競合を避ける
         await runPool(serialJobs, 1, capture);
         console.log(
-            `Done. ${count} screenshots (deviceScaleFactor=${DEVICE_SCALE_FACTOR}, concurrency=${CONCURRENCY}).`,
+            `Done. ${count} screenshots (deviceScaleFactor=${DEVICE_SCALE_FACTOR}, concurrency=${CONCURRENCY}, shard=${SHARD.index + 1}/${SHARD.total}).`,
         );
     } finally {
         await browser.close();
