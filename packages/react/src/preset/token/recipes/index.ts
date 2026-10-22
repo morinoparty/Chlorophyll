@@ -7,6 +7,7 @@ import { drawer } from "./drawer";
 import { editable } from "./editable";
 import { field } from "./field";
 import { guideCard } from "./guide-card";
+import { iconButton } from "./icon-button";
 import { list } from "./list";
 import { menu } from "./menu";
 import { minecraftItem } from "./minecraft-item";
@@ -33,6 +34,7 @@ import { tooltip } from "./tooltip";
 export const recipes = {
     button,
     badge,
+    iconButton,
     skinViewer,
     spinner,
     skeleton,

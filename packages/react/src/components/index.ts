@@ -70,6 +70,13 @@ export {
     Textarea,
 } from "./field";
 export { GuideCard } from "./guide-card";
+export {
+    IconButton,
+    type IconButtonProps,
+    type IconButtonShape,
+    type IconButtonSize,
+    type IconButtonVariant,
+} from "./icon-button";
 export { List, ListItem, type ListItemProps, type ListProps, type ListSize } from "./list";
 export {
     Menu,
