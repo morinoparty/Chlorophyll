@@ -1,6 +1,8 @@
 name: Visual Regression Test
 
 # puppeteer(高 DPI)でスクリーンショットを取得し、reg-suit で差分検出する。
+# 撮影は CPU(SwiftShader)律速なので、build → capture(matrix で分割)→ vrt(集約して reg-suit)に分け、
+# ランナーを増やして並列化する。
 # - reg-keygen-git-hash-plugin: git 履歴から比較対象のベースコミットを特定
 # - reg-publish-s3-plugin: 期待値スナップショット / 実行結果 / レポートを R2(S3 互換) で授受
 # - reg-notify-github-plugin: PR コメントと commit status で結果を通知
@@ -17,9 +19,93 @@ env:
   REG_NOTIFY_GITHUB_CLIENT_ID: ${{ secrets.REG_NOTIFY_GITHUB_CLIENT_ID }}
 
 jobs:
-  vrt:
+  # Storybook のビルドは 1 回だけ行い、各撮影ジョブに配る
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Storybook
+        run: pnpm --filter @chlorophyll/storybook build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: storybook-static
+          path: storybook/storybook-static
+          retention-days: 1
+
+  # ストーリーを VRT_SHARD で分割し、ランナーごとに担当分だけを撮影する
+  capture:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: true
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Cache Puppeteer Chromium
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # pnpm のストアキャッシュがあると install 時の postinstall がスキップされ
+      # Chromium が未取得になることがあるため、明示的に取得する(冪等・有れば即終了)
+      - name: Ensure Puppeteer Chromium
+        run: pnpm --filter @chlorophyll/storybook exec puppeteer browsers install chrome
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: storybook-static
+          path: storybook/storybook-static
+
+      # puppeteer でビルド済み Storybook を巡回し、担当分を高 DPI で __screenshots__ に保存
+      # 1 台の中で複数ページを同時に撮ると、ブラウザ全体が止まる区間が出たうえ、
+      # 描画の揺れで画素差分が増えた(直列同士 4 枚 → 並列 20〜28 枚)。
+      # 並列化はランナーを分けることで行い、ジョブの中は直列で撮る
+      - name: Capture screenshots
+        env:
+          VRT_SHARD: ${{ matrix.shard }}/6
+          VRT_CONCURRENCY: 1
+        run: pnpm --filter @chlorophyll/storybook vrt:capture
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: screenshots-${{ matrix.shard }}
+          path: storybook/__screenshots__
+          retention-days: 1
+
+  # 全シャードの撮影結果を 1 つにまとめ、reg-suit でベースラインと比較する
+  vrt:
+    needs: capture
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
@@ -42,27 +128,15 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      - name: Cache Puppeteer Chromium
-        id: puppeteer-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/puppeteer
-          key: puppeteer-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # pnpm のストアキャッシュがあると install 時の postinstall がスキップされ
-      # Chromium が未取得になることがあるため、明示的に取得する(冪等・有れば即終了)
-      - name: Ensure Puppeteer Chromium
-        run: pnpm --filter @chlorophyll/storybook exec puppeteer browsers install chrome
-
-      - name: Build Storybook
-        run: pnpm --filter @chlorophyll/storybook build
-
-      # puppeteer でビルド済み Storybook を巡回し、高 DPI で __screenshots__ に保存
-      - name: Capture screenshots
-        run: pnpm --filter @chlorophyll/storybook vrt:capture
+      # シャードごとの __screenshots__ はパスが重ならないので、そのまま 1 つのディレクトリに重ねる
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: screenshots-*
+          path: storybook/__screenshots__
+          merge-multiple: true
 
       - name: Get secrets from Bitwarden
         uses: bitwarden/sm-action@v2
