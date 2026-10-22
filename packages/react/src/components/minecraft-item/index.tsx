@@ -11,8 +11,8 @@ interface MinecraftItemProps extends HTMLArkProps<"div"> {
     id: string;
     /** モデル JSON のファイルパス(例: "item/stone.json" / "block/stone.json")から実際の URL を解決する関数。省略した場合は、囲んでいる MinecraftProvider から解決関数を受け取る */
     resolveModel?: (path: string) => string;
-    /** テクスチャのファイル名から実際に表示する URL を解決する関数。ライブラリ側はテクスチャ画像を同梱しないため必須。省略した場合は、囲んでいる MinecraftProvider から解決関数を受け取る */
-    resolveTexture?: (fileName: string) => string;
+    /** テクスチャのパス(textures/ からの相対パス。例: "block/oak_log.png")から実際に表示する URL を解決する関数。ライブラリ側はテクスチャ画像を同梱しないため必須。省略した場合は、囲んでいる MinecraftProvider から解決関数を受け取る */
+    resolveTexture?: (path: string) => string;
     /** アイテムスロットの大きさ */
     size?: "sm" | "md" | "lg";
 }

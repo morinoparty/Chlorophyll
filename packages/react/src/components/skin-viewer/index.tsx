@@ -73,8 +73,8 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     leftHandItem?: string;
     /** モデル JSON のファイルパスから URL を解決する関数。省略時は MinecraftProvider から受け取る */
     resolveModel?: (path: string) => string;
-    /** テクスチャのファイル名から URL を解決する関数。省略時は MinecraftProvider から受け取る */
-    resolveTexture?: (fileName: string) => string;
+    /** テクスチャのパス(例: "item/stick.png")から URL を解決する関数。省略時は MinecraftProvider から受け取る */
+    resolveTexture?: (path: string) => string;
     /**
      * マウス操作(回転・ズーム・パン)を受け付けるか。false にすると操作を全てロックした
      * 表示専用モードになる。autoRotate による自動回転は操作ロックとは独立して機能する

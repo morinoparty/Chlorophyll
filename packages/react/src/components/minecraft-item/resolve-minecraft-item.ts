@@ -38,7 +38,7 @@ interface MinecraftModel {
     };
 }
 
-// 1 面分の、解決済みテクスチャファイル名と切り出し範囲(px, 0-16)
+// 1 面分の、解決済みテクスチャパス(例: "block/oak_log.png")と切り出し範囲(px, 0-16)
 interface ResolvedFace {
     texture: string;
     uv: [number, number, number, number];
@@ -86,11 +86,12 @@ const fetchModel = (url: string): Promise<MinecraftModel | null> => {
 // "minecraft:block/oak_log" のような namespace 付き参照から namespace を取り除く
 const stripNamespace = (ref: string): string => ref.replace(/^minecraft:/, "");
 
-// テクスチャ参照("minecraft:block/oak_log_top" 等)から resolveTexture に渡すファイル名を作る
-const toTextureFileName = (ref: string): string => {
-    const stripped = stripNamespace(ref);
-    const name = stripped.split("/").pop() ?? stripped;
-    return name.endsWith(".png") ? name : `${name}.png`;
+// テクスチャ参照("minecraft:block/oak_log_top" 等)から resolveTexture に渡すパスを作る。
+// textures/ 配下のディレクトリ(block/ item/ など)は残す。block/ と item/ には
+// 同名のテクスチャ(acacia_sign.png など)があるため、ファイル名だけでは一意に決まらない
+const toTexturePath = (ref: string): string => {
+    const path = stripNamespace(ref);
+    return path.endsWith(".png") ? path : `${path}.png`;
 };
 
 // "#side" のような変数参照を、蓄積したテクスチャ変数マップから解決する。
@@ -147,7 +148,7 @@ const resolveElements = (
             if (!rawTexture) return null;
 
             faces[face] = {
-                texture: toTextureFileName(rawTexture),
+                texture: toTexturePath(rawTexture),
                 uv: faceDef.uv ?? defaultUv(face, element.from, element.to),
             };
         }
@@ -223,7 +224,7 @@ const resolveMinecraftItem = async (
     // layer0 を自分自身で持つモデルは、handheld/generated 系の平面アイテム
     const layer0 = itemModel.textures?.layer0;
     if (layer0) {
-        return { type: "flat", texture: toTextureFileName(layer0) };
+        return { type: "flat", texture: toTexturePath(layer0) };
     }
 
     const itemParent = itemModel.parent ? stripNamespace(itemModel.parent) : null;
@@ -243,4 +244,4 @@ export type {
     ResolvedFace,
     ResolvedMinecraftItem,
 };
-export { fetchModel, MAX_PARENT_HOPS, resolveMinecraftItem, stripNamespace, toTextureFileName };
+export { fetchModel, MAX_PARENT_HOPS, resolveMinecraftItem, stripNamespace, toTexturePath };

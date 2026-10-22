@@ -14,7 +14,7 @@ import {
     MAX_PARENT_HOPS,
     type MinecraftModelTransform,
     stripNamespace,
-    toTextureFileName,
+    toTexturePath,
 } from "../minecraft-item/resolve-minecraft-item";
 
 type Hand = "right" | "left";
@@ -26,7 +26,7 @@ interface ResolvedTransform {
 }
 
 interface ResolvedHeldItem {
-    /** resolveTexture に渡す layer0 のテクスチャファイル名 */
+    /** resolveTexture に渡す layer0 のテクスチャパス(例: "item/stick.png") */
     texture: string;
     /** display.thirdperson_righthand の変換 */
     transform: ResolvedTransform;
@@ -34,7 +34,7 @@ interface ResolvedHeldItem {
 
 interface HeldItemResolvers {
     resolveModel: (path: string) => string;
-    resolveTexture: (fileName: string) => string;
+    resolveTexture: (path: string) => string;
 }
 
 interface HeldItem {
@@ -92,7 +92,7 @@ const resolveHeldItem = async (
 
         const layer0 = model.textures?.layer0;
         if (texture === null && layer0) {
-            texture = toTextureFileName(layer0);
+            texture = toTexturePath(layer0);
         }
         const thirdPerson = model.display?.thirdperson_righthand;
         if (transform === null && thirdPerson) {

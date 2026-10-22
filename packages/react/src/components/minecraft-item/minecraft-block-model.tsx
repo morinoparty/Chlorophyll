@@ -9,8 +9,8 @@ interface MinecraftBlockModelProps {
     elements: ResolvedElement[];
     /** GUI 表示時の回転角(度)。モデルの display.gui.rotation そのもの */
     rotation: [number, number, number];
-    /** テクスチャのファイル名から実際に表示する URL を解決する関数 */
-    resolveTexture: (fileName: string) => string;
+    /** テクスチャのパス(例: "block/oak_log.png")から実際に表示する URL を解決する関数 */
+    resolveTexture: (path: string) => string;
     /** Canvas の一辺の実ピクセル数。正投影カメラの zoom(px 基準)を決めるのに使う */
     pixelSize: number;
 }
@@ -81,7 +81,7 @@ const CroppedFaceMaterial = ({
 
 interface ElementMeshProps {
     element: ResolvedElement;
-    resolveTexture: (fileName: string) => string;
+    resolveTexture: (path: string) => string;
 }
 
 // 直方体 1 個分。Minecraft のブロックローカル座標(0-16 が 1 ブロック分)を

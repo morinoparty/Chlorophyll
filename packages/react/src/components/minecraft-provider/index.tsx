@@ -6,8 +6,8 @@ import { createContext, type ReactNode, useContext, useMemo } from "react";
 interface MinecraftConfig {
     /** モデル JSON のファイルパス(例: "item/stone.json")から実際の URL を解決する (MinecraftItem) */
     resolveModel?: (path: string) => string;
-    /** テクスチャのファイル名から実際に表示する URL を解決する (MinecraftItem) */
-    resolveTexture?: (fileName: string) => string;
+    /** テクスチャのパス(textures/ からの相対パス。例: "block/oak_log.png")から実際に表示する URL を解決する (MinecraftItem / SkinViewer) */
+    resolveTexture?: (path: string) => string;
     /** プレイヤー UUID から顔画像の URL を解決する (PlayerAvatar / PlayerMap / NewsCard.Author) */
     avatarUrl?: (playerId: string, pixelSize: number) => string;
     /** プレイヤー UUID からスキンテクスチャの URL を解決する (SkinViewer) */
@@ -84,7 +84,7 @@ const MinecraftProvider = ({ assets, config, children }: MinecraftProviderProps)
             ...(assets
                 ? {
                       resolveModel: (path: string) => joinAssetsPath(assets, `models/${path}`),
-                      resolveTexture: (fileName: string) => joinAssetsPath(assets, `textures/${fileName}`),
+                      resolveTexture: (path: string) => joinAssetsPath(assets, `textures/${path}`),
                   }
                 : {}),
             ...pickDefined({ resolveModel, resolveTexture, avatarUrl, skinUrl }),
