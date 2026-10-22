@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           # reg-keygen-git-hash-plugin がベースコミットを辿るため全履歴が必要
           fetch-depth: 0
@@ -34,17 +34,16 @@ jobs:
           BRANCH: ${{ github.head_ref || github.ref_name }}
         run: git checkout -B "$BRANCH"
 
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
-
-      - uses: actions/setup-node@v6
+      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
+      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
+      - uses: pnpm/setup@v3
         with:
-          node-version: 22
-          cache: 'pnpm'
+          cache: true      # pnpm store を lockfile ごとにキャッシュ
+          install: false   # install は次の手順で --frozen-lockfile 付きで行う
 
       - name: Cache Puppeteer Chromium
         id: puppeteer-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/puppeteer
           key: puppeteer-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -65,7 +64,7 @@ jobs:
         run: pnpm --filter @chlorophyll/storybook vrt:capture
 
       - name: Get secrets from Bitwarden
-        uses: bitwarden/sm-action@v2
+        uses: bitwarden/sm-action@1238aae8fc64b212641190a9227c8a734ab1a793 # v3.0.1
         with:
           access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
           secrets: |
