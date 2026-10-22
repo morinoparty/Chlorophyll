@@ -25,6 +25,7 @@ import { skinViewer } from "./skin-viewer";
 import { spinner } from "./spinner";
 import { switchRecipe } from "./switch";
 import { table } from "./table";
+import { tabs } from "./tabs";
 import { toast } from "./toast";
 import { tooltip } from "./tooltip";
 
@@ -62,6 +63,7 @@ export const slotRecipes = {
     breadcrumb,
     checkbox,
     table,
+    tabs,
     toast,
     tooltip,
 };

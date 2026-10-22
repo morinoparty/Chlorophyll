@@ -198,6 +198,16 @@ export {
     type TableSize,
 } from "./table";
 export {
+    Tabs,
+    type TabsContentProps,
+    type TabsIndicatorProps,
+    type TabsListProps,
+    type TabsRootProps,
+    type TabsSize,
+    type TabsTriggerProps,
+    type TabsVariant,
+} from "./tabs";
+export {
     type CreateToasterProps,
     type CreateToasterReturn,
     createToaster,
