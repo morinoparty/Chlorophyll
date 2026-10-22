@@ -26,6 +26,18 @@ export {
 } from "./breadcrumb";
 export { Button, type ButtonProps } from "./button";
 export {
+    Card,
+    type CardBodyProps,
+    type CardDescriptionProps,
+    type CardFooterProps,
+    type CardHeaderProps,
+    type CardImageProps,
+    type CardRootProps,
+    type CardSize,
+    type CardTitleProps,
+    type CardVariant,
+} from "./card";
+export {
     Checkbox,
     type CheckboxCheckedChangeDetails,
     type CheckboxCheckedState,
@@ -38,6 +50,7 @@ export {
     type CheckboxRootProps,
     type CheckboxSize,
 } from "./checkbox";
+export {
     Dialog,
     type DialogBackdropProps,
     type DialogBodyProps,
@@ -52,17 +65,6 @@ export {
     type DialogTitleProps,
     type DialogTriggerProps,
 } from "./dialog";
-    Card,
-    type CardBodyProps,
-    type CardDescriptionProps,
-    type CardFooterProps,
-    type CardHeaderProps,
-    type CardImageProps,
-    type CardRootProps,
-    type CardSize,
-    type CardTitleProps,
-    type CardVariant,
-} from "./card";
 export {
     Drawer,
     type DrawerBackdropProps,
@@ -183,6 +185,7 @@ export {
     type RadioGroupRootProps,
     type RadioGroupSize,
 } from "./radio-group";
+export {
     SegmentGroup,
     type SegmentGroupContextProps,
     type SegmentGroupControlProps,
