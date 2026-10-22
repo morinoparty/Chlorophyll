@@ -75,6 +75,8 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     resolveModel?: (path: string) => string;
     /** テクスチャのパス(例: "item/stick.png")から URL を解決する関数。省略時は MinecraftProvider から受け取る */
     resolveTexture?: (path: string) => string;
+    /** アイテム ID からアイテム定義(items/<id>.json)の URL を解決する関数。1.21.4 以降のアセットでアイテムのモデルを正しく選ぶのに必要。省略した場合は MinecraftProvider から受け取り、そこにも無ければ models/item/<id>.json を直接読む */
+    resolveItemDefinition?: (id: string) => string;
     /**
      * マウス操作(回転・ズーム・パン)を受け付けるか。false にすると操作を全てロックした
      * 表示専用モードになる。autoRotate による自動回転は操作ロックとは独立して機能する
@@ -91,7 +93,7 @@ const useHeldItem = (
     viewerRef: RefObject<SkinViewer3D | null>,
     hand: Hand,
     id: string | undefined,
-    { resolveModel, resolveTexture }: Partial<HeldItemResolvers>,
+    { resolveModel, resolveTexture, resolveItemDefinition }: Partial<HeldItemResolvers>,
 ) => {
     useEffect(() => {
         const viewer = viewerRef.current;
@@ -101,7 +103,7 @@ const useHeldItem = (
 
         let cancelled = false;
         let heldItem: HeldItem | null = null;
-        loadHeldItem(viewer.playerObject.skin, hand, id, { resolveModel, resolveTexture })
+        loadHeldItem(viewer.playerObject.skin, hand, id, { resolveModel, resolveTexture, resolveItemDefinition })
             .then((loaded) => {
                 if (cancelled) {
                     loaded?.dispose();
@@ -117,7 +119,7 @@ const useHeldItem = (
             cancelled = true;
             heldItem?.dispose();
         };
-    }, [viewerRef, hand, id, resolveModel, resolveTexture]);
+    }, [viewerRef, hand, id, resolveModel, resolveTexture, resolveItemDefinition]);
 };
 
 // Minecraft のプレイヤースキンを 3D で表示するコンポーネント。
@@ -138,6 +140,7 @@ const SkinViewer = ({
     leftHandItem,
     resolveModel: resolveModelProp,
     resolveTexture: resolveTextureProp,
+    resolveItemDefinition: resolveItemDefinitionProp,
     ...props
 }: SkinViewerProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -150,6 +153,7 @@ const SkinViewer = ({
     const itemResolvers = {
         resolveModel: resolveModelProp ?? config.resolveModel,
         resolveTexture: resolveTextureProp ?? config.resolveTexture,
+        resolveItemDefinition: resolveItemDefinitionProp ?? config.resolveItemDefinition,
     };
 
     // マウント時に 1 度だけ SkinViewer3D を生成し、アンマウント時に必ず dispose する。

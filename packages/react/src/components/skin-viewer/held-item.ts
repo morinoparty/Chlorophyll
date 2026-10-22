@@ -13,8 +13,10 @@ import {
     fetchModel,
     MAX_PARENT_HOPS,
     type MinecraftModelTransform,
+    resolveItemModelPath,
     stripNamespace,
     toTexturePath,
+    toTextureRef,
 } from "../minecraft-item/resolve-minecraft-item";
 
 type Hand = "right" | "left";
@@ -35,6 +37,8 @@ interface ResolvedHeldItem {
 interface HeldItemResolvers {
     resolveModel: (path: string) => string;
     resolveTexture: (path: string) => string;
+    /** 省略時は models/item/<id>.json を直接読む(1.21.4 より前のアセット向け) */
+    resolveItemDefinition?: (id: string) => string;
 }
 
 interface HeldItem {
@@ -74,15 +78,19 @@ const toResolvedTransform = (transform: MinecraftModelTransform): ResolvedTransf
     scale: toVector3(transform.scale, [1, 1, 1]),
 });
 
-// item/<id>.json から parent 連鎖をたどり、layer0 テクスチャと三人称の右手 display を集める。
+// アイテム定義(items/<id>.json)が指すモデル(無ければ item/<id>.json)から parent 連鎖をたどり、layer0 テクスチャと三人称の右手 display を集める。
 // 葉に近いモデルの値を優先する。block/ を親に持つブロックアイテムは平面スプライトではないため非対応(null)
 const resolveHeldItem = async (
     id: string,
-    resolveModel: (path: string) => string,
+    { resolveModel, resolveItemDefinition }: Omit<HeldItemResolvers, "resolveTexture">,
 ): Promise<ResolvedHeldItem | null> => {
     let texture: string | null = null;
     let transform: ResolvedTransform | null = null;
-    let currentPath = `item/${id}`;
+    let currentPath = await resolveItemModelPath(id, resolveItemDefinition);
+    // アイテム定義がブロックモデルを直接指している = ブロックのアイテムなので非対応
+    if (currentPath.startsWith("block/")) {
+        return null;
+    }
 
     for (let hop = 0; hop < MAX_PARENT_HOPS; hop += 1) {
         const model = await fetchModel(resolveModel(`${currentPath}.json`));
@@ -90,7 +98,7 @@ const resolveHeldItem = async (
             return null;
         }
 
-        const layer0 = model.textures?.layer0;
+        const layer0 = toTextureRef(model.textures?.layer0);
         if (texture === null && layer0) {
             texture = toTexturePath(layer0);
         }
@@ -232,9 +240,9 @@ const loadHeldItem = async (
     skin: SkinObject,
     hand: Hand,
     id: string,
-    { resolveModel, resolveTexture }: HeldItemResolvers,
+    { resolveModel, resolveTexture, resolveItemDefinition }: HeldItemResolvers,
 ): Promise<HeldItem | null> => {
-    const resolved = await resolveHeldItem(id, resolveModel);
+    const resolved = await resolveHeldItem(id, { resolveModel, resolveItemDefinition });
     if (!resolved) {
         return null;
     }
