@@ -20,6 +20,7 @@ import { separator } from "./separator";
 import { skeleton } from "./skeleton";
 import { skinViewer } from "./skin-viewer";
 import { spinner } from "./spinner";
+import { switchRecipe } from "./switch";
 import { table } from "./table";
 import { toast } from "./toast";
 import { tooltip } from "./tooltip";
@@ -51,6 +52,8 @@ export const slotRecipes = {
     modalDialog,
     pagination,
     select,
+    // `switch` は予約語で styled-system/recipes の export 名にできないため、キーは switchRecipe にする
+    switchRecipe,
     breadcrumb,
     table,
     toast,

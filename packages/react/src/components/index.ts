@@ -139,6 +139,16 @@ export { Skeleton, type SkeletonProps, type SkeletonVariant } from "./skeleton";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";
 export { Spinner, type SpinnerProps, type SpinnerSize } from "./spinner";
 export {
+    Switch,
+    type SwitchContextProps,
+    type SwitchControlProps,
+    type SwitchHiddenInputProps,
+    type SwitchLabelProps,
+    type SwitchRootProps,
+    type SwitchSize,
+    type SwitchThumbProps,
+} from "./switch";
+export {
     Table,
     type TableBodyProps,
     type TableCaptionProps,
