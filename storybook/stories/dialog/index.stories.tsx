@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useId, useState } from "react";
 import { css } from "styled-system/css";
 import { Button } from "../../../packages/react/src/components/button";
 import { Dialog, type DialogSize } from "../../../packages/react/src/components/dialog";
@@ -54,11 +54,14 @@ export const Default: Story = {
                             <p>今週末は森の街でお祭りがあるのだ。屋台を出したい人は役場で申し込むのだ。</p>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Dialog.CloseTrigger asChild>
-                                <Button intent="primary" size="md">
-                                    わかったのだ
-                                </Button>
-                            </Dialog.CloseTrigger>
+                            {/* CloseTrigger は × の 1 つだけにして id の重複を避け、Footer からは Context で閉じる */}
+                            <Dialog.Context>
+                                {(dialog) => (
+                                    <Button intent="primary" size="md" onClick={() => dialog.setOpen(false)}>
+                                        わかったのだ
+                                    </Button>
+                                )}
+                            </Dialog.Context>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger />
                     </Dialog.Content>
@@ -89,18 +92,18 @@ export const Open: Story = {
                         <Dialog.Body>
                             <p>今週末は森の街でお祭りがあるのだ。屋台を出したい人は役場で申し込むのだ。</p>
                         </Dialog.Body>
-                        <Dialog.Footer>
-                            <Dialog.CloseTrigger asChild>
-                                <Button intent="secondary" size="md">
-                                    あとで読む
-                                </Button>
-                            </Dialog.CloseTrigger>
-                            <Dialog.CloseTrigger asChild>
-                                <Button intent="primary" size="md">
-                                    わかったのだ
-                                </Button>
-                            </Dialog.CloseTrigger>
-                        </Dialog.Footer>
+                        <Dialog.Context>
+                            {(dialog) => (
+                                <Dialog.Footer>
+                                    <Button intent="secondary" size="md" onClick={() => dialog.setOpen(false)}>
+                                        あとで読む
+                                    </Button>
+                                    <Button intent="primary" size="md" onClick={() => dialog.setOpen(false)}>
+                                        わかったのだ
+                                    </Button>
+                                </Dialog.Footer>
+                            )}
+                        </Dialog.Context>
                         <Dialog.CloseTrigger />
                     </Dialog.Content>
                 </Dialog.Positioner>
@@ -199,11 +202,9 @@ export const WithForm: Story = {
                                 </form>
                             </Dialog.Body>
                             <Dialog.Footer>
-                                <Dialog.CloseTrigger asChild>
-                                    <Button intent="secondary" size="md">
-                                        キャンセル
-                                    </Button>
-                                </Dialog.CloseTrigger>
+                                <Button intent="secondary" size="md" onClick={() => setIsOpen(false)}>
+                                    キャンセル
+                                </Button>
                                 <Button type="submit" form="station-form" intent="primary" size="md">
                                     保存する
                                 </Button>
@@ -218,43 +219,56 @@ export const WithForm: Story = {
 };
 
 /**
- * 取り消せない操作の確認。role="alertdialog" にすると支援技術が応答必須のダイアログとして読み上げ、
- * 開いたときに CloseTrigger(ここでは「キャンセル」)へ初期フォーカスが移る。
+ * 取り消せない操作の確認。role="alertdialog" にすると支援技術が応答必須のダイアログとして読み上げる。
  * 背景クリックでうっかり閉じないよう closeOnInteractOutside を切る。
- * zag は初期フォーカス先を CloseTrigger の id で探し、DOM 上で最初のものに当てるため、
- * 安全側の「キャンセル」を「削除する」より前に置く
+ * zag の既定では初期フォーカス先を CloseTrigger の id で探すため、ボタンの並び順に頼らず
+ * initialFocusEl で安全側の「キャンセル」を明示する
  */
 export const Alert: Story = {
-    render: () => (
-        <Dialog.Root role="alertdialog" size="sm" closeOnInteractOutside={false}>
-            <Dialog.Trigger asChild>
-                <Button intent="secondary" size="md">
-                    記事を削除する
-                </Button>
-            </Dialog.Trigger>
-            <Portal>
-                <Dialog.Backdrop />
-                <Dialog.Positioner>
-                    <Dialog.Content>
-                        <Dialog.Header>
-                            <Dialog.Title>記事を削除するのだ?</Dialog.Title>
-                            <Dialog.Description>削除した記事は元に戻せないのだ。</Dialog.Description>
-                        </Dialog.Header>
-                        <Dialog.Footer>
-                            <Dialog.CloseTrigger asChild>
-                                <Button intent="secondary" size="md">
-                                    キャンセル
-                                </Button>
-                            </Dialog.CloseTrigger>
-                            <Dialog.CloseTrigger asChild>
-                                <Button intent="primary" size="md">
-                                    削除する
-                                </Button>
-                            </Dialog.CloseTrigger>
-                        </Dialog.Footer>
-                    </Dialog.Content>
-                </Dialog.Positioner>
-            </Portal>
-        </Dialog.Root>
-    ),
+    render: function AlertStory() {
+        // Button は ref を受け取らないため、id で要素を引いて初期フォーカス先に渡す
+        const cancelId = useId();
+        return (
+            <Dialog.Root
+                role="alertdialog"
+                size="sm"
+                closeOnInteractOutside={false}
+                initialFocusEl={() => document.getElementById(cancelId)}
+            >
+                <Dialog.Trigger asChild>
+                    <Button intent="secondary" size="md">
+                        記事を削除する
+                    </Button>
+                </Dialog.Trigger>
+                <Portal>
+                    <Dialog.Backdrop />
+                    <Dialog.Positioner>
+                        <Dialog.Content>
+                            <Dialog.Header>
+                                <Dialog.Title>記事を削除するのだ?</Dialog.Title>
+                                <Dialog.Description>削除した記事は元に戻せないのだ。</Dialog.Description>
+                            </Dialog.Header>
+                            <Dialog.Context>
+                                {(dialog) => (
+                                    <Dialog.Footer>
+                                        <Button
+                                            id={cancelId}
+                                            intent="secondary"
+                                            size="md"
+                                            onClick={() => dialog.setOpen(false)}
+                                        >
+                                            キャンセル
+                                        </Button>
+                                        <Button intent="primary" size="md" onClick={() => dialog.setOpen(false)}>
+                                            削除する
+                                        </Button>
+                                    </Dialog.Footer>
+                                )}
+                            </Dialog.Context>
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Portal>
+            </Dialog.Root>
+        );
+    },
 };

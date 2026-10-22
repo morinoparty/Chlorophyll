@@ -27,8 +27,9 @@ type DialogRootProps = ComponentProps<typeof ArkDialog.Root> & {
  * Dialog 全体の開閉状態を管理する Root。zag の Dialog と同じく DOM は持たない。
  *
  * - フォーカストラップ・背面のスクロール抑止・Esc / 背景クリックで閉じる挙動は Ark が担う
- * - 確認ダイアログなど、ユーザーの応答が必要なものは role="alertdialog" を渡す
- *   (開いたときに CloseTrigger へ初期フォーカスが移る)
+ * - 確認ダイアログなど、ユーザーの応答が必要なものは role="alertdialog" を渡す。
+ *   zag は初期フォーカス先を CloseTrigger の id で探すため、安全側のボタン(キャンセルなど)を
+ *   initialFocusEl で明示的に指定するのが確実
  */
 const DialogRoot = ({ size = "md", ...props }: DialogRootProps) => {
     return (
@@ -109,7 +110,10 @@ type DialogCloseTriggerProps = ComponentProps<typeof ArkDialog.CloseTrigger>;
 
 /**
  * 閉じるボタン。children を渡さなければ右上に ×アイコンを表示する。
- * Footer の「キャンセル」ボタンとして使うときは asChild で Button に差し替える
+ *
+ * zag はすべての CloseTrigger に同じ id(`dialog:<id>:close`)を振るため、
+ * 1 つの Dialog に複数置くと id が重複する。Footer の「キャンセル」などの閉じる操作は
+ * Dialog.Context の setOpen(false) を呼ぶ普通の Button にして、CloseTrigger は 1 つに留める
  */
 const DialogCloseTrigger = ({ className, children, ...props }: DialogCloseTriggerProps) => {
     // 既定の ×アイコンは文字を持たないため、支援技術向けの名前を補う
@@ -126,8 +130,13 @@ const DialogCloseTrigger = ({ className, children, ...props }: DialogCloseTrigge
     );
 };
 
+type DialogContextProps = ArkDialog.ContextProps;
+
+// 開閉状態などの API を render prop で受け取る。CloseTrigger 以外のボタンから閉じるときに使う
+const DialogContext = ArkDialog.Context;
+
 // Compound Component パターン:
-// Dialog.Root / Trigger / Backdrop / Positioner / Content / Header / Title / Description / Body / Footer / CloseTrigger
+// Dialog.Root / Trigger / Backdrop / Positioner / Content / Header / Title / Description / Body / Footer / CloseTrigger / Context
 const Dialog = Object.assign(DialogRoot, {
     Root: DialogRoot,
     Trigger: DialogTrigger,
@@ -140,6 +149,7 @@ const Dialog = Object.assign(DialogRoot, {
     Body: DialogBody,
     Footer: DialogFooter,
     CloseTrigger: DialogCloseTrigger,
+    Context: DialogContext,
 });
 
 export { Dialog };
@@ -155,5 +165,6 @@ export type {
     DialogBodyProps,
     DialogFooterProps,
     DialogCloseTriggerProps,
+    DialogContextProps,
     DialogSize,
 };

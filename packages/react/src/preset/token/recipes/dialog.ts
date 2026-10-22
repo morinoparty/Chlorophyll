@@ -99,8 +99,8 @@ export const dialog = defineSlotRecipe({
             // 既定の文字色を colorPalette に追従させる
             // (colorPalette.fg の計測値: 白(bg.panel) Lc 82.1 / colorPalette.bg(mori) Lc 73.8)
             color: "colorPalette.fg",
-            // 開いた直後は Content 自身にフォーカスが当たる(tabIndex=-1)。
-            // 枠そのものにリングを出すと煩いため、内側の操作要素だけにリングを出す
+            // 開いた直後のフォーカスは内側の最初の操作要素に移り、操作要素が一つも無いときだけ
+            // Content 自身(tabIndex=-1)が受け皿になる。その場合も枠全体にリングを出すと煩いため出さない
             outline: "none",
             transformOrigin: "center",
             _open: enterAnimation,
@@ -131,6 +131,11 @@ export const dialog = defineSlotRecipe({
             flex: "1",
             minHeight: "0",
             overflowY: "auto",
+            // overflow-y: auto にすると overflow-x も auto になり、内側の Field.Input などが外側に描く
+            // フォーカスリング(太さ focus.ring 2px + 余白 focus.ring.offset 2px = 4px)の端が切れる。
+            // リングが収まる 4px の余白を内側に取り、同じ量の負のマージンで見た目の位置を相殺する
+            p: "1",
+            m: "-1",
             color: "colorPalette.fg",
             fontSize: "md",
             lineHeight: "relaxed",
