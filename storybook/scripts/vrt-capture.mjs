@@ -6,6 +6,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
+import { availableParallelism } from "node:os";
 import { dirname, join } from "node:path";
 import { deflateSync } from "node:zlib";
 
@@ -20,6 +21,14 @@ const VIEWPORTS = [
 const DEVICE_SCALE_FACTOR = 2;
 const OUT_DIR = "__screenshots__";
 const PORT = 6006;
+
+// 同時に開くページ数。ストーリーごとに使い捨てのページで撮るため並列化しても状態は干渉しない。
+// CPU を使い切ると描画待ちが伸びてタイムアウトしやすいので上限を設け、VRT_CONCURRENCY で上書きできるようにする
+const CONCURRENCY = Number(process.env.VRT_CONCURRENCY) || Math.min(4, Math.max(1, availableParallelism() - 1));
+
+// WebGL(react-three-fiber / skinview3d)を使うストーリー。SwiftShader のソフトウェア描画は
+// 同時に走らせると初期化が大きく遅れるため、これらだけは並列撮影の後に 1 枚ずつ撮る
+const SERIAL_TITLES = new Set(["MINECRAFT/Items", "MINECRAFT/SkinViewer"]);
 
 // アニメーション・トランジションを止めてフレーム差異を無くす
 const DISABLE_ANIMATION_CSS = `*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important;}`;
@@ -235,6 +244,20 @@ async function capturePageWithRetry(browser, baseUrl, story, viewport) {
     }
 }
 
+// ジョブを先頭から取り出しながら、最大 concurrency 個のワーカーで同時に処理する。
+// 1 つでも失敗したら(リトライ後も)例外をそのまま伝え、撮影全体を失敗させる
+async function runPool(jobs, concurrency, worker) {
+    let next = 0;
+    const runWorker = async () => {
+        while (next < jobs.length) {
+            const job = jobs[next];
+            next += 1;
+            await worker(job);
+        }
+    };
+    await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, runWorker));
+}
+
 async function main() {
     const server = await startServer();
     const browser = await puppeteer.launch({
@@ -254,15 +277,24 @@ async function main() {
     });
     try {
         const stories = await fetchStories(server.baseUrl);
+        // ビューポート × ストーリーを 1 枚ずつの撮影ジョブに展開する
+        const jobs = VIEWPORTS.flatMap((viewport) => stories.map((story) => ({ story, viewport })));
+        const parallelJobs = jobs.filter((job) => !SERIAL_TITLES.has(job.story.title));
+        const serialJobs = jobs.filter((job) => SERIAL_TITLES.has(job.story.title));
+
         let count = 0;
-        for (const viewport of VIEWPORTS) {
-            for (const story of stories) {
-                const file = await capturePageWithRetry(browser, server.baseUrl, story, viewport);
-                count += 1;
-                console.log(`captured: ${file}`);
-            }
-        }
-        console.log(`Done. ${count} screenshots (deviceScaleFactor=${DEVICE_SCALE_FACTOR}).`);
+        const capture = async ({ story, viewport }) => {
+            const file = await capturePageWithRetry(browser, server.baseUrl, story, viewport);
+            count += 1;
+            console.log(`captured: ${file}`);
+        };
+
+        await runPool(parallelJobs, CONCURRENCY, capture);
+        // WebGL は並列撮影が終わってから直列で撮り、SwiftShader の競合を避ける
+        await runPool(serialJobs, 1, capture);
+        console.log(
+            `Done. ${count} screenshots (deviceScaleFactor=${DEVICE_SCALE_FACTOR}, concurrency=${CONCURRENCY}).`,
+        );
     } finally {
         await browser.close();
         await server.stop();
