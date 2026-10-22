@@ -52,6 +52,17 @@ export {
     type DialogTitleProps,
     type DialogTriggerProps,
 } from "./dialog";
+    Card,
+    type CardBodyProps,
+    type CardDescriptionProps,
+    type CardFooterProps,
+    type CardHeaderProps,
+    type CardImageProps,
+    type CardRootProps,
+    type CardSize,
+    type CardTitleProps,
+    type CardVariant,
+} from "./card";
 export {
     Drawer,
     type DrawerBackdropProps,

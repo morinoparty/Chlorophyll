@@ -5,6 +5,7 @@ import { breadcrumb } from "./breadcrumb";
 import { button } from "./button";
 import { checkbox } from "./checkbox";
 import { dialog } from "./dialog";
+import { card } from "./card";
 import { drawer } from "./drawer";
 import { editable } from "./editable";
 import { field } from "./field";
@@ -72,4 +73,5 @@ export const slotRecipes = {
     tabs,
     toast,
     tooltip,
+    card,
 };
