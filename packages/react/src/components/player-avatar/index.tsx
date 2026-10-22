@@ -19,24 +19,29 @@ interface PlayerAvatarProps {
     playerName: string;
     /** アバターの大きさ */
     size?: PlayerAvatarSize;
+    /**
+     * 装飾として扱うか。隣にプレイヤー名を文字で表示しているときに true にすると、
+     * alt を空にしてフォールバックの頭文字ごと支援技術から隠し、名前の重複読み上げを防ぐ
+     */
+    decorative?: boolean;
 }
 
 // Minecraft プレイヤーの顔アイコンを表示するアバター。
 // 画像の取得先は MinecraftProvider の config.avatarUrl で差し替えられる(既定は mc-heads.net)。
 // 汎用の Avatar コンポーネント(#42)がまだ実装されていないため、一旦 Ark UI の
 // Avatar プリミティブを直接使って実装している。#42 が実装され次第、そちらに委譲する
-const PlayerAvatar = ({ playerId, playerName, size = "md" }: PlayerAvatarProps) => {
+const PlayerAvatar = ({ playerId, playerName, size = "md", decorative = false }: PlayerAvatarProps) => {
     const styles = playerAvatar({ size });
     const { avatarUrl } = useMinecraftConfig();
     const pixelSize = PIXEL_SIZE[size];
 
     return (
-        <ArkAvatar.Root className={styles.root}>
+        <ArkAvatar.Root className={styles.root} aria-hidden={decorative || undefined}>
             <ArkAvatar.Fallback className={styles.fallback}>{playerName.slice(0, 2).toUpperCase()}</ArkAvatar.Fallback>
             <ArkAvatar.Image
                 className={styles.image}
                 src={avatarUrl(playerId, pixelSize)}
-                alt={playerName}
+                alt={decorative ? "" : playerName}
                 width={pixelSize}
                 height={pixelSize}
             />
