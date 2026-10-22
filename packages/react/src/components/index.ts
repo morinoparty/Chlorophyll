@@ -38,6 +38,20 @@ export {
     type CheckboxRootProps,
     type CheckboxSize,
 } from "./checkbox";
+    Dialog,
+    type DialogBackdropProps,
+    type DialogBodyProps,
+    type DialogCloseTriggerProps,
+    type DialogContentProps,
+    type DialogDescriptionProps,
+    type DialogFooterProps,
+    type DialogHeaderProps,
+    type DialogPositionerProps,
+    type DialogRootProps,
+    type DialogSize,
+    type DialogTitleProps,
+    type DialogTriggerProps,
+} from "./dialog";
 export {
     Drawer,
     type DrawerBackdropProps,
