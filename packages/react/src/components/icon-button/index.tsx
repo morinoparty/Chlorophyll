@@ -22,8 +22,15 @@ interface IconButtonProps extends HTMLArkProps<"button"> {
 
 const IconButton = ({ className, variant, size, shape, ...props }: IconButtonProps) => {
     // フォーム内に置いたときに意図せず submit しないよう type="button" を既定にする。
-    // props より前に置き、利用側が type を渡した場合はそちらを優先する
-    return <ark.button type="button" {...props} className={cx(iconButton({ variant, size, shape }), className)} />;
+    // props より前に置き、利用側が type を渡した場合はそちらを優先する。
+    // asChild のときは子要素(<a> など)に type が渡ると意味が変わるため付けない
+    return (
+        <ark.button
+            type={props.asChild ? undefined : "button"}
+            {...props}
+            className={cx(iconButton({ variant, size, shape }), className)}
+        />
+    );
 };
 
 export { IconButton };

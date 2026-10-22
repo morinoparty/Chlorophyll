@@ -116,11 +116,20 @@ export const iconButton = defineRecipe({
             },
         },
         shape: {
-            // Button / Select と同じ角丸で、フォーム部品と並べても形がそろう
+            // md / lg は Button / Select と同じ角丸で、フォーム部品と並べても形がそろう
             square: { borderRadius: "control" },
             circle: { borderRadius: "full" },
         },
     },
+    compoundVariants: [
+        // sm(32px)に control の角丸を使うと正円に近づき circle と見分けにくいため、
+        // radii の役割どおり「小さなアイコンボタン」として item を使う
+        {
+            size: "sm",
+            shape: "square",
+            css: { borderRadius: "item" },
+        },
+    ],
     defaultVariants: {
         variant: "ghost",
         size: "md",
