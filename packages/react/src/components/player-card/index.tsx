@@ -26,8 +26,10 @@ const usePlayerCardContext = (component: string): PlayerCardContextValue => {
 // スロットはどれも variant を持たないので、一度だけ解決すれば済む
 const styles = playerCard();
 
-// asChild は受け付けない。Root の直下に Card.Body を挟むため、差し替え先の要素に中身を渡せないため
-interface PlayerCardRootProps extends Omit<CardRootProps, "children" | "asChild"> {
+// asChild は受け付けない。Root の直下に Card.Body を挟むため、差し替え先の要素に中身を渡せないため。
+// interactive も受け付けない。asChild で <a> / <button> に差し替えられない以上、Root は div のままで
+// フォーカスもリンク先も持てず、押せる見た目だけが付いてしまうため
+interface PlayerCardRootProps extends Omit<CardRootProps, "children" | "asChild" | "interactive"> {
     /** プレイヤーの UUID。PlayerAvatar に渡してアバター画像を解決する */
     playerId: string;
     /** プレイヤー名 */
@@ -44,7 +46,7 @@ interface PlayerCardRootProps extends Omit<CardRootProps, "children" | "asChild"
 /**
  * プレイヤーのアバター・名前・一言を並べたカード。面と余白は Card(#40)に委譲する。
  *
- * - variant / size / interactive など Card.Root の props(asChild を除く)はそのまま渡せる
+ * - variant / size など Card.Root の props(asChild / interactive を除く)はそのまま渡せる
  * - children を省略すると既定のレイアウト(左にアバター、右に名前と一言)で描画する
  */
 const PlayerCardRoot = ({ playerId, playerName, description, children, ...props }: PlayerCardRootProps) => {
@@ -75,10 +77,11 @@ interface PlayerCardAvatarProps {
     size?: PlayerAvatarSize;
 }
 
-// プレイヤーのアバター画像。実体は PlayerAvatar(#48)にそのまま委譲する
+// プレイヤーのアバター画像。実体は PlayerAvatar(#48)にそのまま委譲する。
+// すぐ隣の Name が同じプレイヤー名を文字で示すので、名前が 2 回読み上げられないよう装飾扱いにする
 const PlayerCardAvatar = ({ size }: PlayerCardAvatarProps) => {
     const { playerId, playerName } = usePlayerCardContext("Avatar");
-    return <PlayerAvatar playerId={playerId} playerName={playerName} size={size} />;
+    return <PlayerAvatar playerId={playerId} playerName={playerName} size={size} decorative />;
 };
 
 type PlayerCardBodyProps = HTMLArkProps<"div">;

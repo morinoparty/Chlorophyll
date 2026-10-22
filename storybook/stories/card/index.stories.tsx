@@ -141,6 +141,21 @@ export const HeaderOnly: Story = {
     ),
 };
 
+// Body を置かず、Header の直後に Footer を続けたカード(見出し + 操作)。Header と Footer の間にも余白 1 つ分が入る
+export const HeaderAndFooter: Story = {
+    render: () => (
+        <Card.Root variant="outline" className={cardWidth}>
+            <Card.Header>
+                <Card.Title>ずんだもち銀行</Card.Title>
+                <Card.Description>口座を開くとアイテムを預けられるのだ。</Card.Description>
+            </Card.Header>
+            <Card.Footer>
+                <Button size="sm">口座を開く</Button>
+            </Card.Footer>
+        </Card.Root>
+    ),
+};
+
 // asChild でカード全体をリンクにした例。interactive で hover / active / フォーカスリングが付く
 export const LinkCard: Story = {
     parameters: { layout: "padded" },

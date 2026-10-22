@@ -35,7 +35,6 @@ export const card = defineSlotRecipe({
         title: {
             fontWeight: "bold",
             color: "colorPalette.fg",
-            lineHeight: "heading",
         },
         description: {
             // 本文より一段引いた補助テキスト
@@ -93,7 +92,9 @@ export const card = defineSlotRecipe({
         },
         // 余白と文字サイズ。Header / Body / Footer は Chakra UI と同じく、
         // Header は上と左右、Body は四方、Footer は下と左右に余白を持ち、隣り合ったときの間隔が余白 1 つ分になる。
-        // Header だけ・Footer だけのカード(Body を置かない)でも下端・上端の余白が欠けないよう、末尾 / 先頭のときは補う
+        // Header だけ・Footer だけのカード(Body を置かない)でも下端・上端の余白が欠けないよう、末尾 / 先頭のときは補う。
+        // Header の直後に Footer が来る(Body を置かない見出し + 操作の)カードでは、Footer の上にも余白を補う。
+        // Title の行送りは textStyle が持つ値に上書きされるため、textStyle の後で heading を指定し直す
         size: {
             sm: {
                 header: {
@@ -106,8 +107,9 @@ export const card = defineSlotRecipe({
                     px: "component.padding.lg",
                     pb: "component.padding.lg",
                     _first: { pt: "component.padding.lg" },
+                    "[data-part='header'] + &": { pt: "component.padding.lg" },
                 },
-                title: { textStyle: "md" },
+                title: { textStyle: "md", lineHeight: "heading" },
                 description: { textStyle: "xs" },
             },
             md: {
@@ -121,8 +123,9 @@ export const card = defineSlotRecipe({
                     px: "component.padding.xl",
                     pb: "component.padding.xl",
                     _first: { pt: "component.padding.xl" },
+                    "[data-part='header'] + &": { pt: "component.padding.xl" },
                 },
-                title: { textStyle: "lg" },
+                title: { textStyle: "lg", lineHeight: "heading" },
                 description: { textStyle: "sm" },
             },
             lg: {
@@ -136,8 +139,9 @@ export const card = defineSlotRecipe({
                     px: "component.padding.2xl",
                     pb: "component.padding.2xl",
                     _first: { pt: "component.padding.2xl" },
+                    "[data-part='header'] + &": { pt: "component.padding.2xl" },
                 },
-                title: { textStyle: "xl" },
+                title: { textStyle: "xl", lineHeight: "heading" },
                 description: { textStyle: "md" },
             },
         },

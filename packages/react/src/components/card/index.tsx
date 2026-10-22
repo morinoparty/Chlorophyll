@@ -7,6 +7,9 @@ import { card } from "styled-system/recipes";
 type CardVariant = "elevated" | "outline" | "subtle";
 type CardSize = "sm" | "md" | "lg";
 
+// 各パーツには Ark UI と同じ data-scope / data-part を付ける。
+// レシピから隣り合うパーツを参照するとき、Panda の生成に依存するクラス名ではなくこちらを使う
+
 // Root で解決したスロットのクラス名を、Header / Title / Body などの各パーツに配る Context。
 // variant / size に応じてスロットの見た目が変わるため、Root で 1 回だけ解決して共有する
 type CardStyles = ReturnType<typeof card>;
@@ -48,7 +51,7 @@ const CardRoot = ({ className, variant, size, interactive, ...props }: CardRootP
     const styles = card({ variant, size, interactive });
     return (
         <CardStylesContext.Provider value={styles}>
-            <ark.div {...props} className={cx(styles.root, className)} />
+            <ark.div data-scope="card" data-part="root" {...props} className={cx(styles.root, className)} />
         </CardStylesContext.Provider>
     );
 };
@@ -58,7 +61,7 @@ type CardHeaderProps = HTMLArkProps<"div">;
 // Title と Description をまとめる見出し領域
 const CardHeader = ({ className, ...props }: CardHeaderProps) => {
     const styles = useCardStyles("Header");
-    return <ark.div {...props} className={cx(styles.header, className)} />;
+    return <ark.div data-scope="card" data-part="header" {...props} className={cx(styles.header, className)} />;
 };
 
 type CardTitleProps = HTMLArkProps<"h3">;
@@ -66,7 +69,7 @@ type CardTitleProps = HTMLArkProps<"h3">;
 // カードの見出し。既定は h3 で、文書構造に合わせて asChild で別の見出しレベルに差し替えられる
 const CardTitle = ({ className, ...props }: CardTitleProps) => {
     const styles = useCardStyles("Title");
-    return <ark.h3 {...props} className={cx(styles.title, className)} />;
+    return <ark.h3 data-scope="card" data-part="title" {...props} className={cx(styles.title, className)} />;
 };
 
 type CardDescriptionProps = HTMLArkProps<"p">;
@@ -74,7 +77,7 @@ type CardDescriptionProps = HTMLArkProps<"p">;
 // 見出しを補足する説明文。本文より一段引いた文字色で表示する
 const CardDescription = ({ className, ...props }: CardDescriptionProps) => {
     const styles = useCardStyles("Description");
-    return <ark.p {...props} className={cx(styles.description, className)} />;
+    return <ark.p data-scope="card" data-part="description" {...props} className={cx(styles.description, className)} />;
 };
 
 type CardBodyProps = HTMLArkProps<"div">;
@@ -82,7 +85,7 @@ type CardBodyProps = HTMLArkProps<"div">;
 // 本文領域。カードの高さが揃えられたときは余白を吸収して Footer を下端へ押しやる
 const CardBody = ({ className, ...props }: CardBodyProps) => {
     const styles = useCardStyles("Body");
-    return <ark.div {...props} className={cx(styles.body, className)} />;
+    return <ark.div data-scope="card" data-part="body" {...props} className={cx(styles.body, className)} />;
 };
 
 type CardFooterProps = HTMLArkProps<"div">;
@@ -90,7 +93,7 @@ type CardFooterProps = HTMLArkProps<"div">;
 // ボタンやメタ情報を横に並べるフッター領域
 const CardFooter = ({ className, ...props }: CardFooterProps) => {
     const styles = useCardStyles("Footer");
-    return <ark.div {...props} className={cx(styles.footer, className)} />;
+    return <ark.div data-scope="card" data-part="footer" {...props} className={cx(styles.footer, className)} />;
 };
 
 type CardImageProps = HTMLArkProps<"img">;
@@ -98,7 +101,7 @@ type CardImageProps = HTMLArkProps<"img">;
 // カードの横幅いっぱいに広げる画像。装飾目的なら alt="" を渡す
 const CardImage = ({ className, ...props }: CardImageProps) => {
     const styles = useCardStyles("Image");
-    return <ark.img {...props} className={cx(styles.image, className)} />;
+    return <ark.img data-scope="card" data-part="image" {...props} className={cx(styles.image, className)} />;
 };
 
 // Compound Component パターン: Card.Root / Header / Title / Description / Body / Footer / Image

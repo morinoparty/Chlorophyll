@@ -26,8 +26,8 @@ export const playerCard = defineSlotRecipe({
             fontWeight: "bold",
             lineHeight: "[1.2]",
             // プレイヤー名は本文と同じ濃さで読ませる
-            // (colorPalette.fg の計測値: 白 Lc 82.1 / colorPalette.bg.subtle(mori.1) Lc 81.0 /
-            //  hover 時の colorPalette.surface(mori.3) Lc 74.6)
+            // (colorPalette.fg の計測値: 白 Lc 82.1 / subtle variant の colorPalette.bg.subtle(mori.1) Lc 81.0。
+            //  PlayerCard は interactive を受け付けないので、hover / active の面は考慮しない)
             color: "colorPalette.fg",
             // プレイヤー名は 1 行に収め、あふれた分は省略記号にする
             overflow: "hidden",
@@ -38,8 +38,8 @@ export const playerCard = defineSlotRecipe({
             textStyle: "sm",
             lineHeight: "[1.4]",
             // 名前を補足する一言。本文より一段引いた補助テキスト
-            // (colorPalette.fg.muted = gray.11 の計測値: 白 Lc 79.8 / colorPalette.bg.subtle(mori.1) Lc 78.8 /
-            //  hover 時の colorPalette.surface(mori.3) Lc 72.3。補助テキストの目安 Lc 60 を満たす)
+            // (colorPalette.fg.muted = gray.11 の計測値: 白 Lc 79.8 / subtle variant の colorPalette.bg.subtle(mori.1) Lc 78.8。
+            //  補助テキストの目安 Lc 60 を満たす)
             color: "colorPalette.fg.muted",
         },
     },
