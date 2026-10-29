@@ -2,7 +2,7 @@
 
 [![Documentation](https://shieldcn.dev/badge/Documentation-read-396E56.svg?logo=readthedocs&logoColor=white)][docs]
 [![Storybook](https://shieldcn.dev/badge/Storybook-live-FF4785.svg?logo=storybook&logoColor=white)][storybook]
-[![GitHub Packages](https://shieldcn.dev/badge/GitHub_Packages-chlorophyll--react-181717.svg?logo=github&logoColor=white)][npm]
+[![npm](https://shieldcn.dev/badge/npm-chlorophyll--react-CB3837.svg?logo=npm&logoColor=white)][npm]
 
 > [!WARNING]
 > This project is currently under development.
@@ -15,11 +15,9 @@ A modern UI component library for React, built with TypeScript, Panda CSS, and A
 
 ## 📦 Installation
 
-The package is hosted on GitHub Packages. Point the `@morinoparty` scope at the registry in your `.npmrc`:
-
-```ini
-@morinoparty:registry=https://npm.pkg.github.com
-```
+The package is published to npm. No `.npmrc` setup or token is needed.
+Versions up to 0.5.0 are also on GitHub Packages; if your `.npmrc` still has
+`@morinoparty:registry=https://npm.pkg.github.com`, remove it so the scope resolves from npm.
 
 ```bash
 pnpm add @morinoparty/chlorophyll-react
@@ -92,7 +90,7 @@ pnpm --filter @chlorophyll/docs generate
 
 [docs]: https://chlorophyll.morinoparty.workers.dev/docs/getting-started/introduction/
 [storybook]: https://chlorophyll.morinoparty.workers.dev/storybook/
-[npm]: https://github.com/morinoparty/chlorophyll/pkgs/npm/chlorophyll-react
+[npm]: https://www.npmjs.com/package/@morinoparty/chlorophyll-react
 
 ---
 

@@ -9,7 +9,8 @@ on:
 
 permissions:
   contents: read
-  packages: write
+  # npm の trusted publishing (OIDC) で使う。npm のトークンは secret に置かない
+  id-token: write
 
 jobs:
   publish:
@@ -48,15 +49,11 @@ jobs:
           '
           echo "publishing @morinoparty/chlorophyll-react@$VERSION"
 
-      # setup-node の registry-url / scope の代わりに ~/.npmrc を書く
-      # (publish 先は packages/react の publishConfig.registry = GitHub Packages)
-      - name: Authenticate to GitHub Packages
-        run: |
-          echo "@morinoparty:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to GitHub Packages
+      # publish 先は packages/react の publishConfig.registry (npm)。
+      # 認証は trusted publishing: pnpm が GitHub の OIDC トークンを npm のトークンと交換する。
+      # ~/.npmrc にトークンがあると OIDC を使わないので、認証設定は書かない。
+      # npm 側でこのリポジトリの publish-react.yml を trusted publisher として登録しておく必要がある。
+      # provenance は trusted publishing で自動的に付く
+      - name: Publish to npm
         working-directory: packages/react
         run: pnpm publish --no-git-checks --access public
