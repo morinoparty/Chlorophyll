@@ -24,7 +24,7 @@
     },
     "devDependencies": {
         "@pandacss/dev": "^1.12.1",
-        "@pandacss/preset-base": "^1.12.1",
+        "@pandacss/preset-base": "^2.4.0",
         "@pandacss/studio": "^1.12.1",
         "@storybook/addon-a11y": "^10.6.2",
         "@storybook/addon-designs": "^11.1.4",
