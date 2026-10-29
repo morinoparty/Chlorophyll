@@ -54,7 +54,7 @@
         "storybook": "^10.6.2",
         "storybook-addon-designs": "^6.3.1",
         "storybook-design-token": "^5.0.0",
-        "typescript": "~5.9.3",
+        "typescript": "~7.0.2",
         "vite": "^8.3.4",
         "vitest": "^5.0.5"
     },
