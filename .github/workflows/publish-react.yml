@@ -53,7 +53,7 @@ jobs:
       # 認証は trusted publishing: pnpm が GitHub の OIDC トークンを npm のトークンと交換する。
       # ~/.npmrc にトークンがあると OIDC を使わないので、認証設定は書かない。
       # npm 側でこのリポジトリの publish-react.yml を trusted publisher として登録しておく必要がある。
-      # provenance は trusted publishing で自動的に付く
+      # provenance (SLSA v1 のビルド来歴) を明示的に付けて、npm 上で Actions 由来であることを検証できるようにする
       - name: Publish to npm
         working-directory: packages/react
-        run: pnpm publish --no-git-checks --access public
+        run: pnpm publish --no-git-checks --access public --provenance
