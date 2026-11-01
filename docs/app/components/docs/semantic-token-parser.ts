@@ -1,6 +1,6 @@
-import semanticTokensSpec from "styled-system/specs/semantic-tokens.json";
+import { getTokens } from "./design-system";
 
-// Semantic token data structure from spec JSON
+// Semantic token data structure from design-system.json
 export interface SemanticToken {
     name: string;
     reference: string;
@@ -28,37 +28,24 @@ export type SemanticTokenType =
 
 // Parse semantic tokens by type and optional filter prefix
 export function parseSemanticTokensByType(type: SemanticTokenType, filterPrefix?: string): SemanticToken[] {
-    const data = semanticTokensSpec.data.find((d) => d.type === type);
-    if (!data) return [];
-
-    return data.values
+    return getTokens(type, "semantic")
         .filter((token) => !filterPrefix || token.name.startsWith(filterPrefix))
-        .map((token) => ({
-            name: token.name,
-            reference: token.values.find((v) => v.condition === "base")?.value || "",
-            cssVar: token.cssVar,
-        }));
+        .map((token) => ({ name: token.name, reference: token.originalValue, cssVar: token.cssVar }));
 }
 
 // Parse shadow tokens with their resolved value
 export function parseShadowTokens(): SemanticTokenWithConditions[] {
-    const data = semanticTokensSpec.data.find((d) => d.type === "shadows");
-    if (!data) return [];
-
-    return data.values.map((token) => ({
+    return getTokens("shadows", "semantic").map((token) => ({
         name: token.name,
-        value: token.values.find((v) => v.condition === "base")?.value || "",
+        value: token.originalValue,
         cssVar: token.cssVar,
     }));
 }
 
 // Get unique prefixes from semantic tokens (e.g., "component.padding", "component.gap", "layout")
 export function getSemanticTokenPrefixes(type: SemanticTokenType): string[] {
-    const data = semanticTokensSpec.data.find((d) => d.type === type);
-    if (!data) return [];
-
     const prefixes = new Set<string>();
-    for (const token of data.values) {
+    for (const token of getTokens(type, "semantic")) {
         // Extract first two parts of the token name as prefix
         const parts = token.name.split(".");
         if (parts.length >= 2) {

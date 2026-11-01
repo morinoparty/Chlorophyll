@@ -1,13 +1,16 @@
 // LLM/エージェント向けに、セマンティックトークン一覧を短いMarkdown契約書として出力するスクリプト。
-// scripts/generate-token-specs.mjs が生成する styled-system/specs/semantic-tokens.json を読み、
+// `panda codegen --spec` が出力する styled-system/specs/design-system.json を読み、
 // 生値の色コードを発明させないための「常にトークンを選ばせる」ドキュメントを public/ 配下に書き出す。
-// 依存ライブラリは使わず、Node.js の fs のみで完結させる。
+// design-system.json の `semantic` フラグは生値で定義したトークン（overlay など）には付かないため、
+// どれがセマンティックトークンかは panda config のプリセット定義から判定する。
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadConfig } from "@pandacss/dev/node";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const SPEC_PATH = join(__dirname, "../styled-system/specs/semantic-tokens.json");
+const ROOT = join(__dirname, "..");
+const SPEC_PATH = join(ROOT, "styled-system/specs/design-system.json");
 const OUTPUT_PATH = join(__dirname, "../public/design-tokens.md");
 
 // カラーパレット系のロール（gray/mori/umi/red/yellow/blue 共通）に対する一行ルール。
@@ -76,18 +79,39 @@ const GLOBAL_RULES = {
 // ブランド（color-palette）として展開されるロールベースの名前一覧。
 const BRAND_NAMES = ["gray", "mori", "umi", "red", "yellow", "blue"];
 
-/**
- * セマンティックトークン仕様(JSON)を読み込む。
- * `pnpm generate` が未実行の場合はエラーで気付けるようにする。
- */
-function loadSemanticTokens() {
-    const raw = readFileSync(SPEC_PATH, "utf-8");
-    const json = JSON.parse(raw);
-    const colorsEntry = json.data.find((entry) => entry.type === "colors");
-    if (!colorsEntry) {
-        throw new Error("semantic-tokens.json に colors のエントリが見つからないのだ");
+/** `{ value }` を葉に持つトークン定義の木からパスを集める。DEFAULT は親の名前として扱う。 */
+function collectTokenPaths(tree, prefix = []) {
+    const paths = [];
+    for (const [key, node] of Object.entries(tree ?? {})) {
+        if (node === null || typeof node !== "object") continue;
+        const path = key === "DEFAULT" ? prefix : [...prefix, key];
+        if ("value" in node) paths.push(path.join("."));
+        paths.push(...collectTokenPaths(node, path));
     }
-    return colorsEntry.values;
+    return paths;
+}
+
+/**
+ * セマンティックカラートークンを design-system.json から定義順で読み込む。
+ * `pnpm generate` が未実行の場合は readFileSync のエラーで気付けるようにする。
+ */
+async function loadSemanticTokens() {
+    const designSystem = JSON.parse(readFileSync(SPEC_PATH, "utf-8"));
+    const { config } = await loadConfig({ cwd: ROOT });
+    const semanticPaths = new Set(collectTokenPaths(config.theme?.semanticTokens?.colors, ["colors"]));
+    if (semanticPaths.size === 0) {
+        throw new Error("panda config に colors のセマンティックトークンが見つからないのだ");
+    }
+    const baseValues = new Map(
+        designSystem.values.filter((entry) => !entry.condition && !entry.theme).map((e) => [e.token, e.value]),
+    );
+    return Object.entries(designSystem.tokens)
+        .filter(([path]) => semanticPaths.has(path))
+        .map(([path, token]) => ({
+            name: path.slice("colors.".length),
+            cssVar: `var(${token.cssVar})`,
+            reference: token.originalValue ?? baseValues.get(path) ?? "",
+        }));
 }
 
 /**
@@ -104,9 +128,7 @@ function isScaleToken(name) {
  * 例: "{colors.mori.9}" -> "mori.9"
  * color-mix() は長くなりすぎるため "参照A × 参照B N%" のように圧縮する。
  */
-function formatReference(values) {
-    const base = values.find((v) => v.condition === "base") ?? values[0];
-    const value = base.value;
+function formatReference(value) {
     const simpleMatch = /^\{colors\.(.+)\}$/.exec(value);
     if (simpleMatch) return simpleMatch[1];
 
@@ -165,7 +187,7 @@ function buildMarkdown(tokens) {
     lines.push(TABLE_HEADER);
     for (const token of globalTokens) {
         const rule = GLOBAL_RULES[token.name] ?? "";
-        lines.push(formatRow(token.name, token.cssVar, formatReference(token.values), rule));
+        lines.push(formatRow(token.name, token.cssVar, formatReference(token.reference), rule));
     }
     lines.push("");
 
@@ -182,7 +204,7 @@ function buildMarkdown(tokens) {
             formatRow(
                 toPattern(token.name, representativeBrand),
                 toPattern(token.cssVar, representativeBrand),
-                toPattern(formatReference(token.values), representativeBrand),
+                toPattern(formatReference(token.reference), representativeBrand),
                 rule,
             ),
         );
@@ -204,19 +226,19 @@ function buildMarkdown(tokens) {
         const brand = token.name.split(".")[0];
         const roleKey = token.name.slice(brand.length + 1);
         const rule = ROLE_RULES[roleKey] ?? "";
-        lines.push(formatRow(token.name, token.cssVar, formatReference(token.values), rule));
+        lines.push(formatRow(token.name, token.cssVar, formatReference(token.reference), rule));
     }
     lines.push("");
 
     return lines.join("\n");
 }
 
-function main() {
-    const tokens = loadSemanticTokens();
+async function main() {
+    const tokens = await loadSemanticTokens();
     const markdown = buildMarkdown(tokens);
     writeFileSync(OUTPUT_PATH, markdown, "utf-8");
     const sizeKb = (Buffer.byteLength(markdown, "utf-8") / 1024).toFixed(2);
     console.log(`🐼 info [llms-tokens] Generated design-tokens.md (${sizeKb} KB) → ${OUTPUT_PATH}`);
 }
 
-main();
+await main();

@@ -1,7 +1,6 @@
 import { sva } from "styled-system/css";
-import textStylesSpec from "styled-system/specs/text-styles.json";
-import tokensSpec from "styled-system/specs/tokens.json";
 import { CopyableCode } from "./copyable-code";
+import { getTextStyleNames, getTokens } from "./design-system";
 
 const tableStyles = sva({
     slots: ["tableWrapper", "table", "th", "td", "tdMuted"],
@@ -63,26 +62,19 @@ const lineHeightMap: Record<string, string> = {
 };
 
 function parseFontSizeTokens(): FontSizeToken[] {
-    const fontSizesData = tokensSpec.data.find((d) => d.type === "fontSizes");
-    if (!fontSizesData) return [];
-    return fontSizesData.values.map((token) => ({
-        name: token.name,
-        value: String(token.value),
-        cssVar: token.cssVar,
-    }));
+    return getTokens("fontSizes", "reference").map(({ name, value, cssVar }) => ({ name, value, cssVar }));
 }
 
 export function TextStylesTable() {
     const styles = tableStyles();
-    const fontSizeTokens = parseFontSizeTokens();
-    const fontSizeMap = new Map(fontSizeTokens.map((t) => [t.name, t.value]));
+    // design-system.json の textStyles は名前順なので、fontSizes トークンの定義順（小さい順）で並べる
+    const textStyleNames = new Set(getTextStyleNames());
 
-    const textStyleTokens = textStylesSpec.data
-        .filter((token) => token.name !== "none" && token.name !== "body" && token.name !== "label")
+    const textStyleTokens = parseFontSizeTokens()
+        .filter((token) => textStyleNames.has(token.name))
         .map((token) => ({
             name: token.name,
-            description: token.description,
-            fontSize: fontSizeMap.get(token.name),
+            fontSize: token.value,
             lineHeight: lineHeightMap[token.name],
         }));
 
