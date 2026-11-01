@@ -13,7 +13,7 @@
         "cf-typegen": "cf workers types"
     },
     "dependencies": {
-        "@ark-ui/react": "^5.40.0",
+        "@ark-ui/react": "^5.39.3",
         "@fuma-translate/react": "^1.0.2",
         "@morinoparty/chlorophyll-react": "workspace:*",
         "@radix-ui/react-collapsible": "^1.2.1",
