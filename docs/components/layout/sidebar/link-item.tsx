@@ -17,6 +17,7 @@ export function createLinkItemRenderer({
     /**
      * Render sidebar items from page tree
      */
+    // biome-ignore lint/correctness/noComponentHookFactories: fumadocs-ui 由来のファクトリで、layout/docs/sidebar.tsx のモジュールトップレベルで一度だけ呼ばれるため毎レンダーで作り直されない
     return function SidebarLinkItem({
         item,
         ...props

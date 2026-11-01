@@ -1,4 +1,5 @@
-import { definePreset, type SemanticTokens } from "@pandacss/dev";
+import { definePreset } from "@pandacss/dev";
+import type { SemanticTokens } from "@pandacss/types";
 import { breakpoints } from "./breakpoints";
 import { recipes, slotRecipes } from "./token/recipes";
 import { globalFontFace, textStyles, tokens } from "./token/reference-tokens";

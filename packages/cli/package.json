@@ -22,7 +22,8 @@
     },
     "devDependencies": {
         "@morinoparty/chlorophyll-react": "workspace:*",
-        "typescript": "~5.9.3",
+        "@typescript/typescript6": "^6.0.2",
+        "typescript": "~7.0.2",
         "unbuild": "^3.6.1"
     },
     "license": "CC0-1.0"

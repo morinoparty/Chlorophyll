@@ -27,7 +27,6 @@ dist-ssr
 
 ## Panda
 **/styled-system
-**/styled-system-studio
 
 generated
 
@@ -61,3 +60,8 @@ storybook/test-results/
 .env
 !.env.example
 .cloudflare/
+
+# .agent/build.sh が .agent/rules から生成するファイル
+/.cursorrules
+/.github/copilot-instructions.md
+/CLAUDE.md

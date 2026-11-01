@@ -8,7 +8,7 @@ description: Chlorophyllを使ってすぐに始める
 インストールが完了したら、すぐにコンポーネントを使い始めることができます。
 
 ```tsx title="App.tsx"
-import { Button } from '@morinoparty/chlorophyll';
+import { Button } from '@morinoparty/chlorophyll-react';
 
 export function App() {
   return (
@@ -24,7 +24,7 @@ export function App() {
 Chlorophyllのコンポーネントは名前付きエクスポートでインポートします。
 
 ```tsx
-import { Button, Card, Input, Select } from '@morinoparty/chlorophyll';
+import { Button, Card, Input, Select } from '@morinoparty/chlorophyll-react';
 ```
 
 ## テーマのカスタマイズ
@@ -33,10 +33,10 @@ Chlorophyllはデザイントークンを使用してテーマを管理してい
 
 ```ts title="panda.config.ts"
 import { defineConfig } from '@pandacss/dev';
-import { chlorophyllPreset } from '@morinoparty/chlorophyll/preset';
+import { createPreset, stone } from '@morinoparty/chlorophyll-react/preset';
 
 export default defineConfig({
-  presets: [chlorophyllPreset],
+  presets: ['@pandacss/preset-base', createPreset({ brandColor: 'mori', grayColor: stone, radius: 'md' })],
   theme: {
     extend: {
       tokens: {

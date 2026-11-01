@@ -2,7 +2,7 @@
     "mcpServers": {
         "panda": {
             "command": "npx",
-            "args": ["panda", "mcp"]
+            "args": ["-y", "@pandacss/mcp"]
         }
     }
 }

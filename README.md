@@ -23,6 +23,8 @@ Versions up to 0.5.0 are also on GitHub Packages; if your `.npmrc` still has
 pnpm add @morinoparty/chlorophyll-react
 ```
 
+The preset requires Panda CSS v2. Install the peer dependencies `@pandacss/dev`, `@pandacss/preset-base` and `@pandacss/types` (all 2.x).
+
 Add the Panda preset to `panda.config.ts`:
 
 ```ts

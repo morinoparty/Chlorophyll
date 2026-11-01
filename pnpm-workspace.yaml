@@ -5,9 +5,9 @@ packages:
 
 # pnpm 11 以降は package.json の "pnpm" 欄を読まないため、ここに移した
 overrides:
-  three: ^0.186.1
-  "@types/three": ^0.186.0
-  jest-runtime: ~30.4.2
+  three: ^0.187.0
+  "@types/three": ^0.187.0
+  jest-runtime: ~30.5.2
 
 # install スクリプトの実行を許可する依存 (pnpm 11 以降は未承認だと install が失敗する)
 allowBuilds:
@@ -19,9 +19,5 @@ allowBuilds:
   sharp: false
   "@swc/core": false
   unrs-resolver: false
-
-minimumReleaseAgeExclude:
-  - "@cloudflare/runtime-types@0.1.14"
-  - "@cloudflare/vite-plugin@2.0.0-beta.v.3"
-  - miniflare@5.20261019.1-beta
-  - cf@1.0.0-beta.20
+  # @pandacss/dev (watch) と jest-haste-map が使う。プラットフォーム別のビルド済みバイナリがあるのでソースビルドは不要
+  "@parcel/watcher": false
