@@ -1,4 +1,4 @@
-import tokensSpec from "styled-system/specs/tokens.json";
+import { getTokens } from "./design-system";
 
 export interface Token {
     name: string;
@@ -19,7 +19,5 @@ export type TokenType =
     | "zIndex";
 
 export function parseTokensByType(type: TokenType): Token[] {
-    const data = tokensSpec.data.find((d) => d.type === type);
-    if (!data) return [];
-    return data.values.map((t) => ({ name: t.name, value: t.value, cssVar: t.cssVar }));
+    return getTokens(type, "reference").map((t) => ({ name: t.name, value: t.value, cssVar: t.cssVar }));
 }

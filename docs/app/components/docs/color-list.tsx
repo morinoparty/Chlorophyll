@@ -1,7 +1,7 @@
 import Color from "colorjs.io";
 import { cx, sva } from "styled-system/css";
-import tokensSpec from "styled-system/specs/tokens.json";
 import { CopyableCode } from "./copyable-code";
+import { getTokens } from "./design-system";
 import { checkerboard } from "./shared-styles";
 
 const colorListStyles = sva({
@@ -90,20 +90,17 @@ interface PaletteScales {
     alpha: ReferenceColorToken[];
 }
 
-// spec の tokens.json からすべてのカラーパレットを最初のパスセグメントでグループ化する。
+// design-system.json のリファレンスカラーからすべてのカラーパレットを最初のパスセグメントでグループ化する。
 // このプロジェクトはライトモード専用のため、light スケールのみを表示対象にする
 function parseReferenceColorPalettes(): { palettes: PaletteScales[]; singles: ReferenceColorToken[] } {
-    const data = tokensSpec.data.find((d) => d.type === "colors");
-    if (!data) return { palettes: [], singles: [] };
-
     const paletteMap = new Map<string, PaletteScales>();
     const singles: ReferenceColorToken[] = [];
 
-    for (const token of data.values) {
+    for (const token of getTokens("colors", "reference")) {
         const parts = token.name.split(".");
         const entry: ReferenceColorToken = {
             name: token.name,
-            value: String(token.value),
+            value: token.value,
             cssVar: token.cssVar,
         };
 

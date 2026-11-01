@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "scripts": {
         "prepare": "panda codegen",
-        "generate": "panda cssgen && panda codegen --spec && node scripts/generate-token-specs.mjs && node scripts/generate-llms-tokens.mjs",
+        "generate": "panda cssgen && panda codegen --spec && node scripts/generate-llms-tokens.mjs",
         "dev": "pnpm generate && vite dev --host",
         "build": "pnpm generate && vite build",
         "start": "vite preview",
