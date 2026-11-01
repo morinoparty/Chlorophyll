@@ -38,7 +38,7 @@
         "tailwindcss": "^4.3.3"
     },
     "devDependencies": {
-        "@cloudflare/vite-plugin": "^2.0.0-beta.v.8",
+        "@cloudflare/vite-plugin": "^2.0.0-beta.v.7",
         "@pandacss/dev": "^2.4.0",
         "@pandacss/preset-base": "^2.4.0",
         "@types/node": "^26.6.6",
