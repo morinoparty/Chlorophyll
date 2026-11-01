@@ -1,4 +1,4 @@
-import type { SemanticTokens } from "@pandacss/dev";
+import type { SemanticTokens } from "@pandacss/types";
 import type { ColorPalette } from "../../create-preset";
 
 // baseカラー（主にstone）のセマンティックトークンを定義

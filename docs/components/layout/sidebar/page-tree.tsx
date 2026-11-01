@@ -27,6 +27,7 @@ export function createPageTreeRenderer({
     SidebarSeparator,
     SidebarItem,
 }: InternalComponents) {
+    // biome-ignore lint/correctness/noComponentHookFactories: fumadocs-ui 由来のファクトリで、layout/docs/sidebar.tsx のモジュールトップレベルで一度だけ呼ばれるため毎レンダーで作り直されない
     function PageTreeFolder({ item, children }: { item: PageTree.Folder; children: ReactNode }) {
         const path = useTreePath();
 
@@ -51,6 +52,7 @@ export function createPageTreeRenderer({
     /**
      * Render sidebar items from page tree
      */
+    // biome-ignore lint/correctness/noComponentHookFactories: fumadocs-ui 由来のファクトリで、layout/docs/sidebar.tsx のモジュールトップレベルで一度だけ呼ばれるため毎レンダーで作り直されない
     return function SidebarPageTree(components: Partial<SidebarPageTreeComponents>) {
         const { root } = useTreeContext();
         const { Separator, Item, Folder = PageTreeFolder } = components;

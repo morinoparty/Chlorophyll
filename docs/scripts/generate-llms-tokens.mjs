@@ -1,5 +1,5 @@
 // LLM/エージェント向けに、セマンティックトークン一覧を短いMarkdown契約書として出力するスクリプト。
-// `panda spec` が生成する styled-system/specs/semantic-tokens.json を読み、
+// scripts/generate-token-specs.mjs が生成する styled-system/specs/semantic-tokens.json を読み、
 // 生値の色コードを発明させないための「常にトークンを選ばせる」ドキュメントを public/ 配下に書き出す。
 // 依存ライブラリは使わず、Node.js の fs のみで完結させる。
 import { readFileSync, writeFileSync } from "node:fs";
@@ -78,7 +78,7 @@ const BRAND_NAMES = ["gray", "mori", "umi", "red", "yellow", "blue"];
 
 /**
  * セマンティックトークン仕様(JSON)を読み込む。
- * `pnpm panda spec` が未実行の場合はエラーで気付けるようにする。
+ * `pnpm generate` が未実行の場合はエラーで気付けるようにする。
  */
 function loadSemanticTokens() {
     const raw = readFileSync(SPEC_PATH, "utf-8");

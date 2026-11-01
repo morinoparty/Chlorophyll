@@ -1,7 +1,7 @@
 import Color from "colorjs.io";
 import { sva } from "styled-system/css";
 import { token } from "styled-system/tokens";
-import type { ColorToken } from "styled-system/tokens/tokens";
+import type { ColorToken } from "styled-system/types";
 
 const toHex = (colorValue: string): string => {
     try {

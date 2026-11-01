@@ -14,6 +14,7 @@
 | `border.interactive` | `var(--mpc-colors-border-interactive)` | `gray.7` | インタラクティブ要素のボーダー |
 | `border.emphasized` | `var(--mpc-colors-border-emphasized)` | `gray.8` | フォーカスリング/強調ボーダー |
 | `border.error` | `var(--mpc-colors-border-error)` | `red.7` | エラー状態のボーダー |
+| `border.error.emphasized` | `var(--mpc-colors-border-error-emphasized)` | `red.9` |  |
 | `border.warning` | `var(--mpc-colors-border-warning)` | `yellow.7` | 警告状態のボーダー |
 | `border.success` | `var(--mpc-colors-border-success)` | `mori.7` | 成功状態のボーダー |
 | `border.info` | `var(--mpc-colors-border-info)` | `blue.7` | 情報状態のボーダー |
@@ -63,6 +64,7 @@
 | `{brand}.fg` | `var(--mpc-colors-{brand}-fg)` | `{brand}.12 × {brand}.11 70%` | 標準テキスト色 |
 | `{brand}.fg.muted` | `var(--mpc-colors-{brand}-fg-muted)` | `gray.11` | 控えめなテキスト色 |
 | `{brand}.fg.subtle` | `var(--mpc-colors-{brand}-fg-subtle)` | `{brand}.11` | さらに控えめなテキスト色 |
+| `{brand}.fg.icon` | `var(--mpc-colors-{brand}-fg-icon)` | `{brand}.9` |  |
 | `{brand}.solid` | `var(--mpc-colors-{brand}-solid)` | `{brand}.9` | アクセントの塗り色（ボタン等） |
 | `{brand}.solid.emphasized` | `var(--mpc-colors-{brand}-solid-emphasized)` | `{brand}.10` | solid の強調色（hover 等） |
 | `{brand}.solid.active` | `var(--mpc-colors-{brand}-solid-active)` | `{brand}.10 × {brand}.12 20%` | solid の押下色（active） |

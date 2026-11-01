@@ -8,7 +8,8 @@
         "skipLibCheck": true,
         "jsx": "react-jsx",
         "lib": ["DOM", "DOM.Iterable", "ES2023"],
-        "baseUrl": ".",
+        // TypeScript 6 以降は types の既定値が [] になり @types/node が自動で読み込まれないため明示する
+        "types": ["node"],
         "paths": {
             "styled-system/*": ["./styled-system/*"],
             "fumadocs-mdx:collections/*": ["./.source/*"]
