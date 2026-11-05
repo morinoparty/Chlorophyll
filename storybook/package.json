@@ -36,13 +36,13 @@
         "@types/node": "^26.6.6",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
-        "@vitejs/plugin-react": "^6.1.2",
-        "@vitest/browser": "^5.0.5",
-        "@vitest/coverage-v8": "^5.0.5",
+        "@vitejs/plugin-react": "^6.2.1",
+        "@vitest/browser": "^5.1.0",
+        "@vitest/coverage-v8": "^5.1.0",
         "apca-w3": "^0.1.9",
         "axe-core": "^4.14.0",
         "axe-playwright": "^2.2.2",
-        "globals": "^17.13.0",
+        "globals": "^17.14.0",
         "http-server": "^14.1.1",
         "playwright": "^1.64.1",
         "puppeteer": "^25.16.0",
@@ -55,7 +55,7 @@
         "storybook-design-token": "^5.0.0",
         "typescript": "~7.0.2",
         "vite": "^8.3.5",
-        "vitest": "^5.0.5"
+        "vitest": "^5.1.0"
     },
     "jest-junit": {
         "outputDirectory": "reports",
