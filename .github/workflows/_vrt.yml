@@ -26,18 +26,38 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
-      - uses: pnpm/setup@v3
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れ、
+      # lockfile を固定したまま install する。vp のバージョンは catalog の vite-plus から決まる
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の手順で --frozen-lockfile 付きで行う
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: |
+            args: ["--frozen-lockfile"]
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # Vite Task の結果 (Storybook のビルド) を run をまたいで再利用する。install が作る node_modules に戻すので install の後に置く。
+      # 入力の変化は Vite Task が判定するため、key には run ごとの値だけを入れて最新のものを戻す。
+      # 同じ run で並行する他のジョブと key が重ならないよう、ジョブごとの名前を入れる
+      - name: Restore Vite Task cache
+        id: task-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: node_modules/.vite/task-cache
+          key: vite-task-${{ runner.os }}-${{ runner.arch }}-vrt-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            vite-task-${{ runner.os }}-${{ runner.arch }}-
 
+      # build:storybook は vite.config.ts の build-storybook タスクを実行し、
+      # 入力が変わっていなければ前回の storybook-static をキャッシュから戻す
       - name: Build Storybook
-        run: pnpm --filter @chlorophyll/storybook build
+        run: pnpm run build:storybook
+
+      # 後続の手順が失敗してもキャッシュを残せるよう、ビルド直後に保存する
+      - name: Save Vite Task cache
+        uses: actions/cache/save@v6
+        with:
+          path: node_modules/.vite/task-cache
+          key: ${{ steps.task-cache.outputs.cache-primary-key }}
 
       - uses: actions/upload-artifact@v7
         with:
@@ -57,12 +77,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
-      - uses: pnpm/setup@v3
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れる。
+      # vp のバージョンは catalog の vite-plus から決まる
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の手順で --frozen-lockfile 付きで行う
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: false # Puppeteer のキャッシュを戻してから --frozen-lockfile 付きで install する
 
       - name: Cache Puppeteer Chromium
         uses: actions/cache@v6
@@ -118,15 +139,14 @@ jobs:
           BRANCH: ${{ github.head_ref || github.ref_name }}
         run: git checkout -B "$BRANCH"
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
-      - uses: pnpm/setup@v3
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れ、
+      # lockfile を固定したまま install する。vp のバージョンは catalog の vite-plus から決まる
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の手順で --frozen-lockfile 付きで行う
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: |
+            args: ["--frozen-lockfile"]
 
       # シャードごとの __screenshots__ はパスが重ならないので、そのまま 1 つのディレクトリに重ねる
       - uses: actions/download-artifact@v8

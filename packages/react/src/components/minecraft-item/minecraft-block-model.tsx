@@ -53,8 +53,8 @@ const CroppedFaceMaterial = ({
 }) => {
     const base = useLoader(TextureLoader, url);
 
+    const [x1, y1, x2, y2] = face.uv;
     const texture = useMemo<Texture>(() => {
-        const [x1, y1, x2, y2] = face.uv;
         // Minecraft の uv は画像上端を y=0 とする px 座標(0-16)。
         // three.js のデフォルト UV(flipY 済み)は下端が v=0 になるため、縦方向だけ反転する
         const u1 = x1 / 16;
@@ -72,7 +72,7 @@ const CroppedFaceMaterial = ({
         cropped.offset.set(u1, Math.min(v1, v2));
         cropped.repeat.set(u2 - u1, Math.abs(v2 - v1));
         return cropped;
-    }, [base, face.uv[0], face.uv[1], face.uv[2], face.uv[3]]);
+    }, [base, x1, y1, x2, y2]);
 
     const color = useMemo(() => new Color(brightness, brightness, brightness), [brightness]);
 
@@ -128,7 +128,7 @@ const BlockModel = ({
     return (
         <group rotation={[rx, ry, rz]}>
             {elements.map((element, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: 要素の並びはモデル JSON 由来で安定している
+                // oxlint-disable-next-line react/no-array-index-key -- 要素の並びはモデル JSON 由来で安定している
                 <ElementMesh key={index} element={element} resolveTexture={resolveTexture} />
             ))}
         </group>

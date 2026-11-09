@@ -27,6 +27,24 @@ jobs:
           calculatedSha=$(git rev-parse --short HEAD)
           echo "commit_sha=$calculatedSha" >> $GITHUB_OUTPUT
 
+  # Oxfmt / Oxlint による整形・lint のチェック (vp check)。CI では自動修正しない
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れ、
+      # lockfile を固定したまま install する。vp check は vite.config.ts を読むので install が必要
+      - uses: voidzero-dev/setup-vp@v1.22.0
+        with:
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: |
+            args: ["--frozen-lockfile"]
+
+      - name: Check
+        run: pnpm run check:ci
+
   # VRT・Preview・A11y を並行実行
   # VRT は reg-suit + reg-notify-github-plugin が独立して PR コメント / commit status を通知する
   vrt:
@@ -62,16 +80,14 @@ jobs:
           path: main
 
       # checkout 先が pr/main サブディレクトリなので working-directory で PR 側を指す。
-      # pnpm は pr/package.json の packageManager、Node は pr/.node-version から入る。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
-      - uses: pnpm/setup@v3
+      # vp は pr/ の catalog の vite-plus、pnpm は pr/package.json の packageManager、Node は pr/.node-version から入る。
+      # install は vp ではなく pnpm で行うので、vite-plus を持たない main 側もそのまま install できる
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
           working-directory: pr
-          cache: true      # pnpm store を PR / main 両方の lockfile をキーにキャッシュ
-          cache-dependency-path: |
-            pr/pnpm-lock.yaml
-            main/pnpm-lock.yaml
-          install: false   # install は pr / main それぞれで行う
+          node-version-file: .node-version # working-directory からの相対パス
+          cache: true # pnpm store を PR の lockfile をキーにキャッシュ (キーにできる lockfile は 1 つだけ)
+          run-install: false # install は pr / main それぞれで行う
 
       - name: Pack PR branch
         id: pr_pack

@@ -11,5 +11,5 @@
 - Headless UIライブラリ: Ark UI
 - パッケージマネージャー: pnpm
 - ドキュメントライブラリ: Storybook
-- フォーマッター& Linter: Biome
+- フォーマッター& Linter: Oxfmt / Oxlint (Vite+ の `vp check` で実行)
 - フェイクデータライブラリ: FakerJS

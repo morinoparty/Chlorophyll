@@ -182,13 +182,13 @@ export function SidebarDrawerOverlay(props: ComponentProps<"div">) {
     if (mode !== "drawer") return;
     return (
         <Presence present={open}>
-            {/* biome-ignore lint/a11y/useSemanticElements: This is an overlay backdrop that closes the sidebar on click */}
             <div
                 data-state={open ? "open" : "closed"}
                 onClick={() => setOpen(false)}
                 onKeyDown={(e) => {
                     if (e.key === "Escape" || e.key === "Enter") setOpen(false);
                 }}
+                // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- This is an overlay backdrop that closes the sidebar on click
                 role="button"
                 tabIndex={0}
                 aria-label="Close sidebar"
@@ -366,7 +366,7 @@ export function SidebarTrigger({ children, ...props }: ComponentProps<"button">)
     const { setOpen } = useSidebar();
 
     return (
-        <button aria-label="Open Sidebar" onClick={() => setOpen((prev) => !prev)} {...props}>
+        <button type="button" aria-label="Open Sidebar" onClick={() => setOpen((prev) => !prev)} {...props}>
             {children}
         </button>
     );

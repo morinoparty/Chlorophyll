@@ -18,15 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
-      - uses: pnpm/setup@v3
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れ、
+      # lockfile を固定したまま install する。vp のバージョンは catalog の vite-plus から決まる
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の手順で --frozen-lockfile 付きで行う
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: |
+            args: ["--frozen-lockfile"]
 
       # リリースのタグ (v0.4.0) を package.json の version に反映してから publish する。
       # リポジトリ側の version は据え置きなので、ここで必ず置き換える

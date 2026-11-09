@@ -76,7 +76,7 @@ function RootComponent() {
 function ThemeScript() {
     return (
         <script
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: SSR theme initialization script
+            // oxlint-disable-next-line react/no-danger -- SSR theme initialization script
             dangerouslySetInnerHTML={{
                 __html: `
           (function() {

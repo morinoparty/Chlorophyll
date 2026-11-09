@@ -2,9 +2,9 @@
 import { Portal } from "@ark-ui/react/portal";
 import {
     Toaster as ArkToaster,
+    createToaster as createArkToaster,
     type CreateToasterProps,
     type CreateToasterReturn,
-    createToaster as createArkToaster,
     Toast,
     type ToastOptions,
     type ToastType,

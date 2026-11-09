@@ -34,23 +34,23 @@ const generateColorContrastAPCAConformanceCheck = (
             pass:
                 "要素は十分なAPCA " +
                 conformanceLevel +
-                // biome-ignore lint/suspicious/noTemplateCurlyInString: for axe-core
+                // oxlint-disable-next-line no-template-curly-in-string -- for axe-core
                 " レベルのLcを持っています ${data.apcaContrast}Lc（前景色: ${data.fgColor}, 背景色: ${data.bgColor}, フォントサイズ: ${data.fontSize}, フォントウェイト: ${data.fontWeight}）。必要な最小APCAコントラストは${data.apcaThreshold}です。",
             fail: {
                 default:
                     "要素のAPCA " +
                     conformanceLevel +
-                    // biome-ignore lint/suspicious/noTemplateCurlyInString: for axe-core
+                    // oxlint-disable-next-line no-template-curly-in-string -- for axe-core
                     " レベルのコントラストが不十分です: ${data.apcaContrast}Lc（前景色: ${data.fgColor}, 背景色: ${data.bgColor}, フォントサイズ: ${data.fontSize}, フォントウェイト: ${data.fontWeight}）。必要な最小APCA明度コントラストは${data.apcaThreshold}Lcです。",
                 increaseFont:
                     "要素のAPCA " +
                     conformanceLevel +
-                    // biome-ignore lint/suspicious/noTemplateCurlyInString: for axe-core
+                    // oxlint-disable-next-line no-template-curly-in-string -- for axe-core
                     " レベルのコントラストが不十分です: ${data.apcaContrast}Lc（前景色: ${data.fgColor}, 背景色: ${data.bgColor}, フォントサイズ: ${data.fontSize}, フォントウェイト: ${data.fontWeight}）。APCAの基準を満たすためにフォントサイズやフォントウェイトを上げてください。",
                 placeholder:
                     "要素のAPCA " +
                     conformanceLevel +
-                    // biome-ignore lint/suspicious/noTemplateCurlyInString: for axe-core
+                    // oxlint-disable-next-line no-template-curly-in-string -- for axe-core
                     " レベルのコントラストが不十分です: ${data.apcaContrast}Lc（前景色: ${data.fgColor}, 背景色: ${data.bgColor}, フォントサイズ: ${data.fontSize}, フォントウェイト: ${data.fontWeight}）。プレースホルダーのため閾値を30Lcに緩和しています。",
             },
             incomplete: "APCA明度コントラスト (Lc) を判定できませんでした。",

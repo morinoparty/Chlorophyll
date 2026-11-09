@@ -37,8 +37,8 @@
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
         "@vitejs/plugin-react": "^6.1.2",
-        "@vitest/browser": "^5.0.5",
-        "@vitest/coverage-v8": "^5.0.5",
+        "@vitest/browser": "^5.1.0",
+        "@vitest/coverage-v8": "^5.1.0",
         "apca-w3": "^0.1.9",
         "axe-core": "^4.14.0",
         "axe-playwright": "^2.2.2",
@@ -54,8 +54,8 @@
         "storybook-addon-designs": "^6.3.1",
         "storybook-design-token": "^5.0.0",
         "typescript": "~7.0.2",
-        "vite": "^8.3.5",
-        "vitest": "^5.0.5"
+        "vite-plus": "catalog:",
+        "vitest": "^5.1.0"
     },
     "jest-junit": {
         "outputDirectory": "reports",

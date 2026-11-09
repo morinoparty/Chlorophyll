@@ -1,6 +1,6 @@
 import Color from "colorjs.io";
 import { type RefObject, useEffect, useState } from "react";
-import { type TokenMetrics, toHex } from "./contrast";
+import { toHex, type TokenMetrics } from "./contrast";
 import type { ThemeName } from "./data";
 
 // documentElement の data-color-palette から現在のテーマを読む（SSR では mori）
@@ -32,7 +32,7 @@ export function useTokenMetrics(
 ): Record<string, TokenMetrics> {
     const [metrics, setMetrics] = useState<Record<string, TokenMetrics>>({});
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: theme 変更で再計測するための依存
+    // theme は effect 内で参照しないが、theme 変更で再計測するための依存
     useEffect(() => {
         const root = rootRef.current;
         if (!root) return;

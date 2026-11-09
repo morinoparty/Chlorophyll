@@ -3,7 +3,9 @@
 ## 実装手順
 - 常に既存コードの設計や記法を参考にしてください。。
 - styleを記述する際は、panda-cssで記述してください。
-- `pnpm run check`を実行して、コードのチェックを行ってください。
+- `pnpm run check`を実行して、コードのチェックを行ってください。Vite+ の `vp check --fix` で Oxfmt (整形) と Oxlint (lint) を実行し、直せるものは自動修正します。CI では自動修正しない `pnpm run check:ci` を実行します。
+- lint の抑制が必要な場合は、`// oxlint-disable-next-line <ルール名> -- <理由>` のようにルール名と理由を書いてください。
+- import 文の並べ替えは `vp check --fix` (Oxfmt) が行います。順序に意味のある副作用 import (CSS など) の直前には空行かコメントを置き、そこで並べ替えを区切ってください (区切りがないと前後の import がその import をまたいで移動します)。
 - また、記述後に`pnpm run dev`の実行やデプロイは行わないでください。
 
 ## 実装時の注意点

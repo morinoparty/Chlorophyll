@@ -7,6 +7,11 @@ updates:
     commit-message:
       prefix: "⬆️"
     groups:
+      # catalog の vite (vite-plus-core の別名) と vite-plus は同じバージョンで揃える必要があるため、まとめて上げる
+      vite-plus:
+        patterns:
+          - "vite-plus"
+          - "@voidzero-dev/vite-plus-*"
       npm-minor-patch:
         update-types:
           - "minor"
