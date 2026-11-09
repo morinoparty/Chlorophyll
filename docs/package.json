@@ -6,9 +6,9 @@
     "scripts": {
         "prepare": "panda codegen",
         "generate": "panda cssgen && panda codegen --spec && node scripts/generate-llms-tokens.mjs",
-        "dev": "pnpm generate && vite dev --host",
-        "build": "pnpm generate && vite build",
-        "start": "vite preview",
+        "dev": "pnpm generate && vp dev --host",
+        "build": "pnpm generate && vp build",
+        "start": "vp preview",
         "deploy": "pnpm generate && cf deploy",
         "cf-typegen": "cf workers types"
     },
@@ -38,7 +38,7 @@
         "tailwindcss": "^4.3.3"
     },
     "devDependencies": {
-        "@cloudflare/vite-plugin": "^2.0.0-beta.v.8",
+        "@cloudflare/vite-plugin": "2.0.0-beta.v.12",
         "@pandacss/dev": "^2.4.0",
         "@pandacss/preset-base": "^2.4.0",
         "@types/node": "^26.6.6",
@@ -46,11 +46,10 @@
         "@types/react-dom": "^19.3.0",
         "@vitejs/plugin-react": "^6.1.2",
         "autoprefixer": "^10.6.2",
-        "cf": "1.0.0-beta.26",
+        "cf": "1.0.0-beta.28",
         "class-variance-authority": "^0.7.1",
         "typescript": "^7.0.2",
-        "vite": "^8.3.5",
-        "vite-tsconfig-paths": "^6.1.1"
+        "vite-plus": "catalog:"
     },
     "license": "CC0-1.0",
     "engines": {

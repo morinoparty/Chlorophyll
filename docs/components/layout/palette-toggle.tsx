@@ -51,6 +51,7 @@ export function PaletteToggle({
 
         return (
             <button
+                type="button"
                 className={container}
                 aria-label="Toggle Palette"
                 onClick={() => changePalette(value === "mori" ? "umi" : "mori")}

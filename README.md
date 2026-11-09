@@ -61,6 +61,14 @@ pnpm dev:docs       # docs only
 pnpm dev:storybook  # storybook only
 ```
 
+The toolchain is [Vite+](https://viteplus.dev) (`vite-plus`, `vp` CLI; version pinned in the `catalog` of `pnpm-workspace.yaml`): Vite 8 + Rolldown for builds, Oxfmt / Oxlint for formatting and linting, and Vite Task for cached task runs.
+
+```bash
+pnpm check            # format (Oxfmt) and lint (Oxlint) with autofix (`vp check --fix`)
+pnpm check:ci         # same checks without autofix, as run in CI
+pnpm build:storybook  # cached Vite Task; restores storybook-static when inputs are unchanged
+```
+
 ### Testing
 
 ```bash

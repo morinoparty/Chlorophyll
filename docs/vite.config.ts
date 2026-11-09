@@ -7,15 +7,14 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import autoprefixer from "autoprefixer";
 import fumadocs from "fumadocs-mdx/vite";
-import { defineConfig, type Plugin } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig, lazyPlugins, type Plugin } from "vite-plus";
 import * as MdxConfig from "./source.config";
 
 // storybook パッケージのビルド成果物 (storybook-static) を
 // client のアセットとして /storybook 配下に同梱する。
 // cf build は package.json の scripts を通らないため、Storybook は先にビルドしておく。
 // Storybook は相対パス (./) でアセットを参照するので、/storybook/ 配下でもそのまま動く
-const storybookDir = path.resolve(__dirname, "../storybook/storybook-static");
+const storybookDir = path.resolve(import.meta.dirname, "../storybook/storybook-static");
 const bundleStorybook = (): Plugin => ({
     name: "chlorophyll:bundle-storybook",
     apply: "build",
@@ -39,7 +38,8 @@ export default defineConfig({
             plugins: [pandacss(), autoprefixer],
         },
     },
-    plugins: [
+    // lint / fmt など設定値だけを読むコマンドではプラグインを初期化しない
+    plugins: lazyPlugins(() => [
         cloudflare({ viteEnvironment: { name: "ssr" } }),
         tailwindcss(),
         fumadocs(MdxConfig, {
@@ -56,19 +56,19 @@ export default defineConfig({
                 filter: ({ path }) => !path.startsWith("/storybook"),
             },
         }),
-        tsconfigPaths(),
         viteReact(),
         bundleStorybook(),
-    ],
+    ]),
     resolve: {
         alias: {
-            "styled-system": `${__dirname}/styled-system`,
-            "@components": `${__dirname}/components`,
-            "fumadocs-mdx:collections/*": `${__dirname}/.source/*`,
+            "styled-system": `${import.meta.dirname}/styled-system`,
+            "@components": `${import.meta.dirname}/components`,
+            "fumadocs-mdx:collections/*": `${import.meta.dirname}/.source/*`,
 
             // Node.js pathモジュールのブラウザ向けポリフィル
             path: "path-browserify",
         },
+        tsconfigPaths: true,
     },
     server: {
         port: 3000,

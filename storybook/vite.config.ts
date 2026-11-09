@@ -1,21 +1,15 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, lazyPlugins } from "vite-plus";
 
+// Storybook (@storybook/builder-vite) がこのファイルを読み込み、.storybook/main.ts の設定とマージする
 export default defineConfig({
-    plugins: [react()],
+    // lint / fmt など設定値だけを読むコマンドではプラグインを初期化しない
+    plugins: lazyPlugins(() => [react()]),
     resolve: {
         alias: [
             {
                 find: "styled-system/",
-                replacement: `${__dirname}/styled-system/`,
-            },
-            {
-                find: "@morinoparty/chlorophyll-react/style.css",
-                replacement: `${__dirname}/../packages/ui/style.css`,
-            },
-            {
-                find: "@morinoparty/chlorophyll-react",
-                replacement: `${__dirname}/../packages/ui/src`,
+                replacement: `${import.meta.dirname}/styled-system/`,
             },
         ],
     },

@@ -26,20 +26,38 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
-      - uses: pnpm/setup@v3
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れ、
+      # lockfile を固定したまま install する。vp のバージョンは catalog の vite-plus から決まる
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の手順で --frozen-lockfile 付きで行う
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: |
+            args: ["--frozen-lockfile"]
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # Vite Task の結果 (Storybook のビルド) を run をまたいで再利用する。install が作る node_modules に戻すので install の後に置く。
+      # 入力の変化は Vite Task が判定するため、key には run ごとの値だけを入れて最新のものを戻す。
+      # 同じ run で並行する他のジョブと key が重ならないよう、ジョブごとの名前を入れる
+      - name: Restore Vite Task cache
+        id: task-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: node_modules/.vite/task-cache
+          key: vite-task-${{ runner.os }}-${{ runner.arch }}-deploy-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            vite-task-${{ runner.os }}-${{ runner.arch }}-
 
       # cf build は package.json の scripts を通らないので、生成物は先に作る。
       # storybook-static は docs の cf build (Vite) が /storybook/ 配下にコピーする
       - name: Build storybook
         run: pnpm run build:storybook
+
+      # 後続の手順が失敗してもキャッシュを残せるよう、ビルド直後に保存する
+      - name: Save Vite Task cache
+        uses: actions/cache/save@v6
+        with:
+          path: node_modules/.vite/task-cache
+          key: ${{ steps.task-cache.outputs.cache-primary-key }}
 
       - name: Generate docs assets
         run: pnpm --filter @chlorophyll/docs generate

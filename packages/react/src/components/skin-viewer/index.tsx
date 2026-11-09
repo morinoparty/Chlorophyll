@@ -160,7 +160,6 @@ const SkinViewer = ({
     // WebGL コンテキストはリークしやすく、StrictMode の二重実行下でも安全なように
     // 生成と破棄をこの effect だけに閉じ込める。width/height は生成時の初期値としてのみ使い、
     // 以降の変更は別 effect で同期するため、依存配列には含めない
-    // biome-ignore lint/correctness/useExhaustiveDependencies: 上記コメントの通り意図的
     useEffect(() => {
         if (!canvasRef.current) {
             return;
@@ -173,6 +172,7 @@ const SkinViewer = ({
             viewer.dispose();
             viewerRef.current = null;
         };
+        // oxlint-disable-next-line react-hooks/exhaustive-deps -- effect 冒頭のコメントの通り width/height を依存配列に含めないのは意図的
     }, []);
 
     // width/height の変更を、インスタンスを作り直さずに反映する

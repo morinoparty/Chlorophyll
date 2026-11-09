@@ -69,7 +69,7 @@ const LinkPagination = ({ currentPage }: { currentPage: number }) => (
                                 <a href={pageUrl(entry.value)}>{entry.value}</a>
                             </Pagination.Item>
                         ) : (
-                            // biome-ignore lint/suspicious/noArrayIndexKey: 省略記号は pages 配列の位置そのものが識別子
+                            // oxlint-disable-next-line react/no-array-index-key -- 省略記号は pages 配列の位置そのものが識別子
                             <Pagination.Ellipsis key={`ellipsis-${index}`} index={index}>
                                 &#8230;
                             </Pagination.Ellipsis>
@@ -126,7 +126,7 @@ export const FewPages: Story = {
                                 <a href={pageUrl(entry.value)}>{entry.value}</a>
                             </Pagination.Item>
                         ) : (
-                            // biome-ignore lint/suspicious/noArrayIndexKey: 省略記号は pages 配列の位置そのものが識別子
+                            // oxlint-disable-next-line react/no-array-index-key -- 省略記号は pages 配列の位置そのものが識別子
                             <Pagination.Ellipsis key={`ellipsis-${index}`} index={index}>
                                 &#8230;
                             </Pagination.Ellipsis>

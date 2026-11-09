@@ -4,9 +4,10 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "check": "biome check ./ --write",
+        "check": "vp check --fix",
+        "check:ci": "vp check",
         "build": "pnpm -r build",
-        "build:storybook": "pnpm --filter @chlorophyll/storybook build",
+        "build:storybook": "node -e \"require('node:fs').rmSync('storybook/storybook-static',{recursive:true,force:true})\" && vp run build-storybook",
         "dev": "pnpm -r dev",
         "dev:docs": "pnpm --filter @chlorophyll/docs dev",
         "dev:storybook": "pnpm --filter @chlorophyll/storybook dev",
@@ -16,7 +17,7 @@
         "chlorophyll-cli": "node packages/cli/bin/cli.mjs"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.6.4"
+        "vite-plus": "catalog:"
     },
     "license": "CC0-1.0",
     "engines": {

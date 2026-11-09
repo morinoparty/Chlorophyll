@@ -3,11 +3,26 @@ packages:
   - "docs"
   - "storybook"
 
+# Vite+ のバージョンはここで一元管理する
+catalog:
+  vite: npm:@voidzero-dev/vite-plus-core@1.5.1
+  vite-plus: 1.5.1
+
 # pnpm 11 以降は package.json の "pnpm" 欄を読まないため、ここに移した
 overrides:
   three: ^0.187.0
   "@types/three": ^0.187.0
   jest-runtime: ~30.5.2
+  # 依存が参照する vite も Vite+ のコアに揃え、vite が二重に入らないようにする
+  vite@*: "catalog:"
+
+peerDependencyRules:
+  # vite-plus-core の版番号は各プラグインの peer 範囲 (vite ^8 など) に一致しないため許可する
+  allowAny:
+    - vite
+  allowedVersions:
+    # storybook の任意 peer (^0.x) が古いだけで、参照するのは vite-plus/versions のみ
+    storybook>vite-plus: "1"
 
 # install スクリプトの実行を許可する依存 (pnpm 11 以降は未承認だと install が失敗する)
 allowBuilds:
@@ -21,3 +36,16 @@ allowBuilds:
   unrs-resolver: false
   # @pandacss/dev (watch) と jest-haste-map が使う。プラットフォーム別のビルド済みバイナリがあるのでソースビルドは不要
   "@parcel/watcher": false
+
+# 公開直後の Vite+ を入れられるよう、pnpm の公開待ち期間から除外する
+minimumReleaseAgeExclude:
+  - "@voidzero-dev/vite-plus-core@1.5.1"
+  - "@voidzero-dev/vite-plus-darwin-arm64@1.5.1"
+  - "@voidzero-dev/vite-plus-darwin-x64@1.5.1"
+  - "@voidzero-dev/vite-plus-linux-arm64-gnu@1.5.1"
+  - "@voidzero-dev/vite-plus-linux-arm64-musl@1.5.1"
+  - "@voidzero-dev/vite-plus-linux-x64-gnu@1.5.1"
+  - "@voidzero-dev/vite-plus-linux-x64-musl@1.5.1"
+  - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.5.1"
+  - "@voidzero-dev/vite-plus-win32-x64-msvc@1.5.1"
+  - vite-plus@1.5.1

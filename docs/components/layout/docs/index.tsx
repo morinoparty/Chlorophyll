@@ -10,7 +10,7 @@ import { PaletteToggle } from "../palette-toggle";
 import { LargeSearchToggle, SearchToggle } from "../search-toggle";
 import { type BaseLayoutProps, renderTitleNav, resolveLinkItems } from "../shared";
 import type { SidebarPageTreeComponents } from "../sidebar/page-tree";
-import { type GetSidebarTabsOptions, getSidebarTabs } from "../sidebar/tabs";
+import { getSidebarTabs, type GetSidebarTabsOptions } from "../sidebar/tabs";
 import { SidebarTabsDropdown, type SidebarTabWithProps } from "../sidebar/tabs/dropdown";
 import { ThemeToggle } from "../theme-toggle";
 import { LayoutBody, LayoutContextProvider, LayoutHeader, LayoutTabs } from "./client";
@@ -39,8 +39,7 @@ export interface DocsLayoutProps extends BaseLayoutProps {
 }
 
 interface SidebarOptions
-    extends ComponentProps<"aside">,
-        Pick<ComponentProps<typeof Sidebar>, "defaultOpenLevel" | "prefetch"> {
+    extends ComponentProps<"aside">, Pick<ComponentProps<typeof Sidebar>, "defaultOpenLevel" | "prefetch"> {
     enabled?: boolean;
     component?: ReactNode;
     components?: Partial<SidebarPageTreeComponents>;
