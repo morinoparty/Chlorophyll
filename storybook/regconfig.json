@@ -18,10 +18,10 @@
             "bucketName": "${S3_UPLOAD_BUCKET}",
             "enableACL": false,
             "pathPrefix": "chlorophyll/vrt",
-            "customDomain": "moripa-ci.nikomaru.dev",
+            "customDomain": "${S3_PUBLIC_HOST}",
             "sdkOptions": {
                 "endpoint": "${S3_ENDPOINT}",
-                "region": "auto",
+                "region": "${AWS_REGION}",
                 "forcePathStyle": true
             }
         }
