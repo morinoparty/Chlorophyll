@@ -49,3 +49,5 @@ minimumReleaseAgeExclude:
   - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.5.1"
   - "@voidzero-dev/vite-plus-win32-x64-msvc@1.5.1"
   - vite-plus@1.5.1
+  - fumadocs-core@16.19.7
+  - fumadocs-ui@16.19.7
