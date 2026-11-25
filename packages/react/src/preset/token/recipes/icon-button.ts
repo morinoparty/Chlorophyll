@@ -97,7 +97,9 @@ export const iconButton = defineRecipe({
         },
         // アイコンだけを載せる正方形のボタンなので、高さは sizes.control(36/40/44px)ではなく 32/40/48px の段で持つ。
         // md(40px)は Button / Select の md と同じ高さで、横に並べたときに揃う。
-        // アイコンはボタンの半分の大きさ(sizes.icon の sm 16 / md 20 / lg 24px)にする
+        // アイコンはボタンの半分の大きさ(sizes.icon の sm 16 / md 20 / lg 24px)にする。
+        // IconButton の sm(32px) / lg(48px) は Button の xs / xl(control.xs / control.xl)と同じ高さに揃うため、
+        // IconButton 側に段は追加しない。これ以上の段は需要が出たときに追加する
         size: {
             sm: {
                 width: "8",

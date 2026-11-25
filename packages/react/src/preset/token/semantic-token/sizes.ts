@@ -9,11 +9,16 @@ import { defineSemanticTokens } from "@pandacss/dev";
  */
 export const sizes = defineSemanticTokens.sizes({
     // フォームコントロールの高さ。Button / Select の trigger / Table の見出し行が同じ段を参照し、
-    // 横に並べたときに高さが揃うことを保証する(park-ui md 40px / shadcn default 36px に近いスケール)
+    // 横に並べたときに高さが揃うことを保証する(park-ui md 40px / shadcn default 36px に近いスケール)。
+    // xs / xl は Button の段を増やすために追加した。sm〜lg と同じ 4px 刻みで両端を伸ばし、
+    // IconButton の 32 / 48px とも高さが揃うようにしている
     control: {
+        // 32px。touchTarget(44px)を下回るため、デスクトップの密な UI 向け
+        xs: { value: "{sizes.8}" }, // 32px
         sm: { value: "{sizes.9}" }, // 36px
         md: { value: "{sizes.10}" }, // 40px
         lg: { value: "{sizes.11}" }, // 44px
+        xl: { value: "{sizes.12}" }, // 48px
     },
     // Icon sizes
     icon: {

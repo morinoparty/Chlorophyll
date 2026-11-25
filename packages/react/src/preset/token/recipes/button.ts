@@ -126,12 +126,19 @@ export const button = defineRecipe({
                 },
             },
         },
-        // 高さは sizes.control(sm 36 / md 40 / lg 44px)で Select などと共有し、
-        // 横 padding・文字サイズを 1 段ずつ連動させ、どこで並べても揃って見えるようにする
+        // 高さは sizes.control(xs 32 / sm 36 / md 40 / lg 44 / xl 48px)で Select などと共有し、
+        // 横 padding・文字サイズを 1 段ずつ連動させ、どこで並べても揃って見えるようにする。
+        // アイコンは base の "& :where(svg)" が em 指定なので、fontSize に追従して大きさが変わる
         size: {
+            // 32px は touchTarget(44px)を下回る。ツールバーや表の行内などデスクトップの密な UI 向けで、
+            // モバイルでは唯一のタップ対象として使わず sm 以上を選ぶ。
+            // 文字は sm と同じ xs のまま、高さに合わせて横 padding と gap を一段詰める
+            xs: { height: "control.xs", px: "{spacing.3}", fontSize: "xs", gap: "1.5" },
             sm: { height: "control.sm", px: "{spacing.3.5}", fontSize: "xs" },
             md: { height: "control.md", px: "{spacing.4}", fontSize: "sm" },
             lg: { height: "control.lg", px: "{spacing.5}", fontSize: "md" },
+            // ヒーローの CTA など強く目立たせたい箇所向け。lg から横 padding・文字サイズを 1 段ずつ上げる
+            xl: { height: "control.xl", px: "{spacing.6}", fontSize: "lg" },
         },
     },
     defaultVariants: {

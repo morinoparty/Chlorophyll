@@ -23,7 +23,7 @@ const meta: Meta<typeof Button> = {
         },
         size: {
             control: "select",
-            options: ["sm", "md", "lg"],
+            options: ["xs", "sm", "md", "lg", "xl"],
         },
     },
     args: {
@@ -33,6 +33,14 @@ const meta: Meta<typeof Button> = {
 
 export default meta;
 type Story = StoryObj<typeof Button>;
+
+// スタイルの一覧表示用レイアウト
+const showcaseStyles = {
+    grid: css({ display: "flex", flexDirection: "column", gap: "8", alignItems: "flex-start" }),
+    section: css({ display: "flex", flexDirection: "column", gap: "3" }),
+    label: css({ fontSize: "sm", fontWeight: "medium", color: "colorPalette.fg.muted" }),
+    row: css({ display: "flex", gap: "4", alignItems: "center", flexWrap: "wrap" }),
+};
 
 export const Primary: Story = {
     args: {
@@ -76,12 +84,33 @@ export const WithIcon: Story = {
     ),
 };
 
-// スタイルの一覧表示用レイアウト
-const showcaseStyles = {
-    grid: css({ display: "flex", flexDirection: "column", gap: "8", alignItems: "flex-start" }),
-    section: css({ display: "flex", flexDirection: "column", gap: "3" }),
-    label: css({ fontSize: "sm", fontWeight: "medium", color: "colorPalette.fg.muted" }),
-    row: css({ display: "flex", gap: "4", alignItems: "center", flexWrap: "wrap" }),
+// size の段を一覧で並べる。高さは sizes.control(xs 32 / sm 36 / md 40 / lg 44 / xl 48px)に揃う。
+// アイコンは文字サイズに追従するため、アイコン付きも並べて大きさを確認する
+const buttonSizes = ["xs", "sm", "md", "lg", "xl"] as const;
+
+export const Sizes: Story = {
+    args: {
+        intent: "primary",
+    },
+    render: (args) => (
+        <div className={showcaseStyles.grid}>
+            <div className={showcaseStyles.row}>
+                {buttonSizes.map((size) => (
+                    <Button key={size} {...args} size={size}>
+                        {size}
+                    </Button>
+                ))}
+            </div>
+            <div className={showcaseStyles.row}>
+                {buttonSizes.map((size) => (
+                    <Button key={size} {...args} size={size}>
+                        次へ
+                        <ArrowRightIcon />
+                    </Button>
+                ))}
+            </div>
+        </div>
+    ),
 };
 
 // intent × size × state を一覧で並べたショーケース
@@ -92,6 +121,9 @@ export const Showcase: Story = {
             <div className={showcaseStyles.section}>
                 <span className={showcaseStyles.label}>Primary</span>
                 <div className={showcaseStyles.row}>
+                    <Button intent="primary" size="xs">
+                        XSmall
+                    </Button>
                     <Button intent="primary" size="sm">
                         Small
                     </Button>
@@ -101,12 +133,18 @@ export const Showcase: Story = {
                     <Button intent="primary" size="lg">
                         Large
                     </Button>
+                    <Button intent="primary" size="xl">
+                        XLarge
+                    </Button>
                 </div>
             </div>
 
             <div className={showcaseStyles.section}>
                 <span className={showcaseStyles.label}>Secondary</span>
                 <div className={showcaseStyles.row}>
+                    <Button intent="secondary" size="xs">
+                        XSmall
+                    </Button>
                     <Button intent="secondary" size="sm">
                         Small
                     </Button>
@@ -116,12 +154,18 @@ export const Showcase: Story = {
                     <Button intent="secondary" size="lg">
                         Large
                     </Button>
+                    <Button intent="secondary" size="xl">
+                        XLarge
+                    </Button>
                 </div>
             </div>
 
             <div className={showcaseStyles.section}>
                 <span className={showcaseStyles.label}>Plain</span>
                 <div className={showcaseStyles.row}>
+                    <Button intent="plain" size="xs">
+                        XSmall
+                    </Button>
                     <Button intent="plain" size="sm">
                         Small
                     </Button>
@@ -130,6 +174,9 @@ export const Showcase: Story = {
                     </Button>
                     <Button intent="plain" size="lg">
                         Large
+                    </Button>
+                    <Button intent="plain" size="xl">
+                        XLarge
                     </Button>
                 </div>
             </div>
