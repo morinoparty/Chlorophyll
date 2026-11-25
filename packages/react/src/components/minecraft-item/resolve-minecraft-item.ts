@@ -11,6 +11,8 @@ interface MinecraftModelFace {
     texture: string;
     /** テクスチャ上の切り出し範囲(px, 0-16)。省略時は要素の座標から機械的に決まる */
     uv?: [number, number, number, number];
+    /** 色付け(tint)の番号。アイテム定義の tints[tintindex] の色をこの面に掛ける。省略時は色付けしない */
+    tintindex?: number;
 }
 
 interface MinecraftModelElement {
@@ -45,6 +47,8 @@ interface MinecraftModel {
 interface ResolvedFace {
     texture: string;
     uv: [number, number, number, number];
+    /** 色付けの番号。省略時は色付けしない */
+    tintindex?: number;
 }
 
 // モデルを構成する直方体 1 つ分。from/to は 0-16 のブロックローカル座標のまま保持する
@@ -62,6 +66,8 @@ type ResolvedMinecraftItem =
           elements: ResolvedElement[];
           /** GUI 表示時にブロックを回す角度(度)。定義しているモデルがなければ block/block.json の既定値 */
           rotation: [number, number, number];
+          /** アイテム定義の tints。面の tintindex で引く。アイテム定義が無い・tints が無い場合は空 */
+          tints: MinecraftTintSource[];
       };
 
 // GUI 表示時の回転(display.gui.rotation)がどのモデルにも見つからない場合のフォールバック値。
@@ -74,10 +80,26 @@ const MAX_PARENT_HOPS = 8;
 // items/<id>.json(アイテム定義)の item model ツリーのノード。1.21.4 以降はアイテムの見た目を
 // models/item/<id>.json ではなくこのツリーで選ぶ(ブロックのアイテムは models/item/ を持たない)。
 // 代表のモデルを 1 つ選ぶのに必要なフィールドだけを持つ
+// アイテム定義の色付け(tint)の指定。1.21.4 以降は、草ブロックや葉などの色をバイオームではなくここで決める。
+// type ごとにフィールドが異なるため、既定の見た目を決めるのに使うものだけを持つ
+interface MinecraftTintSource {
+    /** "minecraft:constant" / "minecraft:grass" / "minecraft:dye" など */
+    type: string;
+    /** minecraft:constant の色(ARGB の符号付き整数) */
+    value?: number;
+    /** minecraft:grass の気温と降水量。草の colormap の位置を決める */
+    temperature?: number;
+    downfall?: number;
+    /** minecraft:dye / potion / firework / map_color などの、データが無いときの色(ARGB の符号付き整数) */
+    default?: number;
+}
+
 interface MinecraftItemModelNode {
     type: string;
     /** minecraft:model のモデル参照(例: "minecraft:block/stone") */
     model?: string;
+    /** minecraft:model の色付け。面の tintindex 番目の色になる */
+    tints?: MinecraftTintSource[];
     /** minecraft:condition の分岐 */
     on_true?: MinecraftItemModelNode;
     on_false?: MinecraftItemModelNode;
@@ -184,6 +206,10 @@ const resolveElements = (
             faces[face] = {
                 texture: toTexturePath(rawTexture),
                 uv: faceDef.uv ?? defaultUv(face, element.from, element.to),
+                // tintindex は数値のときだけ引き継ぐ(-1 などの負の値は Minecraft でも色付けしない)
+                ...(typeof faceDef.tintindex === "number" && faceDef.tintindex >= 0
+                    ? { tintindex: faceDef.tintindex }
+                    : {}),
             };
         }
 
@@ -248,42 +274,59 @@ const MAX_ITEM_MODEL_DEPTH = 8;
 // 条件分岐は、何も持っていない・使っていない既定の状態にあたる側を選ぶ
 // (condition は on_false、select / range_dispatch は fallback、なければ先頭)。
 // composite は先頭のモデルを、special(チェストやベッドなど独自描画のもの)は base を使う
-const pickItemModelPath = (node: MinecraftItemModelNode | undefined, depth = 0): string | null => {
+// 選んだモデル参照と、そのモデルに付いている色付け(minecraft:model 以外は色付けを持たない)
+interface PickedItemModel {
+    path: string;
+    tints: MinecraftTintSource[];
+}
+
+const pickItemModel = (node: MinecraftItemModelNode | undefined, depth = 0): PickedItemModel | null => {
     if (!node || depth > MAX_ITEM_MODEL_DEPTH) return null;
 
     switch (stripNamespace(node.type)) {
         case "model":
-            return node.model ? stripNamespace(node.model) : null;
+            return node.model
+                ? { path: stripNamespace(node.model), tints: Array.isArray(node.tints) ? node.tints : [] }
+                : null;
         case "condition":
-            return pickItemModelPath(node.on_false ?? node.on_true, depth + 1);
+            return pickItemModel(node.on_false ?? node.on_true, depth + 1);
         case "select":
-            return pickItemModelPath(node.fallback ?? node.cases?.[0]?.model, depth + 1);
+            return pickItemModel(node.fallback ?? node.cases?.[0]?.model, depth + 1);
         case "range_dispatch":
-            return pickItemModelPath(node.fallback ?? node.entries?.[0]?.model, depth + 1);
+            return pickItemModel(node.fallback ?? node.entries?.[0]?.model, depth + 1);
         case "composite":
-            return pickItemModelPath(node.models?.[0], depth + 1);
+            return pickItemModel(node.models?.[0], depth + 1);
         case "special":
-            return node.base ? stripNamespace(node.base) : null;
+            return node.base ? { path: stripNamespace(node.base), tints: [] } : null;
         default:
             // minecraft:empty や minecraft:bundle/selected_item など、モデルを持たないもの
             return null;
     }
 };
 
+const pickItemModelPath = (node: MinecraftItemModelNode | undefined): string | null =>
+    pickItemModel(node)?.path ?? null;
+
 // アイテム ID から、たどり始めるモデル参照("block/stone" / "item/diamond_sword" など)を決める。
 // アイテム定義(items/<id>.json)があればそこから選び、無ければ 1.21.4 より前の構成とみなして
 // models/item/<id>.json を直接使う
+// 1.21.4 より前のアセットにはアイテム定義が無く、色付けも分からないため、色付けしない
+const resolveItemModel = async (
+    id: string,
+    resolveItemDefinition: ((id: string) => string) | undefined,
+): Promise<PickedItemModel> => {
+    if (resolveItemDefinition) {
+        const definition = await fetchJson<MinecraftItemDefinition>(resolveItemDefinition(id));
+        const picked = pickItemModel(definition?.model);
+        if (picked) return picked;
+    }
+    return { path: `item/${id}`, tints: [] };
+};
+
 const resolveItemModelPath = async (
     id: string,
     resolveItemDefinition: ((id: string) => string) | undefined,
-): Promise<string> => {
-    if (resolveItemDefinition) {
-        const definition = await fetchJson<MinecraftItemDefinition>(resolveItemDefinition(id));
-        const path = pickItemModelPath(definition?.model);
-        if (path) return path;
-    }
-    return `item/${id}`;
-};
+): Promise<string> => (await resolveItemModel(id, resolveItemDefinition)).path;
 
 interface ResolveMinecraftItemOptions {
     /** モデル JSON のファイルパス(例: "item/stone.json" / "block/stone.json")から実際の URL を解決する */
@@ -299,12 +342,12 @@ const resolveMinecraftItem = async (
     id: string,
     { resolveModel, resolveItemDefinition }: ResolveMinecraftItemOptions,
 ): Promise<ResolvedMinecraftItem | null> => {
-    const modelPath = await resolveItemModelPath(id, resolveItemDefinition);
+    const { path: modelPath, tints } = await resolveItemModel(id, resolveItemDefinition);
 
     // アイテム定義がブロックモデルを直接指している(ブロックのアイテム)
     if (modelPath.startsWith("block/")) {
         const block = await resolveBlockModel(modelPath, resolveModel);
-        return block ? { type: "block", ...block } : null;
+        return block ? { type: "block", ...block, tints } : null;
     }
 
     const itemModel = await fetchModel(resolveModel(`${modelPath}.json`));
@@ -322,7 +365,7 @@ const resolveMinecraftItem = async (
     const block = await resolveBlockModel(itemParent, resolveModel);
     if (!block) return null;
 
-    return { type: "block", ...block };
+    return { type: "block", ...block, tints };
 };
 
 export type {
@@ -331,6 +374,7 @@ export type {
     MinecraftItemModelNode,
     MinecraftModel,
     MinecraftModelTransform,
+    MinecraftTintSource,
     ResolvedElement,
     ResolvedFace,
     ResolvedMinecraftItem,

@@ -5,6 +5,7 @@ import { minecraftItem } from "styled-system/recipes";
 import { useMinecraftConfig } from "../minecraft-provider";
 import { MinecraftBlockModel } from "./minecraft-block-model";
 import { type ResolvedMinecraftItem, resolveMinecraftItem } from "./resolve-minecraft-item";
+import { resolveTintColors } from "./resolve-tint";
 
 interface MinecraftItemProps extends HTMLArkProps<"div"> {
     /** 表示するアイテムの ID(例: "stone" / "diamond_sword")。Minecraft のアイテム ID とそのまま対応する */
@@ -53,28 +54,38 @@ const MinecraftItem = ({
     // (Rules of Hooks)、resolveModel/resolveTexture の有無チェックはすべての hooks の後に行う
     const styles = minecraftItem({ size });
     const [resolved, setResolved] = useState<ResolvedMinecraftItem | null>(null);
+    // 面の tintindex で引く色(0xRRGGBB)。色付けを定義していないアイテムは空のまま
+    const [tintColors, setTintColors] = useState<(number | null)[]>([]);
 
     useEffect(() => {
         // resolveModel が無い場合は、この後の throw でレンダリングが中断されるため
         // ここでは何もせず早期リターンする
-        if (!resolveModel) {
+        if (!resolveModel || !resolveTexture) {
             return;
         }
 
         // id が変わっている間に前回の解決結果が残らないよう、まず一旦クリアする
         setResolved(null);
+        setTintColors([]);
         let cancelled = false;
 
-        resolveMinecraftItem(id, { resolveModel, resolveItemDefinition }).then((result) => {
-            if (!cancelled) {
-                setResolved(result);
-            }
-        });
+        resolveMinecraftItem(id, { resolveModel, resolveItemDefinition })
+            .then(async (result) => {
+                // 色を決めてから描画し、色の無い状態が一瞬見えないようにする
+                const colors = result?.type === "block" ? await resolveTintColors(result.tints, resolveTexture) : [];
+                return { result, colors };
+            })
+            .then(({ result, colors }) => {
+                if (!cancelled) {
+                    setTintColors(colors);
+                    setResolved(result);
+                }
+            });
 
         return () => {
             cancelled = true;
         };
-    }, [id, resolveModel, resolveItemDefinition]);
+    }, [id, resolveModel, resolveTexture, resolveItemDefinition]);
 
     if (!resolveModel || !resolveTexture) {
         throw new Error(
@@ -100,6 +111,7 @@ const MinecraftItem = ({
             <MinecraftBlockModel
                 elements={resolved.elements}
                 rotation={resolved.rotation}
+                tintColors={tintColors}
                 resolveTexture={resolveTexture}
                 pixelSize={CANVAS_PIXEL_SIZE[size ?? "md"]}
             />
