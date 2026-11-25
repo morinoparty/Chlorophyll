@@ -122,7 +122,7 @@ export const Diary: Story = {
     ),
 };
 
-// 本文を枠付きのカードにする outline variant
+// 本文を枠線なしの淡い面に載せる outline variant
 export const Outline: Story = {
     render: () => (
         <div style={{ width: PANEL_WIDTH }}>

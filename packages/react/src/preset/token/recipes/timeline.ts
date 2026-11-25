@@ -18,7 +18,7 @@ export const timeline = defineSlotRecipe({
             // 既定の文字色を colorPalette に追従させる
             // (colorPalette.fg の計測値: 白 Lc 82.1 / colorPalette.bg(mori) Lc 73.8)
             color: "colorPalette.fg",
-            // Indicator を下にずらす量。outline でカードの 1 行目に点を揃えるときだけ compoundVariants で設定する
+            // Indicator を下にずらす量。outline で面の 1 行目に点を揃えるときだけ compoundVariants で設定する
             "--timeline-indicator-offset": "0px",
         },
         item: {
@@ -138,15 +138,15 @@ export const timeline = defineSlotRecipe({
         variant: {
             // 枠を持たず、本文をページの地にそのまま並べる控えめな表示
             subtle: {},
-            // 本文を白いパネルの枠付きカードにする。ページの地色(colorPalette.bg)の上で 1 件ずつ区切って見せたいとき向け。
-            // 枠線は情報を持たない装飾的な輪郭なので最も淡い border.subtle(gray.4)を使い、地色との差は bg.panel の白で出す
-            // (border.subtle の計測値: 白 Lc 11.1 / colorPalette.bg(mori) Lc 0.0。非テキストの目安 Lc 45 は適用しない)
+            // 本文を地色より一段明るい面に載せ、1 件ずつ区切って見せる。
+            // 白いパネル + 枠線だとページの地色(colorPalette.bg)の上で箱っぽく強調されすぎるため、
+            // 枠線を付けず、bg より一段明るい surface.subtle(step2)の低コントラストな面で区切る。
+            // API 互換のため variant 名は outline のまま据え置く
+            // (面の上の文字の計測値: colorPalette.fg Lc 78.8 / colorPalette.fg.muted Lc 76.6(mori)。
+            // 面と地色の差は Lc 0.0 で、区切りは輪郭ではなく面の明度差で淡く見せる)
             outline: {
                 content: {
-                    bg: "bg.panel",
-                    borderWidth: "1px",
-                    borderStyle: "solid",
-                    borderColor: "border.subtle",
+                    bg: "colorPalette.surface.subtle",
                     borderRadius: "panel",
                 },
             },
@@ -185,8 +185,8 @@ export const timeline = defineSlotRecipe({
         },
     },
     compoundVariants: [
-        // outline のカードは size に応じて内側の余白を取る。
-        // カードの上余白ぶん Indicator を下げ、点の中心をカードの 1 行目(時刻)に揃える
+        // outline の面は size に応じて内側の余白を取る。
+        // 面の上余白ぶん Indicator を下げ、点の中心を面の 1 行目(時刻)に揃える
         {
             variant: "outline",
             size: "sm",

@@ -29,7 +29,7 @@ interface TimelineRootProps extends HTMLArkProps<"ol"> {
     /**
      * 本文の見せ方。既定は subtle
      * - subtle: 本文をページの地にそのまま並べる
-     * - outline: 本文を白いパネルの枠付きカードにする
+     * - outline: 本文を地色より一段明るい枠線なしの面に載せる
      */
     variant?: TimelineVariant;
 }
@@ -90,7 +90,7 @@ const TimelineConnector = ({ className, ...props }: TimelineConnectorProps) => {
 
 type TimelineContentProps = HTMLArkProps<"div">;
 
-// 本文領域。Time / Title / Description / Meta を子に置く。outline では枠付きカードになる
+// 本文領域。Time / Title / Description / Meta を子に置く。outline では枠線なしの淡い面に載る
 const TimelineContent = ({ className, ...props }: TimelineContentProps) => {
     const styles = useTimelineStyles("Content");
     return <ark.div data-scope="timeline" data-part="content" {...props} className={cx(styles.content, className)} />;
