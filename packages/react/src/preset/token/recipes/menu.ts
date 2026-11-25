@@ -3,10 +3,11 @@ import { focusRing } from "./shared/focus-ring";
 
 export const menu = defineSlotRecipe({
     className: "menu",
-    jsx: ["Menu", "MenuItem"],
+    jsx: ["Menu", "MenuItem", "MenuCheckboxItem", "MenuRadioItem"],
     description: "The menu component",
     // zag/Ark の anatomy に合わせたスロット名
-    slots: ["trigger", "positioner", "content", "item", "itemGroup", "itemGroupLabel", "separator"],
+    // CheckboxItem / RadioItem は item の見た目を共有し、選択状態の印だけ itemIndicator で描く
+    slots: ["trigger", "positioner", "content", "item", "itemGroup", "itemGroupLabel", "itemIndicator", "separator"],
     base: {
         trigger: {
             // asChild で任意の要素(IconButton など)に差し替えられる想定の最低限のフォールバック見た目
@@ -97,6 +98,27 @@ export const menu = defineSlotRecipe({
             letterSpacing: "wide",
             textTransform: "uppercase",
             color: "fg.muted",
+        },
+        itemIndicator: {
+            // CheckboxItem / RadioItem の選択状態を示すチェックの印。項目の先頭に置く
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: "0",
+            width: "4",
+            height: "4",
+            // アイコンは意味のある非テキスト要素。colorPalette.fg は白(bg.panel)の上で Lc 82.1(mori)で、目安 Lc 45 を満たす
+            color: "colorPalette.fg",
+            // 未選択のときは幅を確保したまま見えなくし、選択を切り替えてもラベルの位置がずれないようにする。
+            // (Ark が付ける hidden 属性はコンポーネント側で外している。preflight の [hidden] は !important の display: none で、
+            // レシピからは上書きできないため。visibility: hidden なので支援技術からも隠れ、選択状態は aria-checked で伝わる)
+            "&[data-state=unchecked]": {
+                visibility: "hidden",
+            },
+            "& svg": {
+                width: "full",
+                height: "full",
+            },
         },
         separator: {
             height: "1px",

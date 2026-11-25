@@ -116,12 +116,16 @@ export {
 export { List, ListItem, type ListItemProps, type ListProps, type ListSize } from "./list";
 export {
     Menu,
+    type MenuCheckboxItemProps,
     type MenuContentProps,
     type MenuItemGroupLabelProps,
     type MenuItemGroupProps,
+    type MenuItemIndicatorProps,
     type MenuItemProps,
     type MenuItemVariant,
     type MenuPositionerProps,
+    type MenuRadioItemGroupProps,
+    type MenuRadioItemProps,
     type MenuRootProps,
     type MenuSeparatorProps,
     type MenuTriggerProps,
