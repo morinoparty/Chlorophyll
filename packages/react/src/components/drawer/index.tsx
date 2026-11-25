@@ -6,8 +6,8 @@ import { createContext, useContext } from "react";
 import { cx } from "styled-system/css";
 import { drawer } from "styled-system/recipes";
 
-// アンカー位置とスライド方向。start = 画面左、end = 画面右
-type DrawerPlacement = "start" | "end";
+// アンカー位置とスライド方向。start = 画面左、end = 画面右、bottom = 画面下(ボトムシート)、top = 画面上
+type DrawerPlacement = "start" | "end" | "bottom" | "top";
 
 // Portal は DOM の描画先を変えるだけで React ツリー(Context)は分断されないが、
 // Positioner/Content は独立した子コンポーネントとして呼び出されるため、
@@ -18,7 +18,7 @@ const DrawerPlacementContext = createContext<DrawerPlacement>("end");
 const styles = drawer();
 
 type DrawerRootProps = ComponentProps<typeof ArkDialog.Root> & {
-    /** スライド方向とアンカー位置。start(画面左) / end(画面右)。既定は end */
+    /** スライド方向とアンカー位置。start(画面左) / end(画面右) / bottom(画面下) / top(画面上)。既定は end */
     placement?: DrawerPlacement;
 };
 
@@ -40,7 +40,7 @@ const DrawerTrigger = ({ className, ...props }: DrawerTriggerProps) => {
 
 type DrawerBackdropProps = ComponentProps<typeof ArkDialog.Backdrop>;
 
-// 画面全体を覆う半透明の暗転レイヤー。開いたときにフェードインする
+// 画面全体を覆う半透明の暗転レイヤー。開くときにフェードインし、閉じるときにフェードアウトする
 const DrawerBackdrop = ({ className, ...props }: DrawerBackdropProps) => {
     return <ArkDialog.Backdrop {...props} className={cx(styles.backdrop, className)} />;
 };
@@ -56,11 +56,18 @@ const DrawerPositioner = ({ className, ...props }: DrawerPositionerProps) => {
 
 type DrawerContentProps = ComponentProps<typeof ArkDialog.Content>;
 
-// 画面端からスライドインしてくるパネル本体
+// 画面端からスライドインしてくるパネル本体。閉じるときは同じ画面端へスライドアウトする
 const DrawerContent = ({ className, ...props }: DrawerContentProps) => {
     const placement = useContext(DrawerPlacementContext);
     const contentClass = drawer({ placement }).content;
     return <ArkDialog.Content {...props} className={cx(contentClass, className)} />;
+};
+
+type DrawerHandleProps = ComponentProps<"div">;
+
+// bottom / top のシート上端に置くつまみ。ドラッグ操作は持たない見た目だけのパーツなので、支援技術からは隠す
+const DrawerHandle = ({ className, ...props }: DrawerHandleProps) => {
+    return <div aria-hidden="true" {...props} className={cx(styles.handle, className)} />;
 };
 
 type DrawerCloseTriggerProps = ComponentProps<typeof ArkDialog.CloseTrigger>;
@@ -81,13 +88,14 @@ const DrawerTitle = ({ className, ...props }: DrawerTitleProps) => {
     return <ArkDialog.Title {...props} className={cx(styles.title, className)} />;
 };
 
-// Compound Component パターン: Drawer.Root / Trigger / Backdrop / Positioner / Content / CloseTrigger / Title
+// Compound Component パターン: Drawer.Root / Trigger / Backdrop / Positioner / Content / Handle / CloseTrigger / Title
 const Drawer = Object.assign(DrawerRoot, {
     Root: DrawerRoot,
     Trigger: DrawerTrigger,
     Backdrop: DrawerBackdrop,
     Positioner: DrawerPositioner,
     Content: DrawerContent,
+    Handle: DrawerHandle,
     CloseTrigger: DrawerCloseTrigger,
     Title: DrawerTitle,
 });
@@ -96,6 +104,7 @@ export type {
     DrawerBackdropProps,
     DrawerCloseTriggerProps,
     DrawerContentProps,
+    DrawerHandleProps,
     DrawerPlacement,
     DrawerPositionerProps,
     DrawerRootProps,

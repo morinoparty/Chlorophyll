@@ -73,6 +73,11 @@ export const createPreset = (option: PresetOptions) => {
                         from: { opacity: "0" },
                         to: { opacity: "1" },
                     },
+                    // Drawer: 閉じるときに暗幕がフェードアウトする。prefers-reduced-motion ではパネルもこれで消える
+                    drawerFadeOut: {
+                        from: { opacity: "1" },
+                        to: { opacity: "0" },
+                    },
                     // Drawer: パネルが画面左端から滑り込む(placement="start")
                     drawerSlideInFromStart: {
                         from: { transform: "translateX(-100%)" },
@@ -82,6 +87,33 @@ export const createPreset = (option: PresetOptions) => {
                     drawerSlideInFromEnd: {
                         from: { transform: "translateX(100%)" },
                         to: { transform: "translateX(0)" },
+                    },
+                    // Drawer: パネルが画面下端から滑り込む(placement="bottom")
+                    drawerSlideInFromBottom: {
+                        from: { transform: "translateY(100%)" },
+                        to: { transform: "translateY(0)" },
+                    },
+                    // Drawer: パネルが画面上端から滑り込む(placement="top")
+                    drawerSlideInFromTop: {
+                        from: { transform: "translateY(-100%)" },
+                        to: { transform: "translateY(0)" },
+                    },
+                    // Drawer: 退場時に各 placement の画面端へ滑り出る。この完了(animationend)を Ark の Presence が待ってから隠す
+                    drawerSlideOutToStart: {
+                        from: { transform: "translateX(0)" },
+                        to: { transform: "translateX(-100%)" },
+                    },
+                    drawerSlideOutToEnd: {
+                        from: { transform: "translateX(0)" },
+                        to: { transform: "translateX(100%)" },
+                    },
+                    drawerSlideOutToBottom: {
+                        from: { transform: "translateY(0)" },
+                        to: { transform: "translateY(100%)" },
+                    },
+                    drawerSlideOutToTop: {
+                        from: { transform: "translateY(0)" },
+                        to: { transform: "translateY(-100%)" },
                     },
                     // ModalDialog: 暗幕とダイアログの入場フェード
                     modalDialogFadeIn: {
