@@ -7,14 +7,16 @@ import {
     GuideCard,
     List,
     NewsCard,
+    PlayerAvatar,
+    PlayerAvatarGroup,
     PlayerPhraseCard,
     SegmentGroup,
     Separator,
     Stat,
     Switch,
     Tabs,
+    Timeline,
 } from "@morinoparty/chlorophyll-react";
-import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { sva } from "styled-system/css";
 
@@ -23,26 +25,31 @@ const PLAYERS = {
     chocolatt: { playerId: "389b1a68-f647-4dd0-a421-61b6c22fdebe", playerName: "Chocolatt" },
     nikomaru: { playerId: "f8b761ec-4a54-48eb-a040-c5604042bcc9", playerName: "_NIKOMARU" },
     rinKai: { playerId: "6371dca0-7136-4c43-a8a5-745c95cf8aa2", playerName: "rin_kai" },
+    kina: { playerId: "e31f4f1a-9c82-4f8b-b2af-8e1152719f73", playerName: "kina1120" },
+    tutu: { playerId: "610fa9d7-4607-4d47-83fd-360f76192723", playerName: "tututututu201" },
 } as const;
+
+const ONLINE_PLAYERS = Object.values(PLAYERS).map((player) => ({ id: player.playerId, name: player.playerName }));
+
+// MoriPath のホームにある「きょうのもりぱダイアリー」を模した出来事
+const DIARY = [
+    { dateTime: "2026-07-15T05:00", time: "05:00", title: "穏やかな時間が流れていました", player: PLAYERS.kina },
+    { dateTime: "2026-07-15T09:30", time: "09:30", title: "_NIKOMARU さんが畑を広げました", player: PLAYERS.nikomaru },
+    {
+        dateTime: "2026-07-15T13:15",
+        time: "13:15",
+        title: "Chocolatt さんが土地を保護しました",
+        player: PLAYERS.chocolatt,
+    },
+];
 
 // PlayerPhraseCard のフレーズを SSR とクライアントで一致させるための固定基準時刻
 const PHRASE_REFERENCE_TIME = new Date("2026-07-15T00:00:00+09:00").getTime();
 
 const wallStyles = sva({
-    slots: [
-        "viewport",
-        "wall",
-        "column",
-        "card",
-        "cardInverted",
-        "cardTitle",
-        "cardTitleInverted",
-        "cardLead",
-        "row",
-        "stats",
-    ],
+    slots: ["viewport", "wall", "column", "card", "cardTitle", "cardLead", "row", "online"],
     base: {
-        // 傾けた壁を右側の領域に収め、はみ出た分は切り落とす
+        // 傾けた壁を右側の領域に収め、はみ出た分は切り落とす。
         // モバイルでは説明の下に高さ固定の帯として置き、画面の左右端まで広げる
         viewport: {
             position: "relative",
@@ -59,21 +66,21 @@ const wallStyles = sva({
             left: "[-1rem]",
             display: "flex",
             alignItems: "flex-start",
-            gap: "4",
+            gap: "5",
             // モバイルでは一回り縮めて、2 列ほどが見えるようにする
             transform: { base: "[rotate(-8deg) scale(0.72)]", md: "[rotate(-8deg)]" },
             transformOrigin: "top left",
         },
+        // 3 列。2 列目は 1 列目より少し下げて、列の頭がそろわないようにする
         column: {
             display: "flex",
             flexDirection: "column",
-            gap: "4",
-            width: "[18.75rem]",
+            gap: "5",
+            width: "[22rem]",
             flexShrink: "0",
-            "&:nth-child(1)": { width: "[22.5rem]", marginTop: "[6rem]" },
-            "&:nth-child(2)": { marginTop: "[1.5rem]" },
-            "&:nth-child(3)": { marginTop: "[2.5rem]" },
-            "&:nth-child(4)": { marginTop: "[-1rem]" },
+            "&:nth-child(1)": { width: "[24rem]", marginTop: "[6rem]" },
+            "&:nth-child(2)": { marginTop: "[9rem]" },
+            "&:nth-child(3)": { marginTop: "[11rem]" },
         },
         card: {
             display: "flex",
@@ -83,14 +90,10 @@ const wallStyles = sva({
             borderRadius: "l3",
             bg: "colorPalette.surface.subtle",
         },
-        // 濃いブランド色で塗ったカード。壁の中で目を留める場所にする
-        cardInverted: {
-            bg: "colorPalette.solid",
-        },
-        cardTitleInverted: {
+        cardTitle: {
             fontSize: "md",
             fontWeight: "bold",
-            color: "colorPalette.contrast",
+            color: "colorPalette.fg",
         },
         cardLead: {
             marginTop: "-2",
@@ -103,15 +106,20 @@ const wallStyles = sva({
             alignItems: "center",
             gap: "2",
         },
-        cardTitle: {
-            fontSize: "md",
+        // 「n 人がプレイ中」の帯。MoriPath のホームの最上部にあるもの
+        online: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "3",
+            paddingY: "2.5",
+            paddingLeft: "4",
+            paddingRight: "2.5",
+            borderRadius: "full",
+            bg: "colorPalette.surface.subtle",
+            fontSize: "sm",
             fontWeight: "bold",
             color: "colorPalette.fg",
-        },
-        stats: {
-            display: "grid",
-            gridTemplateColumns: "[repeat(2, minmax(0, 1fr))]",
-            gap: "3",
         },
     },
 });
@@ -127,13 +135,26 @@ function DemoCard({ styles, title, children }: { styles: WallStyles; title?: str
     );
 }
 
+// スイッチ 1 つ分。設定タブの中で使い回す
+function SwitchRow({ label, defaultChecked }: { label: string; defaultChecked?: boolean }) {
+    return (
+        <Switch.Root defaultChecked={defaultChecked}>
+            <Switch.Control>
+                <Switch.Thumb />
+            </Switch.Control>
+            <Switch.Label>{label}</Switch.Label>
+            <Switch.HiddenInput />
+        </Switch.Root>
+    );
+}
+
 // 実際のコンポーネントで組んだ画面例を、傾けた壁として並べる。
-// 装飾なので操作の対象からは外し、支援技術にも読ませない
+// 入力や切り替えはその場で試せるようにし、別のページへは移動させない
 export function ExampleWall() {
     const styles = wallStyles();
 
     return (
-        <div className={styles.viewport} aria-hidden="true" inert>
+        <section className={styles.viewport} aria-label="コンポーネントの例">
             <div className={styles.wall}>
                 <div className={styles.column}>
                     <NewsCard.Root>
@@ -149,27 +170,23 @@ export function ExampleWall() {
                     </NewsCard.Root>
 
                     <DemoCard styles={styles}>
-                        <GuideCard.Root asChild>
-                            <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }} tabIndex={-1}>
-                                <GuideCard.Image src="/castle-width.png" alt="" />
-                                <GuideCard.Content>
-                                    <GuideCard.Title>はじめに</GuideCard.Title>
-                                    <GuideCard.Description>
-                                        インストールからセットアップまでの手引き。
-                                    </GuideCard.Description>
-                                </GuideCard.Content>
-                            </Link>
+                        <GuideCard.Root>
+                            <GuideCard.Image src="/castle-width.png" alt="" />
+                            <GuideCard.Content>
+                                <GuideCard.Title>はじめに</GuideCard.Title>
+                                <GuideCard.Description>
+                                    インストールからセットアップまでの手引き。
+                                </GuideCard.Description>
+                            </GuideCard.Content>
                         </GuideCard.Root>
-                        <GuideCard.Root asChild>
-                            <Link to="/docs/$" params={{ _splat: "theme" }} tabIndex={-1}>
-                                <GuideCard.Image src="/castle-tall.png" alt="" />
-                                <GuideCard.Content>
-                                    <GuideCard.Title>トークン</GuideCard.Title>
-                                    <GuideCard.Description>
-                                        色・余白・タイポグラフィの土台となるトークン一覧。
-                                    </GuideCard.Description>
-                                </GuideCard.Content>
-                            </Link>
+                        <GuideCard.Root>
+                            <GuideCard.Image src="/castle-tall.png" alt="" />
+                            <GuideCard.Content>
+                                <GuideCard.Title>トークン</GuideCard.Title>
+                                <GuideCard.Description>
+                                    色・余白・タイポグラフィの土台となるトークン一覧。
+                                </GuideCard.Description>
+                            </GuideCard.Content>
                         </GuideCard.Root>
                     </DemoCard>
 
@@ -192,21 +209,18 @@ export function ExampleWall() {
                 </div>
 
                 <div className={styles.column}>
-                    <DemoCard styles={styles} title="通知">
-                        {[
-                            { label: "新しいお知らせ", checked: true },
-                            { label: "イベントの開始", checked: true },
-                            { label: "フレンドのログイン", checked: false },
-                        ].map((item) => (
-                            <Switch.Root key={item.label} defaultChecked={item.checked}>
-                                <Switch.Control>
-                                    <Switch.Thumb />
-                                </Switch.Control>
-                                <Switch.Label>{item.label}</Switch.Label>
-                                <Switch.HiddenInput />
-                            </Switch.Root>
-                        ))}
-                    </DemoCard>
+                    <div className={styles.online}>
+                        <Badge status="success" dot variant="subtle">
+                            12 人がプレイ中
+                        </Badge>
+                        <PlayerAvatarGroup
+                            players={ONLINE_PLAYERS}
+                            max={4}
+                            size="sm"
+                            spacing="tight"
+                            aria-label="プレイ中のプレイヤー"
+                        />
+                    </div>
 
                     <DemoCard styles={styles} title="ログイン">
                         <Field.Root>
@@ -228,7 +242,7 @@ export function ExampleWall() {
                     </DemoCard>
 
                     <DemoCard styles={styles} title="メンバー">
-                        {Object.values(PLAYERS).map((player) => (
+                        {[PLAYERS.chocolatt, PLAYERS.nikomaru, PLAYERS.rinKai].map((player) => (
                             <PlayerPhraseCard
                                 key={player.playerId}
                                 playerId={player.playerId}
@@ -242,87 +256,6 @@ export function ExampleWall() {
                                 </PlayerPhraseCard.Body>
                             </PlayerPhraseCard>
                         ))}
-                    </DemoCard>
-                </div>
-
-                <div className={styles.column}>
-                    <DemoCard styles={styles} title="設定">
-                        <Tabs.Root size="sm" defaultValue="general">
-                            <Tabs.List>
-                                <Tabs.Trigger value="general">概要</Tabs.Trigger>
-                                <Tabs.Trigger value="notify">通知</Tabs.Trigger>
-                                <Tabs.Trigger value="account">アカウント</Tabs.Trigger>
-                                <Tabs.Indicator />
-                            </Tabs.List>
-                        </Tabs.Root>
-                        <Field.Root>
-                            <Field.Input defaultValue="Chocolatt" aria-label="ニックネーム" />
-                        </Field.Root>
-                        <Switch.Root defaultChecked>
-                            <Switch.Control>
-                                <Switch.Thumb />
-                            </Switch.Control>
-                            <Switch.Label>通知を受け取る</Switch.Label>
-                            <Switch.HiddenInput />
-                        </Switch.Root>
-                        <SegmentGroup.Root defaultValue="day">
-                            <SegmentGroup.Label>表示期間</SegmentGroup.Label>
-                            <SegmentGroup.Control>
-                                <SegmentGroup.Indicator />
-                                {[
-                                    { value: "day", label: "日" },
-                                    { value: "week", label: "週" },
-                                    { value: "month", label: "月" },
-                                ].map((item) => (
-                                    <SegmentGroup.Item key={item.value} value={item.value}>
-                                        <SegmentGroup.ItemText>{item.label}</SegmentGroup.ItemText>
-                                        <SegmentGroup.ItemControl />
-                                        <SegmentGroup.ItemHiddenInput />
-                                    </SegmentGroup.Item>
-                                ))}
-                            </SegmentGroup.Control>
-                        </SegmentGroup.Root>
-                    </DemoCard>
-
-                    <DemoCard styles={styles} title="今週のサーバー">
-                        <div className={styles.stats}>
-                            <Stat.Root>
-                                <Stat.Label>ログイン</Stat.Label>
-                                <Stat.Value>
-                                    128<Stat.Unit>人</Stat.Unit>
-                                </Stat.Value>
-                            </Stat.Root>
-                            <Stat.Root>
-                                <Stat.Label>建築ブロック</Stat.Label>
-                                <Stat.Value>42,310</Stat.Value>
-                            </Stat.Root>
-                        </div>
-                    </DemoCard>
-
-                    <DemoCard styles={styles} title="表示">
-                        <Tabs.Root variant="enclosed" defaultValue="list">
-                            <Tabs.List>
-                                <Tabs.Trigger value="list">リスト</Tabs.Trigger>
-                                <Tabs.Trigger value="map">マップ</Tabs.Trigger>
-                                <Tabs.Trigger value="calendar">カレンダー</Tabs.Trigger>
-                                <Tabs.Indicator />
-                            </Tabs.List>
-                        </Tabs.Root>
-                    </DemoCard>
-
-                    <DemoCard styles={styles} title="ステータス">
-                        <div className={styles.row}>
-                            <Badge status="success" dot>
-                                オンライン
-                            </Badge>
-                            <Badge variant="solid">建築中</Badge>
-                            <Badge status="info" variant="subtle">
-                                新着
-                            </Badge>
-                            <Badge status="warning" variant="surface">
-                                メンテ予定
-                            </Badge>
-                        </div>
                     </DemoCard>
                 </div>
 
@@ -344,16 +277,77 @@ export function ExampleWall() {
                         </div>
                     </DemoCard>
 
-                    <div className={`${styles.card} ${styles.cardInverted}`}>
-                        <span className={styles.cardTitleInverted}>イベントを作成</span>
-                        <div className={styles.row}>
-                            <Button intent="secondary" size="sm">
-                                作成する
-                            </Button>
-                        </div>
-                    </div>
+                    <DemoCard styles={styles}>
+                        <Stat.Group size="sm">
+                            <Stat.Root>
+                                <Stat.Label>どんぐり</Stat.Label>
+                                <Stat.Value>12,480</Stat.Value>
+                            </Stat.Root>
+                            <Stat.Root>
+                                <Stat.Label>保護ブロック</Stat.Label>
+                                <Stat.Value>1,240</Stat.Value>
+                            </Stat.Root>
+                            <Stat.Root>
+                                <Stat.Label>連続投票</Stat.Label>
+                                <Stat.Value>
+                                    7<Stat.Unit>日</Stat.Unit>
+                                </Stat.Value>
+                            </Stat.Root>
+                        </Stat.Group>
+                    </DemoCard>
+
+                    <DemoCard styles={styles} title="設定">
+                        <Tabs.Root size="sm" defaultValue="general">
+                            <Tabs.List>
+                                <Tabs.Trigger value="general">概要</Tabs.Trigger>
+                                <Tabs.Trigger value="notify">通知</Tabs.Trigger>
+                                <Tabs.Indicator />
+                            </Tabs.List>
+                            <Tabs.Content value="general">
+                                <SegmentGroup.Root defaultValue="day">
+                                    <SegmentGroup.Label>表示期間</SegmentGroup.Label>
+                                    <SegmentGroup.Control>
+                                        <SegmentGroup.Indicator />
+                                        {[
+                                            { value: "day", label: "日" },
+                                            { value: "week", label: "週" },
+                                            { value: "month", label: "月" },
+                                        ].map((item) => (
+                                            <SegmentGroup.Item key={item.value} value={item.value}>
+                                                <SegmentGroup.ItemText>{item.label}</SegmentGroup.ItemText>
+                                                <SegmentGroup.ItemControl />
+                                                <SegmentGroup.ItemHiddenInput />
+                                            </SegmentGroup.Item>
+                                        ))}
+                                    </SegmentGroup.Control>
+                                </SegmentGroup.Root>
+                            </Tabs.Content>
+                            <Tabs.Content value="notify">
+                                <SwitchRow label="新しいお知らせ" defaultChecked />
+                                <SwitchRow label="フレンドのログイン" />
+                            </Tabs.Content>
+                        </Tabs.Root>
+                    </DemoCard>
+
+                    <DemoCard styles={styles} title="きょうのもりぱダイアリー">
+                        <Timeline.Root size="sm">
+                            {DIARY.map((entry) => (
+                                <Timeline.Item key={entry.dateTime}>
+                                    <Timeline.Indicator />
+                                    <Timeline.Connector />
+                                    <Timeline.Content>
+                                        <Timeline.Time dateTime={entry.dateTime}>{entry.time}</Timeline.Time>
+                                        <Timeline.Title>{entry.title}</Timeline.Title>
+                                        <Timeline.Meta>
+                                            <PlayerAvatar {...entry.player} size="sm" decorative />
+                                        </Timeline.Meta>
+                                    </Timeline.Content>
+                                </Timeline.Item>
+                            ))}
+                        </Timeline.Root>
+                    </DemoCard>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
