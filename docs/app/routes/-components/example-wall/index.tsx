@@ -1,11 +1,9 @@
 import {
-    Accordion,
-    Badge,
     Button,
     Checkbox,
     Field,
     GuideCard,
-    List,
+    IconButton,
     MinecraftItem,
     MinecraftProvider,
     NewsCard,
@@ -19,8 +17,8 @@ import {
     Tabs,
     Timeline,
 } from "@morinoparty/chlorophyll-react";
-import { ChevronRight } from "lucide-react";
-import type { ReactNode } from "react";
+import { Check, ChevronRight, Minus, Plus } from "lucide-react";
+import { type ReactNode, useState } from "react";
 import { sva } from "styled-system/css";
 
 // サンプルに登場させるプレイヤー
@@ -80,6 +78,18 @@ const wallStyles = sva({
         "profileName",
         "skinCanvas",
         "shopRow",
+        "summary",
+        "summaryRow",
+        "summaryLabel",
+        "summaryValue",
+        "amount",
+        "amountValue",
+        "amountUnit",
+        "stepper",
+        "recipients",
+        "recipient",
+        "recipientName",
+        "selected",
         "shopIcon",
         "shopBody",
         "shopName",
@@ -226,6 +236,110 @@ const wallStyles = sva({
             flexDirection: "column",
             gap: "3",
         },
+        // 金額や数量の確認表。ラベルを左、値を右に寄せた行を並べる
+        summary: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "2",
+            padding: "4",
+            borderRadius: "l2",
+            bg: "bg.panel",
+        },
+        summaryRow: {
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            gap: "3",
+            fontSize: "sm",
+        },
+        summaryLabel: {
+            color: "colorPalette.fg.muted",
+        },
+        summaryValue: {
+            fontWeight: "bold",
+            color: "colorPalette.fg",
+            fontVariantNumeric: "tabular-nums",
+        },
+        // 大きく見せる数量・金額
+        amount: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "0.5",
+        },
+        amountValue: {
+            fontSize: "4xl",
+            fontWeight: "bold",
+            lineHeight: "[1]",
+            color: "colorPalette.fg",
+            fontVariantNumeric: "tabular-nums",
+        },
+        amountUnit: {
+            fontSize: "xs",
+            color: "colorPalette.fg.muted",
+        },
+        // −・数量・＋ を横に並べる
+        stepper: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "3",
+        },
+        // 送り先のプレイヤー。押すと選択中になり、顔に輪がつく
+        recipients: {
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "2",
+        },
+        recipient: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "1.5",
+            flex: "1",
+            minWidth: "0",
+            padding: "1",
+            borderRadius: "l2",
+            cursor: "pointer",
+            "& > :first-child": {
+                borderRadius: "l2",
+                outlineWidth: "2",
+                outlineStyle: "solid",
+                outlineColor: "transparent",
+                outlineOffset: "0.5",
+            },
+            _pressed: {
+                "& > :first-child": { outlineColor: "colorPalette.solid" },
+            },
+            _focusVisible: {
+                outlineStyle: "solid",
+                outlineWidth: "focus.ring",
+                outlineColor: "colorPalette.focus.ring",
+            },
+        },
+        recipientName: {
+            maxWidth: "full",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            fontSize: "xs",
+            color: "colorPalette.fg.muted",
+            "[aria-pressed=true] > &": { fontWeight: "bold", color: "colorPalette.fg" },
+        },
+        // 選択中の送り先を示す行
+        selected: {
+            display: "flex",
+            alignItems: "center",
+            gap: "2",
+            paddingY: "2",
+            paddingX: "3",
+            borderRadius: "full",
+            bg: "bg.panel",
+            fontSize: "sm",
+            fontWeight: "bold",
+            color: "colorPalette.fg",
+            "& > svg": { marginLeft: "auto", width: "4", height: "4", color: "colorPalette.solid" },
+        },
         // おみせの 1 行。アイコン・名前と出品者・値段を並べる
         shopRow: {
             display: "flex",
@@ -309,6 +423,122 @@ function SwitchRow({ label, defaultChecked }: { label: string; defaultChecked?: 
     );
 }
 
+const ACORNS = 12_480;
+const PROTECTED_BLOCKS = 1_240;
+const BLOCK_PRICE = 10;
+
+// MoriPath の /balance-claim を模したカード。+/− とチップで買う数を変えると、合計と買ったあとの値が追従する
+function BuyBlocksCard({ styles }: { styles: WallStyles }) {
+    const [count, setCount] = useState(500);
+    // どんぐりで買える上限を超えないようにする
+    const max = Math.floor(ACORNS / BLOCK_PRICE);
+    const update = (next: number) => setCount(Math.min(max, Math.max(0, next)));
+    const cost = count * BLOCK_PRICE;
+
+    return (
+        <DemoCard styles={styles} title="保護ブロックを買う">
+            <div className={styles.stepper}>
+                <IconButton variant="outline" shape="circle" aria-label="減らす" onClick={() => update(count - 100)}>
+                    <Minus />
+                </IconButton>
+                <div className={styles.amount}>
+                    <span className={styles.amountValue}>{count.toLocaleString()}</span>
+                    <span className={styles.amountUnit}>ブロック</span>
+                </div>
+                <IconButton variant="outline" shape="circle" aria-label="増やす" onClick={() => update(count + 100)}>
+                    <Plus />
+                </IconButton>
+            </div>
+            <div className={styles.row}>
+                {[100, 500, 1000].map((step) => (
+                    <Button key={step} intent="secondary" size="xs" onClick={() => update(count + step)}>
+                        +{step.toLocaleString()}
+                    </Button>
+                ))}
+                <Button intent="secondary" size="xs" onClick={() => update(max)}>
+                    最大
+                </Button>
+            </div>
+            <div className={styles.summary}>
+                <div className={styles.summaryRow}>
+                    <span className={styles.summaryLabel}>合計の目安</span>
+                    <span className={styles.summaryValue}>{cost.toLocaleString()} どんぐり</span>
+                </div>
+                <div className={styles.summaryRow}>
+                    <span className={styles.summaryLabel}>保護ブロック</span>
+                    <span className={styles.summaryValue}>
+                        {PROTECTED_BLOCKS.toLocaleString()} → {(PROTECTED_BLOCKS + count).toLocaleString()}
+                    </span>
+                </div>
+                <div className={styles.summaryRow}>
+                    <span className={styles.summaryLabel}>どんぐり</span>
+                    <span className={styles.summaryValue}>
+                        {ACORNS.toLocaleString()} → {(ACORNS - cost).toLocaleString()}
+                    </span>
+                </div>
+            </div>
+            <Button intent="primary" disabled={count === 0}>
+                {count.toLocaleString()} ブロックを買う
+            </Button>
+        </DemoCard>
+    );
+}
+
+const RECIPIENTS = [PLAYERS.chocolatt, PLAYERS.tutu, PLAYERS.kina, PLAYERS.rinKai];
+const SEND_AMOUNTS = [100, 500, 1000];
+
+// MoriPath の /wallet/send を模したカード。送り先と金額を選ぶと、ボタンと残高の表示が追従する
+function SendAcornsCard({ styles }: { styles: WallStyles }) {
+    const [recipientId, setRecipientId] = useState<string>(PLAYERS.chocolatt.playerId);
+    const [amount, setAmount] = useState("500");
+    const recipient = RECIPIENTS.find((player) => player.playerId === recipientId) ?? RECIPIENTS[0];
+    const value = Number(amount);
+
+    return (
+        <DemoCard styles={styles} title="どんぐりを送る">
+            <div className={styles.recipients}>
+                {RECIPIENTS.map((player) => (
+                    <button
+                        key={player.playerId}
+                        type="button"
+                        className={styles.recipient}
+                        aria-pressed={player.playerId === recipientId}
+                        onClick={() => setRecipientId(player.playerId)}
+                    >
+                        <PlayerAvatar {...player} size="md" decorative />
+                        <span className={styles.recipientName}>{player.playerName}</span>
+                    </button>
+                ))}
+            </div>
+            <div className={styles.selected}>
+                <PlayerAvatar {...recipient} size="sm" decorative />
+                {recipient.playerName}
+                <Check />
+            </div>
+            <SegmentGroup.Root value={amount} onValueChange={(details) => details.value && setAmount(details.value)}>
+                <SegmentGroup.Label>送る金額</SegmentGroup.Label>
+                <SegmentGroup.Control>
+                    <SegmentGroup.Indicator />
+                    {SEND_AMOUNTS.map((item) => (
+                        <SegmentGroup.Item key={item} value={String(item)}>
+                            <SegmentGroup.ItemText>{item.toLocaleString()}</SegmentGroup.ItemText>
+                            <SegmentGroup.ItemControl />
+                            <SegmentGroup.ItemHiddenInput />
+                        </SegmentGroup.Item>
+                    ))}
+                </SegmentGroup.Control>
+            </SegmentGroup.Root>
+            <div className={styles.summaryRow}>
+                <span className={styles.summaryLabel}>残高</span>
+                <span className={styles.summaryValue}>
+                    {ACORNS.toLocaleString()} → {(ACORNS - value).toLocaleString()} どんぐり
+                </span>
+            </div>
+            <Button intent="primary">{value.toLocaleString()} どんぐりを送る</Button>
+        </DemoCard>
+    );
+}
+
 // 実際のコンポーネントで組んだ画面例を、傾けた壁として並べる。
 // 入力や切り替えはその場で試せるようにし、別のページへは移動させない
 export function ExampleWall() {
@@ -353,22 +583,7 @@ export function ExampleWall() {
                             </GuideCard.Root>
                         </DemoCard>
 
-                        <DemoCard styles={styles} title="よくある質問">
-                            <Accordion.Root variant="ghost" collapsible defaultValue={["join"]}>
-                                <Accordion.Item value="join">
-                                    <Accordion.ItemTrigger>参加方法は？</Accordion.ItemTrigger>
-                                    <Accordion.ItemContent>
-                                        サーバーアドレスを追加して、そのまま接続すれば参加できます。
-                                    </Accordion.ItemContent>
-                                </Accordion.Item>
-                                <Accordion.Item value="rule">
-                                    <Accordion.ItemTrigger>ルールはある？</Accordion.ItemTrigger>
-                                    <Accordion.ItemContent>
-                                        他のプレイヤーの建築は壊さないでください。
-                                    </Accordion.ItemContent>
-                                </Accordion.Item>
-                            </Accordion.Root>
-                        </DemoCard>
+                        <BuyBlocksCard styles={styles} />
                     </div>
 
                     <div className={styles.column}>
@@ -446,33 +661,7 @@ export function ExampleWall() {
                     </div>
 
                     <div className={styles.column}>
-                        <DemoCard styles={styles} title="サーバーに参加する">
-                            <span className={styles.cardLead}>今日から建築をはじめよう。</span>
-                            <div className={styles.row}>
-                                <Badge status="success" dot>
-                                    オンライン
-                                </Badge>
-                                <Badge status="info" variant="subtle">
-                                    新着
-                                </Badge>
-                                <Badge status="warning" variant="surface">
-                                    メンテ予定
-                                </Badge>
-                            </div>
-                            <List variant="ghost" size="sm">
-                                <List.Item>サーバーに参加する</List.Item>
-                                <List.Item>ルールを確認する</List.Item>
-                                <List.Item>建築を始める</List.Item>
-                            </List>
-                            <div className={styles.row}>
-                                <Button intent="primary" size="sm">
-                                    参加する
-                                </Button>
-                                <Button intent="plain" size="sm">
-                                    あとで
-                                </Button>
-                            </div>
-                        </DemoCard>
+                        <SendAcornsCard styles={styles} />
 
                         <div className={styles.profile}>
                             <div className={styles.profileSkin}>

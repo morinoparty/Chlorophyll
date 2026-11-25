@@ -1,10 +1,8 @@
 import { Button } from "@morinoparty/chlorophyll-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { cx, sva } from "styled-system/css";
+import { sva } from "styled-system/css";
 import { ExampleWall } from "./-components/example-wall";
 import { InstallCommand } from "./-components/install-command";
-import { paletteClass, type PaletteName, type RadiusName, radiusStyle, ThemePicker } from "./-components/theme-picker";
 
 export const Route = createFileRoute("/")({
     head: () => ({
@@ -63,13 +61,9 @@ const homeStyles = sva({
 
 function Home() {
     const styles = homeStyles();
-    // テーマピッカーで選んだパレットと角丸は、このページの中だけに適用する。
-    // パレットは未選択(null)の間、ヘッダーで切り替えたサイト全体のパレットに従う
-    const [palette, setPalette] = useState<PaletteName | null>(null);
-    const [radius, setRadius] = useState<RadiusName>("md");
 
     return (
-        <div className={cx(palette && paletteClass[palette], styles.root)} style={radiusStyle(radius)}>
+        <div className={styles.root}>
             <section className={styles.hero}>
                 <div>
                     <h1 className={styles.title}>Chlorophyll</h1>
@@ -90,12 +84,6 @@ function Home() {
                     </Button>
                 </div>
                 <InstallCommand />
-                <ThemePicker
-                    palette={palette}
-                    radius={radius}
-                    onPaletteChange={setPalette}
-                    onRadiusChange={setRadius}
-                />
             </section>
 
             <ExampleWall />
