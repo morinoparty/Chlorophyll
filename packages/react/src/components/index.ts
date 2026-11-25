@@ -70,6 +70,7 @@ export {
     type DrawerBackdropProps,
     type DrawerCloseTriggerProps,
     type DrawerContentProps,
+    type DrawerHandleProps,
     type DrawerPlacement,
     type DrawerPositionerProps,
     type DrawerRootProps,
