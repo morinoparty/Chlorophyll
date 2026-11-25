@@ -255,6 +255,20 @@ export {
     type TabsVariant,
 } from "./tabs";
 export {
+    Timeline,
+    type TimelineConnectorProps,
+    type TimelineContentProps,
+    type TimelineDescriptionProps,
+    type TimelineIndicatorProps,
+    type TimelineItemProps,
+    type TimelineMetaProps,
+    type TimelineRootProps,
+    type TimelineSize,
+    type TimelineTimeProps,
+    type TimelineTitleProps,
+    type TimelineVariant,
+} from "./timeline";
+export {
     type CreateToasterProps,
     type CreateToasterReturn,
     createToaster,
