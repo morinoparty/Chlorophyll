@@ -34,6 +34,14 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
+// スタイルの一覧表示用レイアウト
+const showcaseStyles = {
+    grid: css({ display: "flex", flexDirection: "column", gap: "8", alignItems: "flex-start" }),
+    section: css({ display: "flex", flexDirection: "column", gap: "3" }),
+    label: css({ fontSize: "sm", fontWeight: "medium", color: "colorPalette.fg.muted" }),
+    row: css({ display: "flex", gap: "4", alignItems: "center", flexWrap: "wrap" }),
+};
+
 export const Primary: Story = {
     args: {
         intent: "primary",
@@ -103,14 +111,6 @@ export const Sizes: Story = {
             </div>
         </div>
     ),
-};
-
-// スタイルの一覧表示用レイアウト
-const showcaseStyles = {
-    grid: css({ display: "flex", flexDirection: "column", gap: "8", alignItems: "flex-start" }),
-    section: css({ display: "flex", flexDirection: "column", gap: "3" }),
-    label: css({ fontSize: "sm", fontWeight: "medium", color: "colorPalette.fg.muted" }),
-    row: css({ display: "flex", gap: "4", alignItems: "center", flexWrap: "wrap" }),
 };
 
 // intent × size × state を一覧で並べたショーケース

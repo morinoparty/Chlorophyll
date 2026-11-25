@@ -9,17 +9,18 @@ width / height / minHeight など、大きさを受け取るプロパティか�
 ## コントロールの高さ
 
 Button / Select の trigger / Table の見出し行が共有する高さ。横に並べたときに揃うことを保証します。
+`control.xs` / `control.xl` は現在 Button だけが使い、IconButton の sm（32px）/ lg（48px）と同じ高さに揃います。
 
 <SemanticTokenTable
     type="sizes"
     filterPrefix="control"
     showDescription={true}
     descriptions={{
-        "control.xs": "デスクトップの密な UI 向けの最小コントロール（32px）。タッチターゲットを下回る",
+        "control.xs": "デスクトップの密な UI 向けの最小コントロール（32px）。Button の xs サイズで使う。タッチターゲットを下回る",
         "control.sm": "コンパクトなコントロール（36px）",
         "control.md": "標準のコントロール（40px）",
         "control.lg": "大きめのコントロール（44px）。Button の既定サイズ",
-        "control.xl": "特に目立たせたいコントロール（48px）"
+        "control.xl": "特に目立たせたいコントロール（48px）。Button の xl サイズで使う"
     }}
 />
 
