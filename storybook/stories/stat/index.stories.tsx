@@ -203,6 +203,24 @@ export const InProfileCard: Story = {
     ),
 };
 
+// 値が長い場合: Stat の幅に収まらないときは、隣に重ねず次の行へ折り返す
+const LONG_STATS: PlayerStat[] = [
+    { label: "どんぐり", value: "1,234,567" },
+    { label: "保護ブロック", value: "98,765" },
+    { label: "プレイ", value: "12,345", unit: "時間" },
+    { label: "連続投票", value: "365", unit: "日" },
+];
+
+export const GroupWithLongValues: Story = {
+    render: () => (
+        <div style={{ width: PANEL_WIDTH }}>
+            <Stat.Group size="md" align="center">
+                {LONG_STATS.map((item) => renderStat(item))}
+            </Stat.Group>
+        </div>
+    ),
+};
+
 // colorPalette を umi に切り替えると、文字色がパレットに追従する
 export const UmiPalette: Story = {
     render: () => (

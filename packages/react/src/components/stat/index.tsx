@@ -1,6 +1,6 @@
 "use client";
 import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { cx } from "styled-system/css";
 import { stat } from "styled-system/recipes";
 
@@ -105,8 +105,10 @@ interface StatGroupProps extends HTMLArkProps<"dl"> {
 const StatGroup = ({ className, size, align, ...props }: StatGroupProps) => {
     // Group 自身は Root の外にあるので、自分のスロット(group)のクラス名はここで解決する
     const styles = stat({ size, align });
+    // Group が再描画されても size / align が同じなら同じオブジェクトを渡し、子の Root の再描画を避ける
+    const groupContext = useMemo(() => ({ size, align }), [size, align]);
     return (
-        <StatGroupContext.Provider value={{ size, align }}>
+        <StatGroupContext.Provider value={groupContext}>
             <ark.dl data-scope="stat" data-part="group" {...props} className={cx(styles.group, className)} />
         </StatGroupContext.Provider>
     );

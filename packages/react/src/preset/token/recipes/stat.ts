@@ -58,16 +58,22 @@ export const stat = defineSlotRecipe({
             alignItems: "stretch",
             margin: "0",
             width: "full",
+            // 値が収まりきらないときは、隣の Stat に重ねず次の行へ送る。行の間も区切りと同じ余白を取る
+            flexWrap: "wrap",
+            rowGap: "var(--stat-group-gap)",
             // 各 Stat は中身の幅を基準に残りの幅を分け合う。等分(flex-basis: 0)にすると、
             // スマホ幅で「保護ブロック」のような長いラベルだけが途中で折り返されるため。
             // data-part だけだと他のコンポーネントのパーツにも当たるため data-scope で Stat に絞る
             "& > [data-scope='stat'][data-part='root']": {
                 flex: "1 1 auto",
+                // root の既定の minWidth: 0 を戻し、折り返さない値(value)の幅より狭く縮めない。
+                // 0 のままだと長い値(例: 1,234,567)が Root からはみ出し、隣の区切り線とラベルに重なる
+                minWidth: "auto",
             },
             // 2 つ目以降の Stat の左に縦の区切り線を引く。区切りの前後の余白は size ごとに
             // group の columnGap と root の paddingInlineStart で同じ値を取る。
             // 区切りはマークアップ(<dl> の各組)が伝えるので線は装飾として控えめな border(gray.6)にする
-            // (border の計測値: 白 Lc 19.3 / colorPalette.bg(mori) Lc 11.1。非テキストの目安 Lc 45 は適用しない)
+            // (border の calcAPCA 計測値: 白 Lc 19.3 / colorPalette.bg(mori) Lc 11.1。装飾なので意味のある非テキストの目安 Lc 45・下限 Lc 30 は適用しない)
             "& > [data-scope='stat'][data-part='root'] + [data-scope='stat'][data-part='root']": {
                 borderInlineStartWidth: "1px",
                 borderInlineStartStyle: "solid",
