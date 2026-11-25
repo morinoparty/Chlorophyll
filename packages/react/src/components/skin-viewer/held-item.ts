@@ -44,6 +44,8 @@ interface HeldItemResolvers {
 interface HeldItem {
     /** 腕に取り付けるルートオブジェクト */
     object: Group;
+    /** 手で握る位置を中心に、アイテムを何倍の大きさで描くかを変える(1 で Minecraft と同じ大きさ) */
+    setScale: (scale: number) => void;
     /** 腕から外し、GPU リソースを解放する */
     dispose: () => void;
 }
@@ -185,7 +187,11 @@ const createSpriteMesh = (image: HTMLImageElement): InstancedMesh => {
 
 // skinview3d の腕の原点(肩)から、手に持ったアイテムのモデル空間までの変換を Group の入れ子で組み立てる。
 // Minecraft の ItemInHandLayer と ItemTransform.apply の処理順をそのまま再現している
-const createHandTransform = (hand: Hand, transform: ResolvedTransform, sprite: InstancedMesh) => {
+const createHandTransform = (
+    hand: Hand,
+    transform: ResolvedTransform,
+    sprite: InstancedMesh,
+): { root: Group; grip: Group } => {
     const sign = hand === "left" ? -1 : 1;
 
     // Minecraft のモデル空間は y が下向き・正面が -z。skinview3d は y が上向き・正面が +z なので、
@@ -199,6 +205,8 @@ const createHandTransform = (hand: Hand, transform: ResolvedTransform, sprite: I
     hold.rotation.set(-Math.PI / 2, Math.PI, 0, "XYZ");
     const handOffset = new Group();
     handOffset.position.set(sign * 1, 2, -10);
+    // 握る位置を中心にアイテムを拡大・縮小するための入れ子(Minecraft には無い、表示用の調整)
+    const grip = new Group();
 
     // ItemTransform.apply: 左手は x の平行移動と y/z の回転を反転して右手の変換を鏡映する
     const display = new Group();
@@ -214,10 +222,11 @@ const createHandTransform = (hand: Hand, transform: ResolvedTransform, sprite: I
 
     center.add(sprite);
     display.add(center);
-    handOffset.add(display);
+    grip.add(display);
+    handOffset.add(grip);
     hold.add(handOffset);
     root.add(hold);
-    return root;
+    return { root, grip };
 };
 
 // 光るアイテムにゆらぐ点光源を付ける。ライトの位置はスプライト上部(炎のあたり)
@@ -249,7 +258,7 @@ const loadHeldItem = async (
     const image = await loadImage(resolveTexture(resolved.texture));
 
     const sprite = createSpriteMesh(image);
-    const object = createHandTransform(hand, resolved.transform, sprite);
+    const { root: object, grip } = createHandTransform(hand, resolved.transform, sprite);
     const lightColor = LIGHT_EMITTING_ITEMS[id];
     const light = lightColor === undefined ? null : attachLight(sprite, lightColor);
 
@@ -266,6 +275,9 @@ const loadHeldItem = async (
 
     return {
         object,
+        setScale: (scale) => {
+            grip.scale.setScalar(scale);
+        },
         dispose: () => {
             object.removeFromParent();
             sprite.geometry.dispose();
