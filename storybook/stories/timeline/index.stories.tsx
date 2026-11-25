@@ -109,9 +109,12 @@ export const Default: Story = {
 export const Diary: Story = {
     render: () => (
         <div style={{ width: PANEL_WIDTH, display: "flex", flexDirection: "column", gap: 24 }}>
-            {DIARY.map((group) => (
-                <section key={group.label}>
-                    <h3 className={groupLabel}>{group.label}</h3>
+            {DIARY.map((group, index) => (
+                // 見出しを region の名前にして、時間帯ごとのまとまりを支援技術にも伝える
+                <section key={group.label} aria-labelledby={`diary-group-${index}`}>
+                    <h3 id={`diary-group-${index}`} className={groupLabel}>
+                        {group.label}
+                    </h3>
                     <Timeline.Root>{group.entries.map(renderEntry)}</Timeline.Root>
                 </section>
             ))}
@@ -130,16 +133,29 @@ export const Outline: Story = {
     ),
 };
 
+// 比較用の各パネルに付ける「variant / size」の見出し
+const panelCaption = css({
+    textStyle: "xs",
+    color: "colorPalette.fg.muted",
+    mb: "component.gap.sm",
+});
+
 // md と sm を、subtle / outline それぞれで並べて大きさを比較する
 export const Sizes: Story = {
     parameters: { layout: "padded" },
     render: () => (
         <div style={{ display: "grid", gridTemplateColumns: `repeat(2, ${PANEL_WIDTH}px)`, gap: 32 }}>
-            {(["subtle", "outline"] as const).map((variant) =>
+            {(["subtle", "outline"] as const).flatMap((variant) =>
                 (["md", "sm"] as const).map((size) => (
-                    <Timeline.Root key={`${variant}-${size}`} variant={variant} size={size}>
-                        {DIARY[1].entries.map(renderEntry)}
-                    </Timeline.Root>
+                    // どのパネルがどの組み合わせかを見出しで示す(VRT の差分確認でも見分けられるように)
+                    <figure key={`${variant}-${size}`} style={{ margin: 0 }}>
+                        <figcaption className={panelCaption}>
+                            {variant} / {size}
+                        </figcaption>
+                        <Timeline.Root variant={variant} size={size}>
+                            {DIARY[1].entries.map(renderEntry)}
+                        </Timeline.Root>
+                    </figure>
                 )),
             )}
         </div>
@@ -255,6 +271,42 @@ export const WithMeta: Story = {
                         </Timeline.Content>
                     </Timeline.Item>
                 ))}
+            </Timeline.Root>
+        </div>
+    ),
+};
+
+// Meta が文字より高くても、時刻と見出しの間が開かないことを確かめる例(Title だけの項目と、md のアバター)
+export const MetaTallerThanText: Story = {
+    args: { variant: "outline" },
+    argTypes: {
+        variant: { control: "select", options: ["subtle", "outline"] },
+        size: { control: "select", options: ["sm", "md"] },
+    },
+    render: (args) => (
+        <div style={{ width: PANEL_WIDTH }}>
+            <Timeline.Root {...args}>
+                <Timeline.Item>
+                    <Timeline.Indicator />
+                    <Timeline.Connector />
+                    <Timeline.Content>
+                        <Timeline.Title>{ACTIVITIES[0].title}</Timeline.Title>
+                        <Timeline.Meta>
+                            <PlayerAvatar {...ACTIVITIES[0].player} size="sm" decorative />
+                        </Timeline.Meta>
+                    </Timeline.Content>
+                </Timeline.Item>
+                <Timeline.Item>
+                    <Timeline.Indicator />
+                    <Timeline.Connector />
+                    <Timeline.Content>
+                        <Timeline.Time dateTime={ACTIVITIES[1].dateTime}>{ACTIVITIES[1].time}</Timeline.Time>
+                        <Timeline.Title>{ACTIVITIES[1].title}</Timeline.Title>
+                        <Timeline.Meta>
+                            <PlayerAvatar {...ACTIVITIES[1].player} size="md" decorative />
+                        </Timeline.Meta>
+                    </Timeline.Content>
+                </Timeline.Item>
             </Timeline.Root>
         </div>
     ),

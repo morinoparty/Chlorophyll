@@ -16,7 +16,7 @@ export const timeline = defineSlotRecipe({
             padding: "0",
             width: "full",
             // 既定の文字色を colorPalette に追従させる
-            // (colorPalette.fg の計測値: 白 Lc 82.1 / colorPalette.bg.subtle(mori.1) Lc 81.0)
+            // (colorPalette.fg の計測値: 白 Lc 82.1 / colorPalette.bg(mori) Lc 73.8)
             color: "colorPalette.fg",
             // Indicator を下にずらす量。outline でカードの 1 行目に点を揃えるときだけ compoundVariants で設定する
             "--timeline-indicator-offset": "0px",
@@ -31,8 +31,9 @@ export const timeline = defineSlotRecipe({
             _last: {
                 pb: "0",
             },
-            // 最後の項目の後には次の項目が無いので、Connector を出さない
-            "&:last-child > [data-part='connector']": {
+            // 最後の項目の後には次の項目が無いので、Connector を出さない。
+            // data-part だけだと他のコンポーネントのパーツにも当たるため data-scope で Timeline に絞る
+            "&:last-child > [data-scope='timeline'][data-part='connector']": {
                 display: "none",
             },
         },
@@ -65,13 +66,15 @@ export const timeline = defineSlotRecipe({
         },
         connector: {
             // Indicator の下から次の Indicator の手前まで伸びる縦線。
-            // 位置は Indicator の大きさ(--timeline-indicator-size)から計算し、点の中心に合わせる
+            // 位置は Indicator の大きさ(--timeline-indicator-size)から計算し、点の中心に合わせる。
+            // 線幅の半分は transform ではなく論理プロパティの計算で引き、RTL でも中心がずれないようにする
             position: "absolute",
-            insetInlineStart: "calc(var(--timeline-indicator-size) / 2)",
+            insetInlineStart: "calc((var(--timeline-indicator-size) - token(sizes.0.5)) / 2)",
             top: "calc(var(--timeline-indicator-offset) + var(--timeline-indicator-size) + token(spacing.component.gap.xs))",
-            bottom: "component.gap.xs",
+            // 次の項目の Indicator は --timeline-indicator-offset だけ下がっているので、その分だけ次の項目へはみ出させ、
+            // 線の上下の隙間を同じ gap.xs に揃える(はみ出した部分は zIndex を持つ次の Indicator が上に重なる)
+            bottom: "calc(token(spacing.component.gap.xs) - var(--timeline-indicator-offset))",
             width: "0.5",
-            transform: "translateX(-50%)",
             borderRadius: "full",
             // 項目の並びはマークアップ(<ol>)が伝えるため、線は装飾的な輪郭として控えめな枠線色にする
             // (colorPalette.border = mori.6 の計測値: 白 Lc 23.6 / colorPalette.bg(mori) Lc 15.3。非テキストの目安 Lc 45 は適用しない)
@@ -84,10 +87,13 @@ export const timeline = defineSlotRecipe({
             display: "grid",
             gridTemplateColumns: "minmax(0, 1fr) auto",
             alignContent: "start",
+            // Time / Title / Description の 3 行。Meta が文字より高いときに余った高さを最後の行だけに回し、
+            // 時刻と見出しの間が開かないようにする
+            gridTemplateRows: "auto auto 1fr",
             columnGap: "component.gap.md",
             minWidth: "0",
             // Meta 以外のパーツは左の列に積む
-            "& > :not([data-part='meta'])": {
+            "& > :not([data-scope='timeline'][data-part='meta'])": {
                 gridColumn: "1",
             },
         },
@@ -97,14 +103,14 @@ export const timeline = defineSlotRecipe({
             fontVariantNumeric: "tabular-nums",
             fontWeight: "medium",
             // 本文より一段引いた補助テキスト
-            // (colorPalette.fg.muted = gray.11 の計測値: 白 Lc 79.8 / colorPalette.bg.subtle(mori.1) Lc 78.8)
+            // (colorPalette.fg.muted = gray.11 の計測値: 白 Lc 79.8 / colorPalette.bg(mori) Lc 71.6)
             color: "colorPalette.fg.muted",
         },
         title: {
             fontWeight: "bold",
             color: "colorPalette.fg",
             // 時刻の下に置いたときだけ間を空ける(Meta を挟んでも効くよう一般兄弟セレクタにする)
-            "[data-part='time'] ~ &": {
+            "[data-scope='timeline'][data-part='time'] ~ &": {
                 mt: "0.5",
             },
         },
@@ -112,7 +118,7 @@ export const timeline = defineSlotRecipe({
             // 補助テキスト(colorPalette.fg.muted の計測値は time と同じ)
             color: "colorPalette.fg.muted",
             // 時刻・見出しの下に置いたときだけ間を空ける
-            "[data-part='time'] ~ &, [data-part='title'] ~ &": {
+            "[data-scope='timeline'][data-part='time'] ~ &, [data-scope='timeline'][data-part='title'] ~ &": {
                 mt: "1",
             },
         },
