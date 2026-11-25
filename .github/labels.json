@@ -20,6 +20,11 @@
         "description": "Type: Feature improvement"
     },
     {
+        "name": "small-enhancement",
+        "color": "#6A8BC6",
+        "description": "Type: Small feature improvement (released as patch)"
+    },
+    {
         "name": "document",
         "color": "#3B62BD",
         "description": "Type: Documentation changes"

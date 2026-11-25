@@ -7,6 +7,8 @@ categories:
     labels:
       - "enhancement"
       - "requirement"
+      # 既存の使い方を変えない小さな機能追加 (任意の props の追加など)。Features に並べるが patch で出す
+      - "small-enhancement"
   - title: "🐛 Bug Fixes"
     labels:
       - "bug"
@@ -45,6 +47,8 @@ version-resolver:
       - "document"
       - "dependencies"
       - "patch"
+      # 小さな機能追加は minor を上げずに patch で出す (enhancement と一緒に付けると minor が優先される)
+      - "small-enhancement"
   default: patch
 
 exclude-labels:
