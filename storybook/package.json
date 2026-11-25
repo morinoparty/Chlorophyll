@@ -20,7 +20,7 @@
         "lucide-react": "^1.77.0",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
-        "three": "^0.187.0"
+        "three": "^0.156.0"
     },
     "devDependencies": {
         "@pandacss/dev": "^2.6.0",

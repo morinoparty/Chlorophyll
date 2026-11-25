@@ -14,6 +14,7 @@ import {
 import { skinViewer as skinViewerRecipe } from "styled-system/recipes";
 import { useMinecraftConfig } from "../minecraft-provider";
 import { type Hand, type HeldItem, type HeldItemResolvers, loadHeldItem } from "./held-item";
+import { interpolateSkinViewerPose, PosedAnimation, type SkinViewerJointRotation, type SkinViewerPose } from "./pose";
 import { RaiseAnimation } from "./raise-animation";
 
 type SkinViewerAnimation = "idle" | "walking" | "running" | "wave" | "crouch" | "hit" | "raise" | "none";
@@ -43,6 +44,10 @@ const MAX_PITCH_DEG = 89;
 
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
+// zoom / fov を省略したときの値。skinview3d の既定値と同じ
+const DEFAULT_ZOOM = 0.9;
+const DEFAULT_FOV = 50;
+
 interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height"> {
     /** プレイヤーの UUID。skinUrl 省略時、MinecraftProvider の skinUrl でスキンテクスチャの URL に解決される */
     playerId?: string;
@@ -64,6 +69,24 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     pitch?: number;
     /** 再生するアニメーション。"none" ならポーズしたまま静止表示する */
     animation?: SkinViewerAnimation;
+    /**
+     * 関節の角度(度)。指定した関節・軸だけをアニメーションの上から毎フレーム上書きする。
+     * 値を変えてもアニメーションは途中から続くので、スクロールなどに合わせて連続的に変えられる。
+     * 軸は skinview3d(three.js)の関節のローカル軸: x が前後(rightArm.x = -90 で右腕を真正面に上げる、
+     * head.x が正でうつむく)、y がひねり(head.y が正で左を向く)、z が左右の開き
+     */
+    pose?: SkinViewerPose;
+    /**
+     * アニメーションが付ける関節の回転の強さ(0〜1)。1 でそのまま、0 で直立になる。
+     * 回転のみに効き、しゃがみの体の位置などは縮めない。pose はこの後に適用される
+     */
+    animationWeight?: number;
+    /**
+     * カメラの寄り具合。小さいほど引いて、掲げたアイテムなどが枠に収まりやすくなる。既定は 0.9
+     */
+    zoom?: number;
+    /** カメラの垂直画角(度)。既定は 50 */
+    fov?: number;
     /**
      * 右手に持たせるアイテムの ID(例: "torch" / "diamond_sword")。Minecraft のアイテム ID とそのまま対応する。
      * 平面スプライトのアイテム(item/generated・item/handheld 系)のみ対応し、ブロックは表示されない
@@ -135,6 +158,10 @@ const SkinViewer = ({
     yaw,
     pitch,
     animation = "idle",
+    pose,
+    animationWeight = 1,
+    zoom = DEFAULT_ZOOM,
+    fov = DEFAULT_FOV,
     interactive = true,
     rightHandItem,
     leftHandItem,
@@ -145,6 +172,8 @@ const SkinViewer = ({
 }: SkinViewerProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const viewerRef = useRef<SkinViewer3D | null>(null);
+    // pose / animationWeight は描画ループから毎フレーム読む。アニメーションを作り直さずに反映するため ref に置く
+    const poseStateRef = useRef({ pose, animationWeight });
     const styles = skinViewerRecipe({ interactive });
     // skinUrl 未指定時に playerId からテクスチャ URL を解決する(既定は mc-heads.net)
     const config = useMinecraftConfig();
@@ -165,15 +194,26 @@ const SkinViewer = ({
             return;
         }
 
-        const viewer = new SkinViewer3D({ canvas: canvasRef.current, width, height });
+        const viewer = new SkinViewer3D({ canvas: canvasRef.current, width, height, zoom, fov });
         viewerRef.current = viewer;
 
         return () => {
             viewer.dispose();
             viewerRef.current = null;
         };
-        // oxlint-disable-next-line react-hooks/exhaustive-deps -- effect 冒頭のコメントの通り width/height を依存配列に含めないのは意図的
+        // oxlint-disable-next-line react-hooks/exhaustive-deps -- effect 冒頭のコメントの通り width/height/zoom/fov を依存配列に含めないのは意図的
     }, []);
+
+    // zoom / fov の変更を反映する。skinview3d はカメラの向きを保ったまま距離だけを変えるため、
+    // yaw / pitch の effect より先に宣言して、固定角度の計算が新しい距離を使うようにする
+    useEffect(() => {
+        const viewer = viewerRef.current;
+        if (!viewer) {
+            return;
+        }
+        viewer.fov = fov;
+        viewer.zoom = zoom;
+    }, [zoom, fov]);
 
     // width/height の変更を、インスタンスを作り直さずに反映する
     useEffect(() => {
@@ -229,8 +269,13 @@ const SkinViewer = ({
         if (!viewer) {
             return;
         }
-        viewer.animation = ANIMATION_FACTORY[animation]();
+        // pose を毎フレーム適用できるよう、"none" でも PosedAnimation で包んで描画ループに乗せる
+        viewer.animation = new PosedAnimation(ANIMATION_FACTORY[animation](), () => poseStateRef.current);
     }, [animation]);
+
+    useEffect(() => {
+        poseStateRef.current = { pose, animationWeight };
+    }, [pose, animationWeight]);
 
     // 生成 effect より後に宣言し、viewer が作られてからアイテムを持たせる
     useHeldItem(viewerRef, "right", rightHandItem, itemResolvers);
@@ -266,5 +311,5 @@ const SkinViewer = ({
     );
 };
 
-export type { SkinViewerAnimation, SkinViewerProps };
-export { SkinViewer };
+export type { SkinViewerAnimation, SkinViewerJointRotation, SkinViewerPose, SkinViewerProps };
+export { interpolateSkinViewerPose, SkinViewer };

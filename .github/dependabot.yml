@@ -6,6 +6,12 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "⬆️"
+    # skinview3d が three ^0.156 に依存しているため、three は skinview3d が対応するまで 0.156 系に留める
+    ignore:
+      - dependency-name: "three"
+        versions: [">=0.157.0"]
+      - dependency-name: "@types/three"
+        versions: [">=0.157.0"]
     groups:
       # catalog の vite (vite-plus-core の別名) と vite-plus は同じバージョンで揃える必要があるため、まとめて上げる
       vite-plus:

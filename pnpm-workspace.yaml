@@ -10,8 +10,10 @@ catalog:
 
 # pnpm 11 以降は package.json の "pnpm" 欄を読まないため、ここに移した
 overrides:
-  three: ^0.187.0
-  "@types/three": ^0.187.0
+  # skinview3d は three ^0.156 に依存し、新しい three では動かない (unmount 時に fxaaPass.fsQuad が無いなど)。
+  # 手に持たせるアイテムも同じ three で作る必要があるため、ワークスペース全体を 0.156 系に揃える
+  three: ^0.156.0
+  "@types/three": ^0.156.0
   jest-runtime: ~30.5.2
   # 依存が参照する vite も Vite+ のコアに揃え、vite が二重に入らないようにする
   vite@*: "catalog:"

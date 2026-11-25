@@ -25,6 +25,12 @@ pnpm add @morinoparty/chlorophyll-react
 
 The preset requires Panda CSS v2. Install the peer dependencies `@pandacss/dev`, `@pandacss/preset-base` and `@pandacss/types` (all 2.x).
 
+`SkinViewer` and `MinecraftItem` use three.js. The package depends on `three@^0.156.0`, the same range as
+`skinview3d` (the 3D skin renderer), so a single copy of three is installed. Do not override `three` (or
+`skinview3d>three`) to a newer version: skinview3d is built for three 0.156 and breaks with newer releases
+(for example, `fxaaPass.fsQuad is undefined` on unmount), and items held by `SkinViewer` must be built with
+the same three instance that skinview3d renders with. Check with `pnpm why three` that only one version is installed.
+
 Add the Panda preset to `panda.config.ts`:
 
 ```ts
