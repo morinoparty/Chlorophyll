@@ -222,6 +222,17 @@ export { Skeleton, type SkeletonProps, type SkeletonVariant } from "./skeleton";
 export { SkinViewer, type SkinViewerAnimation, type SkinViewerProps } from "./skin-viewer";
 export { Spinner, type SpinnerProps, type SpinnerSize } from "./spinner";
 export {
+    Stat,
+    type StatAlign,
+    type StatGroupProps,
+    type StatHelpTextProps,
+    type StatLabelProps,
+    type StatRootProps,
+    type StatSize,
+    type StatUnitProps,
+    type StatValueProps,
+} from "./stat";
+export {
     Switch,
     type SwitchContextProps,
     type SwitchControlProps,

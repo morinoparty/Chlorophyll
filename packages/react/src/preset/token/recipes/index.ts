@@ -28,6 +28,7 @@ import { separator } from "./separator";
 import { skeleton } from "./skeleton";
 import { skinViewer } from "./skin-viewer";
 import { spinner } from "./spinner";
+import { stat } from "./stat";
 import { switchRecipe } from "./switch";
 import { table } from "./table";
 import { tabs } from "./tabs";
@@ -73,6 +74,7 @@ export const slotRecipes = {
     checkbox,
     table,
     tabs,
+    stat,
     timeline,
     toast,
     tooltip,
