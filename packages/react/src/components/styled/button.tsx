@@ -4,7 +4,8 @@ import { button } from "styled-system/recipes";
 
 interface ButtonProps extends HTMLArkProps<"button"> {
     intent?: "primary" | "secondary" | "plain";
-    size?: "sm" | "md" | "lg";
+    /** 大きさ。xs 32px / sm 36px / md 40px / lg 44px(既定) / xl 48px。xs はデスクトップの密な UI 向け */
+    size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
 const Button = ({ className, intent, size, ...props }: ButtonProps) => {
