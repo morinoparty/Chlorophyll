@@ -22,6 +22,7 @@ import { playerAvatarGroup } from "./player-avatar-group";
 import { playerCard } from "./player-card";
 import { playerMap } from "./player-map";
 import { playerPhraseCard } from "./player-phrase-card";
+import { popover } from "./popover";
 import { radioGroup } from "./radio-group";
 import { segmentGroup } from "./segment-group";
 import { select } from "./select";
@@ -61,6 +62,7 @@ export const slotRecipes = {
     guideCard,
     newsCard,
     menu,
+    popover,
     dialog,
     drawer,
     editable,
