@@ -18,6 +18,7 @@ import { modalDialog } from "./modal-dialog";
 import { newsCard } from "./news-card";
 import { pagination } from "./pagination";
 import { playerAvatar } from "./player-avatar";
+import { playerAvatarGroup } from "./player-avatar-group";
 import { playerCard } from "./player-card";
 import { playerMap } from "./player-map";
 import { playerPhraseCard } from "./player-phrase-card";
@@ -50,6 +51,7 @@ export const recipes = {
 // 複数スロットを持つレシピ
 export const slotRecipes = {
     playerAvatar,
+    playerAvatarGroup,
     playerMap,
     playerPhraseCard,
     list,

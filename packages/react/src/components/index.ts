@@ -160,6 +160,15 @@ export {
 } from "./pagination";
 export { PlayerAvatar, type PlayerAvatarProps, type PlayerAvatarSize } from "./player-avatar";
 export {
+    PlayerAvatarGroup,
+    type PlayerAvatarGroupItemProps,
+    type PlayerAvatarGroupOverflowProps,
+    type PlayerAvatarGroupPlayer,
+    type PlayerAvatarGroupProps,
+    type PlayerAvatarGroupRootProps,
+    type PlayerAvatarGroupSpacing,
+} from "./player-avatar-group";
+export {
     PlayerCard,
     type PlayerCardAvatarProps,
     type PlayerCardBodyProps,
