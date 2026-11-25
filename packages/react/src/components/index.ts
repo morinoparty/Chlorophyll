@@ -179,6 +179,17 @@ export {
 } from "./player-card";
 export { PlayerMap, type PlayerMapProps, type PlayerMapSize } from "./player-map";
 export { PlayerPhraseCard, type PlayerPhraseCardBodyProps, type PlayerPhraseCardRootProps } from "./player-phrase-card";
+export {
+    Popover,
+    type PopoverArrowProps,
+    type PopoverCloseTriggerProps,
+    type PopoverContentProps,
+    type PopoverDescriptionProps,
+    type PopoverPositionerProps,
+    type PopoverRootProps,
+    type PopoverTitleProps,
+    type PopoverTriggerProps,
+} from "./popover";
 export { Portal, type PortalProps } from "./portal";
 export {
     RadioGroup,
