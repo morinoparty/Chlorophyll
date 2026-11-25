@@ -94,6 +94,13 @@ interface SkinViewerProps extends Omit<HTMLArkProps<"canvas">, "width" | "height
     rightHandItem?: string;
     /** 左手に持たせるアイテムの ID。rightHandItem と同じ */
     leftHandItem?: string;
+    /**
+     * 右手のアイテムを描く倍率。握る位置を中心に拡大・縮小する。既定は 1(Minecraft と同じ大きさ)。
+     * 松明のような細いアイテムを大きく見せたいときに使う
+     */
+    rightHandItemScale?: number;
+    /** 左手のアイテムを描く倍率。rightHandItemScale と同じ */
+    leftHandItemScale?: number;
     /** モデル JSON のファイルパスから URL を解決する関数。省略時は MinecraftProvider から受け取る */
     resolveModel?: (path: string) => string;
     /** テクスチャのパス(例: "item/stick.png")から URL を解決する関数。省略時は MinecraftProvider から受け取る */
@@ -111,13 +118,24 @@ const DEFAULT_WIDTH = 300;
 const DEFAULT_HEIGHT = 400;
 
 // 指定した手にアイテムを持たせ、ID や解決関数が変わったら持ち替える。
-// 読み込みは非同期なので、完了前に持ち替え・アンマウントされた場合は結果を捨てて解放する
+// 読み込みは非同期なので、完了前に持ち替え・アンマウントされた場合は結果を捨てて解放する。
+// 倍率は読み込み直さずに、持っているアイテムへそのまま当てる
 const useHeldItem = (
     viewerRef: RefObject<SkinViewer3D | null>,
     hand: Hand,
     id: string | undefined,
+    scale: number,
     { resolveModel, resolveTexture, resolveItemDefinition }: Partial<HeldItemResolvers>,
 ) => {
+    const heldItemRef = useRef<HeldItem | null>(null);
+    // 読み込み完了時に最新の倍率を当てられるよう、ref にも持つ
+    const scaleRef = useRef(scale);
+
+    useEffect(() => {
+        scaleRef.current = scale;
+        heldItemRef.current?.setScale(scale);
+    }, [scale]);
+
     useEffect(() => {
         const viewer = viewerRef.current;
         if (!viewer || !id || !resolveModel || !resolveTexture) {
@@ -133,6 +151,8 @@ const useHeldItem = (
                     return;
                 }
                 heldItem = loaded;
+                heldItemRef.current = loaded;
+                loaded?.setScale(scaleRef.current);
             })
             .catch(() => {
                 // モデルやテクスチャが取得できない場合は何も持たせない
@@ -141,6 +161,7 @@ const useHeldItem = (
         return () => {
             cancelled = true;
             heldItem?.dispose();
+            heldItemRef.current = null;
         };
     }, [viewerRef, hand, id, resolveModel, resolveTexture, resolveItemDefinition]);
 };
@@ -165,6 +186,8 @@ const SkinViewer = ({
     interactive = true,
     rightHandItem,
     leftHandItem,
+    rightHandItemScale = 1,
+    leftHandItemScale = 1,
     resolveModel: resolveModelProp,
     resolveTexture: resolveTextureProp,
     resolveItemDefinition: resolveItemDefinitionProp,
@@ -278,8 +301,8 @@ const SkinViewer = ({
     }, [pose, animationWeight]);
 
     // 生成 effect より後に宣言し、viewer が作られてからアイテムを持たせる
-    useHeldItem(viewerRef, "right", rightHandItem, itemResolvers);
-    useHeldItem(viewerRef, "left", leftHandItem, itemResolvers);
+    useHeldItem(viewerRef, "right", rightHandItem, rightHandItemScale, itemResolvers);
+    useHeldItem(viewerRef, "left", leftHandItem, leftHandItemScale, itemResolvers);
 
     // skin の読み込みは非同期(内部で画像を fetch してからテクスチャ化する)なので、
     // 不正な URL でも例外で落ちないよう catch で握りつぶす(表示は前回のスキンのまま残る)

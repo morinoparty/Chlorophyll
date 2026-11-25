@@ -37,6 +37,8 @@ const meta: Meta<typeof SkinViewer> = {
             control: "select",
             options: [undefined, "torch", "diamond_sword", "iron_pickaxe", "apple", "stick"],
         },
+        rightHandItemScale: { control: { type: "range", min: 0.5, max: 3, step: 0.1 } },
+        leftHandItemScale: { control: { type: "range", min: 0.5, max: 3, step: 0.1 } },
         yaw: { control: { type: "range", min: -180, max: 180, step: 5 } },
         pitch: { control: { type: "range", min: -89, max: 89, step: 1 } },
         interactive: { control: "boolean" },
@@ -73,6 +75,11 @@ export const Torch: Story = {
 // 剣やツルハシ(item/handheld)は斜めに、りんごや松明(item/generated)は小さく持つ
 export const HeldItems: Story = {
     args: { rightHandItem: "diamond_sword", leftHandItem: "torch", yaw: 30, pitch: 10 },
+};
+
+// 細い松明は小さく見えるため、握る位置を中心に 1.8 倍で描く
+export const ScaledHeldItem: Story = {
+    args: { animation: "raise", rightHandItem: "torch", rightHandItemScale: 1.8, yaw: 30, pitch: 10 },
 };
 
 // yaw / pitch で視点の角度を固定した例。斜め前やや上から見下ろす。
