@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { createLucideIcon } from "lucide-react";
 import { sva } from "styled-system/css";
-import reactPackage from "../../../../packages/react/package.json";
 import { ColorPaletteToggle } from "../color-palette-toggle";
 import { MobileNav } from "../mobile-nav";
 
@@ -121,7 +120,7 @@ export function Header() {
                 <Link to="/" className={styles.logo}>
                     <img src="/chlorophyll.svg" alt="" className={styles.logoIcon} />
                     <span className={styles.logoText}>Chlorophyll</span>
-                    <span className={styles.version}>v{reactPackage.version}</span>
+                    <span className={styles.version}>v{__CHLOROPHYLL_VERSION__}</span>
                 </Link>
 
                 {/* md 以上のナビ。モバイルでは MobileNav に任せる */}
