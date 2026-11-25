@@ -31,6 +31,7 @@ import { spinner } from "./spinner";
 import { switchRecipe } from "./switch";
 import { table } from "./table";
 import { tabs } from "./tabs";
+import { timeline } from "./timeline";
 import { toast } from "./toast";
 import { tooltip } from "./tooltip";
 
@@ -72,6 +73,7 @@ export const slotRecipes = {
     checkbox,
     table,
     tabs,
+    timeline,
     toast,
     tooltip,
     card,
