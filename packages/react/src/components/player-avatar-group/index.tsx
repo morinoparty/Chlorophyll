@@ -118,7 +118,10 @@ interface PlayerAvatarGroupPlayer {
 }
 
 interface PlayerAvatarGroupProps extends Omit<PlayerAvatarGroupRootProps, "children"> {
-    /** 並べるプレイヤー。先頭から max 人までをアバターで表示する */
+    /**
+     * 並べるプレイヤー。先頭から max 人までをアバターで表示する。
+     * id は React の key に使うため一意にする(複数の一覧を合わせた場合は、渡す前に重複を除く)
+     */
     players: PlayerAvatarGroupPlayer[];
     /** アバターで表示する最大人数。超えた分は「+N」にまとめる。省略すると全員を表示する */
     max?: number;
@@ -142,6 +145,7 @@ const PlayerAvatarGroupBase = ({
     const hiddenPlayers = players.slice(visibleCount);
     return (
         <PlayerAvatarGroupRoot {...props}>
+            {/* players の id は一意である前提で、そのまま key に使う */}
             {visiblePlayers.map((player) => (
                 <PlayerAvatarGroupItem key={player.id} playerId={player.id} playerName={player.name} />
             ))}

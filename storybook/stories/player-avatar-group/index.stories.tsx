@@ -112,7 +112,28 @@ export const Compound: Story = {
     ),
 };
 
-// ページの地色(colorPalette.bg)の上に置く場合: リングの色を CSS 変数で地色に合わせる
+// 隠れた人数が多い場合: 「+N」のチップは四角に収まらない桁数になると横に伸びる
+export const LargeOverflowCount: Story = {
+    render: () => (
+        <div className={column}>
+            <PlayerAvatarGroup.Root size="sm" aria-label="オンラインのプレイヤー(sm)">
+                {PLAYERS.slice(0, 3).map((player) => (
+                    <PlayerAvatarGroup.Item key={player.id} playerId={player.id} playerName={player.name} />
+                ))}
+                <PlayerAvatarGroup.Overflow count={1024} aria-label="ほか 1024 人がオンライン" />
+            </PlayerAvatarGroup.Root>
+            <PlayerAvatarGroup.Root size="md" aria-label="オンラインのプレイヤー(md)">
+                {PLAYERS.slice(0, 3).map((player) => (
+                    <PlayerAvatarGroup.Item key={player.id} playerId={player.id} playerName={player.name} />
+                ))}
+                <PlayerAvatarGroup.Overflow count={1024} aria-label="ほか 1024 人がオンライン" />
+            </PlayerAvatarGroup.Root>
+        </div>
+    ),
+};
+
+// ページの地色(colorPalette.bg)の上に置く場合: リングの色を CSS 変数で地色に合わせる。
+// 値は生成される変数名ではなくトークン参照で書き、prefix や命名規則に依存しないようにする
 export const OnPageBackground: Story = {
     render: () => (
         <div className={css({ bg: "colorPalette.bg", padding: "component.padding.lg", borderRadius: "panel" })}>
@@ -120,7 +141,7 @@ export const OnPageBackground: Story = {
                 players={PLAYERS}
                 max={3}
                 aria-label="この日記にいた人"
-                className={css({ "--player-avatar-group-ring-color": "var(--mpc-colors-color-palette-bg)" })}
+                className={css({ "--player-avatar-group-ring-color": "{colors.colorPalette.bg}" })}
             />
         </div>
     ),

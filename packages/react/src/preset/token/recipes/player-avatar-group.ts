@@ -38,9 +38,13 @@ export const playerAvatarGroup = defineSlotRecipe({
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            // PlayerAvatar と同じ大きさ・角丸の四角にして、頭の列の続きとして読ませる
-            width: "var(--player-avatar-group-size)",
+            // PlayerAvatar と同じ大きさ・角丸の四角にして、頭の列の続きとして読ませる。
+            // 幅は最小値だけ決め、「+1000」のように桁が増えて四角に収まらないときは横に伸ばす
+            // (固定幅だと文字がはみ出してリングや隣の頭に重なるため)
+            minWidth: "var(--player-avatar-group-size)",
             height: "var(--player-avatar-group-size)",
+            // 横に伸びたときも文字がリングに触れないよう、左右に最小限の余白を取る
+            paddingInline: "1",
             borderRadius: "lg",
             boxShadow: "0 0 0 var(--player-avatar-group-ring-width) var(--player-avatar-group-ring-color)",
             // パレットの色味を薄く帯びた面に、パレットの文字色で「+N」を載せる。
@@ -54,7 +58,7 @@ export const playerAvatarGroup = defineSlotRecipe({
             color: "colorPalette.fg",
             fontWeight: "semibold",
             lineHeight: "1",
-            // 桁が変わっても幅がぶれないよう等幅数字にする
+            // 数字ごとに幅が変わらないよう等幅数字にする
             fontVariantNumeric: "tabular-nums",
             whiteSpace: "nowrap",
             userSelect: "none",
