@@ -19,9 +19,10 @@ const homeStyles = sva({
         // xl 以上ではヘッダーを除いた 1 画面に収め、左に説明・右に傾けたサンプルの壁を置く
         root: {
             display: "grid",
-            gridTemplateColumns: { base: "1fr", xl: "[minmax(0, 29rem) 1fr]" },
+            gridTemplateColumns: { base: "[minmax(0, 1fr)]", xl: "[minmax(0, 29rem) 1fr]" },
             columnGap: "16",
-            height: { xl: "[calc(100dvh - 4rem)]" },
+            // ヘッダー(4rem + 下線 1px)を除いた高さ
+            height: { xl: "[calc(100dvh - 4rem - 1px)]" },
             minHeight: { xl: "[40rem]" },
             overflow: "hidden",
             paddingLeft: { base: "5", md: "8", xl: "20" },
@@ -32,7 +33,8 @@ const homeStyles = sva({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: "8",
+            gap: { base: "6", md: "8" },
+            minWidth: "0",
             paddingY: { base: "12", xl: "8" },
             animation: "[chl-enter 500ms ease-out both]",
         },
@@ -48,6 +50,8 @@ const homeStyles = sva({
             fontSize: "md",
             lineHeight: "relaxed",
             color: "colorPalette.fg.muted",
+            // 文節の途中で折り返さない
+            wordBreak: "auto-phrase",
         },
         actions: {
             display: "flex",
@@ -59,16 +63,17 @@ const homeStyles = sva({
 
 function Home() {
     const styles = homeStyles();
-    // テーマピッカーで選んだパレットと角丸は、このページの中だけに適用する
-    const [palette, setPalette] = useState<PaletteName>("mori");
+    // テーマピッカーで選んだパレットと角丸は、このページの中だけに適用する。
+    // パレットは未選択(null)の間、ヘッダーで切り替えたサイト全体のパレットに従う
+    const [palette, setPalette] = useState<PaletteName | null>(null);
     const [radius, setRadius] = useState<RadiusName>("md");
 
     return (
-        <div className={cx(paletteClass[palette], styles.root)} style={radiusStyle(radius)}>
+        <div className={cx(palette && paletteClass[palette], styles.root)} style={radiusStyle(radius)}>
             <section className={styles.hero}>
                 <div>
                     <h1 className={styles.title}>Chlorophyll</h1>
-                    <p className={styles.tagline}>
+                    <p className={styles.tagline} lang="ja">
                         もりのパーティが育てる、AI ネイティブなデザインシステム。
                         <br />
                         人も AI も、同じトークンとコンポーネントで組み立てる。

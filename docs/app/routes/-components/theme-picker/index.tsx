@@ -101,7 +101,7 @@ const pickerStyles = sva({
 });
 
 interface ThemePickerProps {
-    palette: PaletteName;
+    palette: PaletteName | null;
     radius: RadiusName;
     onPaletteChange: (palette: PaletteName) => void;
     onRadiusChange: (radius: RadiusName) => void;

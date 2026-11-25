@@ -1,8 +1,11 @@
 import {
+    Accordion,
+    Badge,
     Button,
     Checkbox,
     Field,
     GuideCard,
+    List,
     NewsCard,
     PlayerPhraseCard,
     SegmentGroup,
@@ -26,13 +29,25 @@ const PLAYERS = {
 const PHRASE_REFERENCE_TIME = new Date("2026-07-15T00:00:00+09:00").getTime();
 
 const wallStyles = sva({
-    slots: ["viewport", "wall", "column", "card", "cardTitle", "stats"],
+    slots: [
+        "viewport",
+        "wall",
+        "column",
+        "card",
+        "cardInverted",
+        "cardTitle",
+        "cardTitleInverted",
+        "cardLead",
+        "row",
+        "stats",
+    ],
     base: {
         // 傾けた壁を右側の領域に収め、はみ出た分は切り落とす
+        // モバイルでは説明の下に高さ固定の帯として置き、画面の左右端まで広げる
         viewport: {
             position: "relative",
-            height: "full",
-            minHeight: "[36rem]",
+            height: { base: "[30rem]", xl: "full" },
+            marginX: { base: "-5", md: "-8", xl: "0" },
             overflow: "hidden",
             // 入場アニメーションは transform を上書きするので、傾ける要素とは別の要素に付ける
             animation: "[chl-enter 600ms ease-out both]",
@@ -45,7 +60,8 @@ const wallStyles = sva({
             display: "flex",
             alignItems: "flex-start",
             gap: "4",
-            transform: "[rotate(-8deg)]",
+            // モバイルでは一回り縮めて、2 列ほどが見えるようにする
+            transform: { base: "[rotate(-8deg) scale(0.72)]", md: "[rotate(-8deg)]" },
             transformOrigin: "top left",
         },
         column: {
@@ -57,6 +73,7 @@ const wallStyles = sva({
             "&:nth-child(1)": { width: "[22.5rem]", marginTop: "[6rem]" },
             "&:nth-child(2)": { marginTop: "[1.5rem]" },
             "&:nth-child(3)": { marginTop: "[2.5rem]" },
+            "&:nth-child(4)": { marginTop: "[-1rem]" },
         },
         card: {
             display: "flex",
@@ -65,6 +82,26 @@ const wallStyles = sva({
             padding: "5",
             borderRadius: "l3",
             bg: "colorPalette.surface.subtle",
+        },
+        // 濃いブランド色で塗ったカード。壁の中で目を留める場所にする
+        cardInverted: {
+            bg: "colorPalette.solid",
+        },
+        cardTitleInverted: {
+            fontSize: "md",
+            fontWeight: "bold",
+            color: "colorPalette.contrast",
+        },
+        cardLead: {
+            marginTop: "-2",
+            fontSize: "sm",
+            color: "colorPalette.fg.muted",
+        },
+        row: {
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: "2",
         },
         cardTitle: {
             fontSize: "md",
@@ -134,6 +171,23 @@ export function ExampleWall() {
                                 </GuideCard.Content>
                             </Link>
                         </GuideCard.Root>
+                    </DemoCard>
+
+                    <DemoCard styles={styles} title="よくある質問">
+                        <Accordion.Root variant="ghost" collapsible defaultValue={["join"]}>
+                            <Accordion.Item value="join">
+                                <Accordion.ItemTrigger>参加方法は？</Accordion.ItemTrigger>
+                                <Accordion.ItemContent>
+                                    サーバーアドレスを追加して、そのまま接続すれば参加できます。
+                                </Accordion.ItemContent>
+                            </Accordion.Item>
+                            <Accordion.Item value="rule">
+                                <Accordion.ItemTrigger>ルールはある？</Accordion.ItemTrigger>
+                                <Accordion.ItemContent>
+                                    他のプレイヤーの建築は壊さないでください。
+                                </Accordion.ItemContent>
+                            </Accordion.Item>
+                        </Accordion.Root>
                     </DemoCard>
                 </div>
 
@@ -255,6 +309,49 @@ export function ExampleWall() {
                             </Tabs.List>
                         </Tabs.Root>
                     </DemoCard>
+
+                    <DemoCard styles={styles} title="ステータス">
+                        <div className={styles.row}>
+                            <Badge status="success" dot>
+                                オンライン
+                            </Badge>
+                            <Badge variant="solid">建築中</Badge>
+                            <Badge status="info" variant="subtle">
+                                新着
+                            </Badge>
+                            <Badge status="warning" variant="surface">
+                                メンテ予定
+                            </Badge>
+                        </div>
+                    </DemoCard>
+                </div>
+
+                <div className={styles.column}>
+                    <DemoCard styles={styles} title="サーバーに参加する">
+                        <span className={styles.cardLead}>今日から建築をはじめよう。</span>
+                        <List variant="ghost" size="sm">
+                            <List.Item>サーバーに参加する</List.Item>
+                            <List.Item>ルールを確認する</List.Item>
+                            <List.Item>建築を始める</List.Item>
+                        </List>
+                        <div className={styles.row}>
+                            <Button intent="primary" size="sm">
+                                参加する
+                            </Button>
+                            <Button intent="plain" size="sm">
+                                あとで
+                            </Button>
+                        </div>
+                    </DemoCard>
+
+                    <div className={`${styles.card} ${styles.cardInverted}`}>
+                        <span className={styles.cardTitleInverted}>イベントを作成</span>
+                        <div className={styles.row}>
+                            <Button intent="secondary" size="sm">
+                                作成する
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
