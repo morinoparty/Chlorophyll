@@ -9,6 +9,8 @@ interface MinecraftBlockModelProps {
     elements: ResolvedElement[];
     /** GUI 表示時の回転角(度)。モデルの display.gui.rotation そのもの */
     rotation: [number, number, number];
+    /** 面の tintindex で引く色(0xRRGGBB)。null や範囲外の番号の面は色付けしない */
+    tintColors?: (number | null)[];
     /** テクスチャのパス(例: "block/oak_log.png")から実際に表示する URL を解決する関数 */
     resolveTexture: (path: string) => string;
     /** Canvas の一辺の実ピクセル数。正投影カメラの zoom(px 基準)を決めるのに使う */
@@ -31,6 +33,9 @@ const FACE_BRIGHTNESS: Record<MinecraftFace, number> = {
 // Minecraft のワールド座標(X+=east, Y+=up, Z+=south)は three.js の座標系にそのまま対応する
 const FACE_BY_MATERIAL_INDEX: MinecraftFace[] = ["east", "west", "up", "down", "south", "north"];
 
+// Minecraft の cutout 描画と同じく、アルファが 0.1 未満のピクセルは描画しない(ガラスの透明部分や草の側面の重ね絵)
+const ALPHA_CUTOFF = 0.1;
+
 // 面が定義されていない箇所(他の直方体に隠れて Minecraft 側でも描画されない内部面)は
 // 何も貼らず透明にする
 const InvisibleFaceMaterial = ({ attach }: { attach: string }) => (
@@ -45,11 +50,14 @@ const CroppedFaceMaterial = ({
     url,
     face,
     brightness,
+    tint,
 }: {
     attach: string;
     url: string;
     face: ResolvedFace;
     brightness: number;
+    /** 面に掛ける色(0xRRGGBB)。省略時はテクスチャの色のまま */
+    tint?: number;
 }) => {
     const base = useLoader(TextureLoader, url);
 
@@ -74,19 +82,37 @@ const CroppedFaceMaterial = ({
         return cropped;
     }, [base, x1, y1, x2, y2]);
 
-    const color = useMemo(() => new Color(brightness, brightness, brightness), [brightness]);
+    // 面の明るさに、tintindex を持つ面だけ色付けの色を掛け合わせる(Minecraft も頂点色として乗算する)
+    const color = useMemo(() => {
+        const shade = new Color(brightness, brightness, brightness);
+        return tint === undefined ? shade : shade.multiply(new Color().setHex(tint, SRGBColorSpace));
+    }, [brightness, tint]);
 
-    return <meshBasicMaterial attach={attach} map={texture} color={color} toneMapped={false} />;
+    // ガラスのような透明・半透明のピクセルを持つテクスチャのため、アルファを使って描く。
+    // 透明部分は alphaTest で捨て、色付きガラスのような半透明部分は背景と合成する
+    return (
+        <meshBasicMaterial
+            attach={attach}
+            map={texture}
+            color={color}
+            toneMapped={false}
+            transparent
+            alphaTest={ALPHA_CUTOFF}
+        />
+    );
 };
 
 interface ElementMeshProps {
     element: ResolvedElement;
+    /** モデル内での順番。同じ位置に重なる直方体(草ブロックの側面の重ね絵)を後のものほど手前に描く */
+    order: number;
+    tintColors: (number | null)[];
     resolveTexture: (path: string) => string;
 }
 
 // 直方体 1 個分。Minecraft のブロックローカル座標(0-16 が 1 ブロック分)を
 // three.js のワールド単位(1 ブロック = 1 unit、中心が原点)に変換する
-const ElementMesh = ({ element, resolveTexture }: ElementMeshProps) => {
+const ElementMesh = ({ element, order, tintColors, resolveTexture }: ElementMeshProps) => {
     const { from, to, faces } = element;
     const size: [number, number, number] = [(to[0] - from[0]) / 16, (to[1] - from[1]) / 16, (to[2] - from[2]) / 16];
     const position: [number, number, number] = [
@@ -96,10 +122,11 @@ const ElementMesh = ({ element, resolveTexture }: ElementMeshProps) => {
     ];
 
     return (
-        <mesh position={position}>
+        <mesh position={position} renderOrder={order}>
             <boxGeometry args={size} />
             {FACE_BY_MATERIAL_INDEX.map((face, index) => {
                 const faceDef = faces[face];
+                const tint = faceDef?.tintindex === undefined ? undefined : tintColors[faceDef.tintindex];
                 return faceDef ? (
                     <CroppedFaceMaterial
                         key={face}
@@ -107,6 +134,7 @@ const ElementMesh = ({ element, resolveTexture }: ElementMeshProps) => {
                         url={resolveTexture(faceDef.texture)}
                         face={faceDef}
                         brightness={FACE_BRIGHTNESS[face]}
+                        tint={tint ?? undefined}
                     />
                 ) : (
                     <InvisibleFaceMaterial key={face} attach={`material-${index}`} />
@@ -119,8 +147,9 @@ const ElementMesh = ({ element, resolveTexture }: ElementMeshProps) => {
 const BlockModel = ({
     elements,
     rotation,
+    tintColors = [],
     resolveTexture,
-}: Pick<MinecraftBlockModelProps, "elements" | "rotation" | "resolveTexture">) => {
+}: Pick<MinecraftBlockModelProps, "elements" | "rotation" | "tintColors" | "resolveTexture">) => {
     // モデルの display.gui.rotation(例: [30, 225, 0])は Minecraft の座標系そのままで、
     // three.js の Euler(XYZ 順)にも変換なしで一致する(検証済み)
     const [rx, ry, rz] = rotation.map(MathUtils.degToRad);
@@ -128,8 +157,14 @@ const BlockModel = ({
     return (
         <group rotation={[rx, ry, rz]}>
             {elements.map((element, index) => (
-                // oxlint-disable-next-line react/no-array-index-key -- 要素の並びはモデル JSON 由来で安定している
-                <ElementMesh key={index} element={element} resolveTexture={resolveTexture} />
+                <ElementMesh
+                    // oxlint-disable-next-line react/no-array-index-key -- 要素の並びはモデル JSON 由来で安定している
+                    key={index}
+                    element={element}
+                    order={index}
+                    tintColors={tintColors}
+                    resolveTexture={resolveTexture}
+                />
             ))}
         </group>
     );
@@ -145,7 +180,13 @@ const FILL_RATIO = 0.9;
 // Minecraft のインベントリ GUI と同じ、正投影(パースなし)のブロックを
 // react-three-fiber で実際に立体として描画するコンポーネント。
 // 立方体 1 個とは限らず、階段やフェンスのように複数の直方体からなる形状にも対応する
-const MinecraftBlockModel = ({ elements, rotation, resolveTexture, pixelSize }: MinecraftBlockModelProps) => {
+const MinecraftBlockModel = ({
+    elements,
+    rotation,
+    tintColors,
+    resolveTexture,
+    pixelSize,
+}: MinecraftBlockModelProps) => {
     const zoom = (pixelSize * FILL_RATIO) / PROJECTED_EXTENT;
 
     return (
@@ -157,7 +198,12 @@ const MinecraftBlockModel = ({ elements, rotation, resolveTexture, pixelSize }: 
             style={{ width: "100%", height: "100%" }}
         >
             <Suspense fallback={null}>
-                <BlockModel elements={elements} rotation={rotation} resolveTexture={resolveTexture} />
+                <BlockModel
+                    elements={elements}
+                    rotation={rotation}
+                    tintColors={tintColors}
+                    resolveTexture={resolveTexture}
+                />
             </Suspense>
         </Canvas>
     );

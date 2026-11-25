@@ -131,3 +131,47 @@ export const Showcase: Story = {
         </div>
     ),
 };
+
+// 色付け(tint)と透過の確認用。背景に模様を敷き、透ける部分が背景を見せることを確認する
+const tintStyles = {
+    row: css({
+        display: "flex",
+        gap: "4",
+        padding: "4",
+        borderRadius: "l3",
+        // 透過したピクセルの向こうが見えるよう、市松模様の背景に置く
+        backgroundImage:
+            "repeating-conic-gradient(var(--mpc-colors-bg-subtle) 0% 25%, var(--mpc-colors-bg-panel) 0% 50%)",
+        backgroundSize: "16px 16px",
+    }),
+    item: css({ display: "flex", flexDirection: "column", alignItems: "center", gap: "2" }),
+    label: css({ fontSize: "xs", color: "colorPalette.fg.muted" }),
+};
+
+const TINT_SAMPLES = [
+    // 色付けしないブロック(テクスチャの色そのまま)
+    { id: "stone", note: "no tint" },
+    // 透明なピクセルを持つブロック。色付けせず、透けた部分から背景が見える
+    { id: "glass", note: "cutout" },
+    { id: "light_blue_stained_glass", note: "translucent" },
+    // items/<id>.json の tints で色を付けるブロック
+    { id: "grass_block", note: "tint: grass" },
+    { id: "oak_leaves", note: "tint: constant" },
+] as const;
+
+// tint を定義していないブロックはテクスチャのまま、定義しているブロックはインベントリと同じ既定色で描く
+export const TintAndTransparency: Story = {
+    parameters: { layout: "padded" },
+    render: () => (
+        <div className={tintStyles.row}>
+            {TINT_SAMPLES.map(({ id, note }) => (
+                <div key={id} className={tintStyles.item}>
+                    <MinecraftItem id={id} size="lg" />
+                    <span className={tintStyles.label}>
+                        {id} ({note})
+                    </span>
+                </div>
+            ))}
+        </div>
+    ),
+};
