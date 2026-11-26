@@ -125,6 +125,7 @@ jobs:
 
   # 全シャードの撮影結果を 1 つにまとめ、reg-suit でベースラインと比較する
   vrt:
+    if: github.actor != 'dependabot[bot]'
     needs: capture
     runs-on: ubuntu-latest
     timeout-minutes: 15

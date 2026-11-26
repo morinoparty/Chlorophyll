@@ -48,7 +48,6 @@ jobs:
   # VRT・Preview・A11y を並行実行
   # VRT は reg-suit + reg-notify-github-plugin が独立して PR コメント / commit status を通知する
   vrt:
-    if: github.actor != 'dependabot[bot]'
     uses: ./.github/workflows/_vrt.yml
     secrets: inherit
 
