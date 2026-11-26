@@ -32,7 +32,30 @@ const bundleStorybook = (): Plugin => ({
     },
 });
 
+// ヘッダーに出すライブラリのバージョン。リポジトリの package.json の version は据え置きで、
+// リリース時にタグから書き換えて publish するため、ビルド時に npm の latest を取得する。
+// 取得できない(オフラインなど)場合は package.json の値を使う
+const resolveLibraryVersion = async (): Promise<string> => {
+    const packageJsonPath = path.resolve(import.meta.dirname, "../packages/react/package.json");
+    const fallback = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version as string;
+    try {
+        const response = await fetch("https://registry.npmjs.org/@morinoparty/chlorophyll-react/latest", {
+            signal: AbortSignal.timeout(5000),
+        });
+        if (!response.ok) return fallback;
+        const { version } = (await response.json()) as { version?: string };
+        return version ?? fallback;
+    } catch {
+        return fallback;
+    }
+};
+
+const libraryVersion = await resolveLibraryVersion();
+
 export default defineConfig({
+    define: {
+        __CHLOROPHYLL_VERSION__: JSON.stringify(libraryVersion),
+    },
     css: {
         postcss: {
             plugins: [pandacss(), autoprefixer],

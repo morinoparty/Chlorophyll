@@ -1,4 +1,3 @@
-import { TreePine, Waves } from "lucide-react";
 import { useEffect, useState } from "react";
 import { css, cx } from "styled-system/css";
 
@@ -8,13 +7,35 @@ interface ColorPaletteToggleProps {
     className?: string;
 }
 
+// mori / umi を切り替えるピル型のボタン。現在のパレットの色の点と名前を出す
+const toggleStyle = css({
+    display: { base: "none", md: "inline-flex" },
+    alignItems: "center",
+    gap: "2",
+    height: "9",
+    paddingX: "3.5",
+    borderRadius: "full",
+    bg: "colorPalette.surface.subtle",
+    fontSize: "sm",
+    fontWeight: "bold",
+    color: "colorPalette.fg",
+    cursor: "pointer",
+    transition: "colors",
+    _hover: { bg: "colorPalette.surface" },
+});
+
+const dotStyle = css({
+    width: "2.5",
+    height: "2.5",
+    borderRadius: "full",
+    bg: "colorPalette.solid",
+});
+
 export function ColorPaletteToggle({ className }: ColorPaletteToggleProps) {
-    // hydration errorを防ぐため、マウント後にのみ状態を確定させる
-    const [mounted, setMounted] = useState(false);
+    // SSR 時は既定の mori で描き、マウント後に保存済みのパレットへ合わせる
     const [theme, setTheme] = useState<Theme>("mori");
 
     useEffect(() => {
-        setMounted(true);
         const savedTheme = localStorage.getItem("color-palette") as Theme | null;
         if (savedTheme === "mori" || savedTheme === "umi") {
             setTheme(savedTheme);
@@ -32,18 +53,11 @@ export function ColorPaletteToggle({ className }: ColorPaletteToggleProps) {
         <button
             type="button"
             onClick={toggleTheme}
-            className={cx(
-                // 見た目は呼び出し側の className に委ね、ここでは素のボタンにするだけに留める
-                css({
-                    bg: "transparent",
-                    cursor: "pointer",
-                }),
-                className,
-            )}
-            aria-label="Toggle theme"
+            className={cx(toggleStyle, className)}
+            aria-label={`カラーパレットを切り替える(現在: ${theme})`}
         >
-            {/* SSR時は常にTreePineを表示し、hydration後に正しいアイコンに切り替える */}
-            {mounted ? theme === "mori" ? <TreePine /> : <Waves /> : <TreePine />}
+            <span className={dotStyle} />
+            {theme}
         </button>
     );
 }

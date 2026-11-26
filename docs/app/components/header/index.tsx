@@ -17,27 +17,31 @@ const Github = createLucideIcon("github", [
 ]);
 
 const headerStyles = sva({
-    slots: ["root", "container", "logo", "logoIcon", "logoText", "rightSection", "nav", "navLink", "iconButton"],
+    slots: ["root", "container", "logo", "logoIcon", "logoText", "version", "nav", "navLink", "actions", "iconButton"],
     base: {
         root: {
             position: "sticky",
             top: "0",
             zIndex: "overlay",
-            bg: "bg/70",
+            bg: "colorPalette.bg/80",
             backdropFilter: "[blur(12px)]",
+            borderBottomWidth: "1",
+            borderColor: "border",
         },
-        // park-ui のトップに倣い、コンテナ幅で縛らず画面端までを使う
+        // ロゴ・ナビ・操作の 3 つを並べ、ナビは画面の中央に置く
         container: {
-            display: "flex",
-            paddingX: { base: "5", md: "8" },
-            height: "16",
+            display: "grid",
+            gridTemplateColumns: { base: "[1fr auto]", md: "[1fr auto 1fr]" },
             alignItems: "center",
-            justifyContent: "space-between",
+            gap: "4",
+            height: "16",
+            paddingX: { base: "5", md: "8" },
         },
         logo: {
             display: "flex",
             alignItems: "center",
-            gap: "3",
+            gap: "2.5",
+            justifySelf: "start",
             textDecoration: "none",
             color: "colorPalette.fg",
         },
@@ -49,53 +53,60 @@ const headerStyles = sva({
             fontWeight: "bold",
             fontSize: "lg",
         },
-        rightSection: {
-            display: "flex",
-            alignItems: "center",
-            gap: "2",
+        // ライブラリのバージョン。ロゴの横に小さく添える
+        version: {
+            paddingX: "2",
+            paddingY: "0.5",
+            borderRadius: "full",
+            bg: "colorPalette.surface",
+            fontSize: "xs",
+            fontWeight: "bold",
+            color: "colorPalette.fg",
         },
+        // ナビは淡い面のピルにまとめ、現在のページだけ白い面で浮かせる
         nav: {
             display: { base: "none", md: "flex" },
             alignItems: "center",
             gap: "1",
-            marginRight: "2",
+            padding: "1",
+            borderRadius: "full",
+            bg: "colorPalette.surface.subtle",
         },
-        // 枠線を使わず、hover で淡い面を敷くゴーストボタン型のリンク
         navLink: {
-            display: "inline-flex",
-            alignItems: "center",
-            paddingX: "3",
-            paddingY: "2",
-            borderRadius: "lg",
+            paddingX: "4",
+            paddingY: "1.5",
+            borderRadius: "full",
             fontSize: "sm",
             fontWeight: "medium",
             color: "colorPalette.fg.muted",
             textDecoration: "none",
             transition: "colors",
-            _hover: {
+            _hover: { color: "colorPalette.fg" },
+            "&[data-status=active]": {
+                bg: "bg.panel",
                 color: "colorPalette.fg",
-                bg: "colorPalette.surface",
+                fontWeight: "bold",
+                boxShadow: "xs",
             },
         },
-        // アイコン類も同じゴーストボタン型に揃える
+        actions: {
+            display: "flex",
+            alignItems: "center",
+            justifySelf: "end",
+            gap: "2",
+        },
         iconButton: {
             display: { base: "none", md: "flex" },
             alignItems: "center",
             justifyContent: "center",
             width: "9",
             height: "9",
-            borderRadius: "lg",
-            color: "colorPalette.fg.muted",
-            cursor: "pointer",
+            borderRadius: "full",
+            bg: "colorPalette.surface.subtle",
+            color: "colorPalette.fg",
             transition: "colors",
-            _hover: {
-                color: "colorPalette.fg",
-                bg: "colorPalette.surface",
-            },
-            "& svg": {
-                width: "5",
-                height: "5",
-            },
+            _hover: { bg: "colorPalette.surface" },
+            "& svg": { width: "5", height: "5" },
         },
     },
 });
@@ -106,28 +117,26 @@ export function Header() {
     return (
         <header className={styles.root}>
             <div className={styles.container}>
-                {/* Logo */}
                 <Link to="/" className={styles.logo}>
-                    <img src="/chlorophyll.svg" alt="Chlorophyll" className={styles.logoIcon} />
+                    <img src="/chlorophyll.svg" alt="" className={styles.logoIcon} />
                     <span className={styles.logoText}>Chlorophyll</span>
+                    <span className={styles.version}>v{__CHLOROPHYLL_VERSION__}</span>
                 </Link>
 
-                {/* Right Section */}
-                <div className={styles.rightSection}>
-                    {/* Navigation - hidden on mobile */}
-                    <nav className={styles.nav}>
-                        <Link
-                            to="/docs/$"
-                            params={{ _splat: "getting-started/introduction" }}
-                            className={styles.navLink}
-                        >
-                            Docs
-                        </Link>
-                        <Link to="/docs/$" params={{ _splat: "theme" }} className={styles.navLink}>
-                            Theme
-                        </Link>
-                    </nav>
+                {/* md 以上のナビ。モバイルでは MobileNav に任せる */}
+                <nav className={styles.nav}>
+                    <Link to="/docs/$" params={{ _splat: "getting-started/introduction" }} className={styles.navLink}>
+                        ドキュメント
+                    </Link>
+                    <Link to="/docs/$" params={{ _splat: "theme" }} className={styles.navLink}>
+                        トークン
+                    </Link>
+                    <a href="/storybook/" className={styles.navLink}>
+                        Storybook
+                    </a>
+                </nav>
 
+                <div className={styles.actions}>
                     <a
                         href="https://github.com/morinoparty/chlorophyll"
                         target="_blank"
@@ -137,9 +146,7 @@ export function Header() {
                     >
                         <Github />
                     </a>
-                    <ColorPaletteToggle className={styles.iconButton} />
-
-                    {/* Mobile Navigation - visible only on mobile */}
+                    <ColorPaletteToggle />
                     <MobileNav />
                 </div>
             </div>

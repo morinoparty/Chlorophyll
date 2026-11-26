@@ -36,6 +36,8 @@ export const Route = createRootRoute({
 function RootComponent() {
     const location = useLocation();
     const isDocsPage = location.pathname.startsWith("/docs");
+    // トップページはスクロールさせず 1 画面に収めるため、フッターを出さない
+    const isHomePage = location.pathname === "/";
 
     return (
         <html lang="en">
@@ -65,7 +67,7 @@ function RootComponent() {
                     >
                         <Outlet />
                     </main>
-                    {!isDocsPage && <Footer />}
+                    {!isDocsPage && !isHomePage && <Footer />}
                     <Scripts />
                 </RootProvider>
             </body>
