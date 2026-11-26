@@ -52,6 +52,7 @@ jobs:
     secrets: inherit
 
   preview:
+    if: github.actor != 'dependabot[bot]'
     uses: ./.github/workflows/_preview-deploy.yml
     secrets: inherit
 
