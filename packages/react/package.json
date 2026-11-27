@@ -38,9 +38,9 @@
         "build": "panda codegen"
     },
     "dependencies": {
-        "@ark-ui/react": "^5.40.0",
+        "@ark-ui/react": "^5.40.1",
         "@react-three/fiber": "^9.8.2",
-        "lucide-react": "^1.77.0",
+        "lucide-react": "^1.78.0",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
         "skinview3d": "^3.4.2",
